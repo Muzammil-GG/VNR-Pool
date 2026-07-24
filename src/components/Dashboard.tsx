@@ -146,6 +146,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
   const offerMutation = useMutation({
     mutationFn: async () => {
+      if (rideCategory === 'personal_vehicle' && !offerData.vehicle_number) {
+        throw new Error('Vehicle number is required for Student Pool rides.')
+      }
+      
       // Convert the local datetime-local string to a proper UTC ISO string for Supabase
       const isoDepartureTime = new Date(offerData.departure_time).toISOString();
       
@@ -689,7 +693,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 </div>
                 {rideCategory === 'personal_vehicle' && (
                   <div className="space-y-2">
-                    <Label className="font-semibold text-foreground">Vehicle No.</Label>
+                    <Label className="font-semibold text-foreground">Vehicle No. <span className="text-red-500">*</span></Label>
                     <Input 
                       value={offerData.vehicle_number}
                       onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
@@ -750,7 +754,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
               <Button
                 onClick={() => offerMutation.mutate()}
-                disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time}
+                disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
                 className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-lg hover:shadow-emerald-500/30 transition-all btn-glow"
               >
                 {offerMutation.isPending ? 'Publishing…' : '🚀 Publish Ride'}
