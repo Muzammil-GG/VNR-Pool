@@ -456,8 +456,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               <div className="text-3xl font-black text-amber-500 price-glow">
                                 ₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}
                               </div>
-                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex items-center gap-0.5 justify-end mt-0.5">
-                                <Zap className="w-2.5 h-2.5 fill-current" /> Dynamic
+                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex flex-col items-end gap-1 mt-1">
+                                <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Current Split</span>
+                                {ride.available_seats > 0 && (
+                                  <span className="text-emerald-600 dark:text-emerald-400 normal-case tracking-normal">
+                                    Drops to <strong className="text-emerald-700 dark:text-emerald-300">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats) + 1))}</strong> if 1 more joins
+                                  </span>
+                                )}
                               </div>
                             </>
                           ) : (
