@@ -175,7 +175,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
       setOpen(val)
       if (!val) setIsEditing(false)
     }}>
-      <DialogTrigger asChild>
+      <DialogTrigger render={
         <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer w-full text-left font-medium">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
@@ -184,7 +184,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
             <span>Edit Profile</span>
           </div>
         </div>
-      </DialogTrigger>
+      } />
       <DialogContent className="sm:max-w-md bg-card/90 backdrop-blur-xl border-border overflow-hidden">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-foreground">My Profile</DialogTitle>
