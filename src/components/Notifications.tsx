@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Bell } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from './ui/button'
@@ -55,12 +55,14 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
         // Find new unread notifications that were not in the previous list
         const newNotifs = notifications.filter(n => !n.is_read && !prev.find(p => p.id === n.id))
         newNotifs.forEach(n => {
-          toast(n.title + '\n' + n.message, { 
+          toast(n.title, { 
+            description: n.message,
             icon: '🔔',
             duration: 6000,
             style: {
               background: '#10b981',
               color: '#fff',
+              border: 'none',
               fontWeight: 'bold'
             }
           })
