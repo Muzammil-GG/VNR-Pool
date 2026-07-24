@@ -118,7 +118,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       if (error) throw error
       return data as Ride[]
     },
-    enabled: !!currentUserProfile
+    enabled: !!currentUserProfile,
+    refetchInterval: 5000
   })
 
   const { data: hasActiveBooking } = useQuery({

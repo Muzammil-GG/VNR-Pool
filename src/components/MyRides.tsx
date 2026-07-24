@@ -35,7 +35,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
 
       if (error) throw error
       return data
-    }
+    },
+    refetchInterval: 5000
   })
 
   // 2. Joined Rides (Bookings)
@@ -65,7 +66,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
       if (error) throw error
       // Filter out bookings where the ride itself is cancelled or completed
       return data?.filter((b: any) => b.ride && !['cancelled', 'completed'].includes(b.ride.status)) || []
-    }
+    },
+    refetchInterval: 5000
   })
 
   // Mutations
@@ -231,8 +233,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-3">
-                      <span className="text-xs bg-emerald-100 dark:bg-emerald-950 px-2.5 py-1 rounded-full text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider shadow-sm">
-                        {ride.status}
+                      <span className={cn(
+                        "text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5",
+                        ride.status === 'in_progress' 
+                          ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 animate-pulse border border-blue-200" 
+                          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                      )}>
+                        {ride.status === 'in_progress' && <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span></span>}
+                        {ride.status.replace('_', ' ')}
                       </span>
                       {ride.status === 'active' && (
                         <div className="flex gap-2">
@@ -372,9 +380,12 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         </CardTitle>
                         <div className="flex gap-1.5 mt-1">
                           <span className={cn(
-                            "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border",
-                            isApproved ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"
+                            "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1",
+                            ride.status === 'in_progress' && isApproved
+                              ? "bg-blue-50 text-blue-600 border-blue-200 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                              : isApproved ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"
                           )}>
+                            {ride.status === 'in_progress' && isApproved && <span className="relative flex h-1.5 w-1.5 mr-0.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span></span>}
                             {b.status === 'approved' && ride.status !== 'active' 
                               ? ride.status.replace('_', ' ') 
                               : b.status}
