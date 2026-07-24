@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap } from 'lucide-react'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { MyRides } from '@/components/MyRides'
 import { cn } from '@/lib/utils'
 
 type Ride = {
@@ -40,7 +41,7 @@ type Ride = {
   }[]
 }
 
-const TABS = ['Find a Ride', 'Offer a Seat']
+const TABS = ['Find a Ride', 'Offer a Seat', 'My Rides']
 
 export function Dashboard({ currentUserId }: { currentUserId: string }) {
   useRideReminders(currentUserId)
@@ -173,6 +174,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       toast.error(error.message)
     } else {
       toast.success('Booking requested! Wait for approval.')
+      queryClient.invalidateQueries({ queryKey: ['rides'] })
     }
   }
 
@@ -381,12 +383,21 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       </div>
                     </CardContent>
                     <CardFooter className="pt-2 pb-4 flex gap-2">
-                      <Button 
-                        onClick={() => handleBook(ride.id, ride.is_women_only)}
-                        className="flex-1 bg-secondary hover:bg-emerald-600 text-secondary-foreground hover:text-white transition-colors font-semibold"
-                      >
-                        Request Seat
-                      </Button>
+                      {(() => {
+                        const myBooking = ride.bookings?.find(b => b.passenger.id === currentUserId)
+                        const isPending = myBooking?.status === 'pending'
+                        const isApproved = myBooking?.status === 'approved'
+
+                        return (
+                          <Button 
+                            onClick={() => handleBook(ride.id, ride.is_women_only)}
+                            disabled={isPending || isApproved || ride.driver_id === currentUserId}
+                            className="flex-1 bg-secondary hover:bg-emerald-600 text-secondary-foreground hover:text-white transition-colors font-semibold disabled:opacity-70 disabled:hover:bg-secondary disabled:hover:text-secondary-foreground"
+                          >
+                            {isApproved ? 'Seat Approved!' : isPending ? 'Requested (Pending)' : ride.driver_id === currentUserId ? 'Your Ride' : 'Request Seat'}
+                          </Button>
+                        )
+                      })()}
                       <Button 
                         variant="outline" 
                         size="icon" 
@@ -557,7 +568,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             </CardContent>
           </Card>
         </div>
-      )}
+      ) : activeTab === 'My Rides' ? (
+        <MyRides currentUserId={currentUserId} />
+      ) : null}
 
       {chatRide && (
         <ChatModal 
