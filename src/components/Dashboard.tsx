@@ -86,7 +86,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         .from('rides')
         .select(`
           *,
-          driver:users!rides_driver_id_fkey(full_name, gender, mobile_number),
+          driver:users!rides_driver_id_fkey(full_name, gender, mobile_number, total_rating_score, rating_count),
           bookings(
             id,
             status,
@@ -139,6 +139,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   })
 
   // Stagger animation when feed changes
+  
+  // Calculate stars helper
+  const renderStars = (score, count) => {
+    if (!count || count === 0) return <span className="text-[10px] font-normal text-muted-foreground ml-1">New</span>
+    const avg = (score / count).toFixed(1)
+    return (
+      <span className="flex items-center text-[10px] font-bold text-yellow-500 ml-1 bg-yellow-500/10 px-1 rounded">
+        <Star className="w-2.5 h-2.5 mr-0.5 fill-current" /> {avg} <span className="text-muted-foreground font-normal ml-0.5">({count})</span>
+      </span>
+    )
+  }
+
   const hasAnimatedFeed = useRef(false)
   useEffect(() => {
     if (rides && rides.length > 0 && feedRef.current && !hasAnimatedFeed.current) {
@@ -464,7 +476,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               {ride.driver.full_name.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <p className="text-base font-extrabold text-foreground leading-tight">{ride.driver.full_name}</p>
+                              <p className="text-base font-extrabold text-foreground leading-tight flex items-center">{ride.driver.full_name} {renderStars(ride.driver.total_rating_score, ride.driver.rating_count)}</p>
                               <p className="text-[11px] text-muted-foreground font-medium">{obfuscatePhone(ride.driver.mobile_number)}</p>
                             </div>
                           </div>

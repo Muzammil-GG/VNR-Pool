@@ -6,14 +6,22 @@ import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, MessageCircle, Play, Flag } from 'lucide-react'
+import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, Play, Flag, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
+import { RateRidematesDialog } from './RateRidematesDialog'
 
 export function MyRides({ currentUserId }: { currentUserId: string }) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<'offered' | 'joined'>('offered')
+
+  // Helper for 1-hour window check
+  const isWithinOneHour = (dateString?: string) => {
+    if (!dateString) return false
+    const oneHour = 60 * 60 * 1000
+    return (new Date().getTime() - new Date(dateString).getTime()) < oneHour
+  }
 
   // 1. Offered Rides
   const { data: offeredRides, isLoading: offeredLoading } = useQuery({
@@ -26,15 +34,16 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           bookings(
             id,
             status,
-            passenger:users!bookings_passenger_id_fkey(id, full_name, mobile_number, gender)
+            passenger:users!bookings_passenger_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count)
           )
         `)
         .eq('driver_id', currentUserId)
-        .in('status', ['active', 'in_progress'])
+        .in('status', ['active', 'in_progress', 'completed'])
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      return data
+      // Filter out completed rides older than 1 hour
+      return data?.filter((r: any) => r.status !== 'completed' || isWithinOneHour(r.completed_at)) || []
     },
     refetchInterval: 5000
   })
@@ -51,11 +60,11 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           created_at,
           ride:rides (
             *,
-            driver:users!rides_driver_id_fkey(id, full_name, mobile_number, gender),
+            driver:users!rides_driver_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count),
             bookings(
               id,
               status,
-              passenger:users!bookings_passenger_id_fkey(id, full_name, gender)
+              passenger:users!bookings_passenger_id_fkey(id, full_name, gender, total_rating_score, rating_count)
             )
           )
         `)
@@ -64,8 +73,13 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      // Filter out bookings where the ride itself is cancelled or completed
-      return data?.filter((b: any) => b.ride && !['cancelled', 'completed'].includes(b.ride.status)) || []
+      // Filter out cancelled rides, and completed rides older than 1 hour
+      return data?.filter((b: any) => {
+        if (!b.ride) return false
+        if (b.ride.status === 'cancelled') return false
+        if (b.ride.status === 'completed' && !isWithinOneHour(b.ride.completed_at)) return false
+        return true
+      }) || []
     },
     refetchInterval: 5000
   })
@@ -137,7 +151,10 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
 
   const completeRideMutation = useMutation({
     mutationFn: async (ride: any) => {
-      const { error } = await supabase.from('rides').update({ status: 'completed' }).eq('id', ride.id);
+      const { error } = await supabase.from('rides').update({ 
+        status: 'completed',
+        completed_at: new Date().toISOString()
+      }).eq('id', ride.id);
       if (error) throw error;
       const approved = ride.bookings?.filter((b: any) => b.status === 'approved') || [];
       if (approved.length > 0) {
@@ -179,6 +196,17 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
 
   const isLoading = activeTab === 'offered' ? offeredLoading : joinedLoading
 
+  // Calculate stars helper
+  const renderStars = (score: number, count: number) => {
+    if (!count || count === 0) return <span className="text-[10px] font-normal text-muted-foreground ml-1">New</span>
+    const avg = (score / count).toFixed(1)
+    return (
+      <span className="flex items-center text-[10px] font-bold text-yellow-500 ml-1 bg-yellow-500/10 px-1 rounded">
+        <Star className="w-2.5 h-2.5 mr-0.5 fill-current" /> {avg} <span className="text-muted-foreground font-normal ml-0.5">({count})</span>
+      </span>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Tabs */}
@@ -212,7 +240,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
       ) : activeTab === 'offered' ? (
         // --- OFFERED RIDES ---
         !offeredRides || offeredRides.length === 0 ? (
-          <div className="text-center py-10 text-muted-foreground">You haven't offered any rides yet.</div>
+          <div className="text-center py-10 text-muted-foreground">You haven't offered any active rides recently.</div>
         ) : (
           <div className="space-y-6">
             {offeredRides.map(ride => (
@@ -235,9 +263,11 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     <div className="flex flex-col items-end gap-3">
                       <span className={cn(
                         "text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5",
-                        ride.status === 'in_progress' 
+                        ride.status === 'completed'
+                          ? "bg-muted text-muted-foreground"
+                          : ride.status === 'in_progress' 
                           ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 animate-pulse border border-blue-200" 
-                          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                          : "bg-primary/20 text-primary"
                       )}>
                         {ride.status === 'in_progress' && <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span></span>}
                         {ride.status.replace('_', ' ')}
@@ -304,12 +334,13 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         <div key={booking.id} className="flex flex-col gap-3 bg-card border border-border p-4 rounded-xl shadow-sm">
                           <div className="flex justify-between items-start">
                             <div>
-                              <p className="font-bold text-foreground flex items-center gap-2">
+                              <p className="font-bold text-foreground flex items-center">
                                 {booking.passenger.full_name} 
                                 <span className={cn(
-                                  "w-2 h-2 rounded-full",
+                                  "w-2 h-2 rounded-full ml-2",
                                   booking.passenger.gender === 'female' ? 'bg-foreground' : 'bg-blue-500'
                                 )} />
+                                {renderStars(booking.passenger.total_rating_score, booking.passenger.rating_count)}
                               </p>
                               <p className="text-xs text-muted-foreground font-medium mt-1">
                                 Status: <span className={cn(
@@ -318,7 +349,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 )}>{booking.status}</span>
                               </p>
                             </div>
-                            {booking.status === 'approved' && (
+                            {booking.status === 'approved' && ride.status !== 'completed' && (
                               <a href={`tel:${booking.passenger.mobile_number}`}>
                                 <Button variant="outline" size="icon" className="h-8 w-8 rounded-full border-blue-200 text-secondary-foreground hover:bg-blue-50 dark:hover:bg-blue-950">
                                   <Phone className="w-3.5 h-3.5" />
@@ -327,7 +358,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             )}
                           </div>
 
-                          {booking.status === 'pending' && (
+                          {booking.status === 'pending' && ride.status !== 'completed' && (
                             <div className="flex gap-2 mt-1">
                               <Button 
                                 size="sm" 
@@ -340,7 +371,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                               <Button 
                                 size="sm" 
                                 onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'approved', rideId: ride.id, currentSeats: ride.available_seats, passengerId: booking.passenger.id })}
-                                className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-md h-8"
+                                className="flex-1 bg-primary hover:opacity-90 text-primary-foreground h-8"
                                 disabled={ride.available_seats === 0}
                               >
                                 <CheckCircle className="w-4 h-4 mr-1.5" /> Approve
@@ -351,6 +382,24 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                       ))}
                     </div>
                   )}
+
+                  {ride.status === 'completed' && (
+                    <div className="mt-6 pt-4 border-t border-border">
+                      <RateRidematesDialog 
+                        rideId={ride.id} 
+                        currentUserId={currentUserId}
+                        ridemates={
+                          ride.bookings
+                            .filter((b: any) => b.status === 'approved')
+                            .map((b: any) => ({
+                              id: b.passenger.id,
+                              full_name: b.passenger.full_name,
+                              role: 'Passenger' as const
+                            }))
+                        }
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -359,7 +408,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
       ) : (
         // --- JOINED RIDES ---
         !joinedBookings || joinedBookings.length === 0 ? (
-          <div className="text-center py-10 text-muted-foreground">You haven't requested any seats yet.</div>
+          <div className="text-center py-10 text-muted-foreground">You haven't requested any seats recently.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {joinedBookings.map((b: any) => {
@@ -370,17 +419,20 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                 <Card key={b.id} className="glass-card overflow-hidden">
                   <div className={cn(
                     "h-1 w-full",
-                    isApproved ? "bg-gradient-to-r from-emerald-400 to-teal-500" : "bg-gradient-to-r from-amber-400 to-orange-400"
+                    ride.status === 'completed' ? "bg-muted-foreground" :
+                    isApproved ? "bg-primary" : "bg-secondary"
                   )} />
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <CardTitle className="text-lg font-bold text-foreground">
+                        <CardTitle className="text-lg font-bold text-foreground flex items-center">
                           {ride.driver.full_name}
+                          {renderStars(ride.driver.total_rating_score, ride.driver.rating_count)}
                         </CardTitle>
                         <div className="flex gap-1.5 mt-1">
                           <span className={cn(
                             "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1",
+                            ride.status === 'completed' ? "bg-muted text-muted-foreground border-border" :
                             ride.status === 'in_progress' && isApproved
                               ? "bg-blue-50 text-blue-600 border-blue-200 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]"
                               : isApproved ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"
@@ -434,38 +486,60 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         </div>
                       </div>
                     )}
-                  </CardContent>
-                  <CardFooter className="pt-2 pb-4 flex gap-2">
-                    {ride.status === 'active' && (
-                      <Button 
-                        onClick={() => {
-                          if (window.confirm('Cancel this seat request?')) {
-                            cancelMyBooking.mutate({ 
-                              bookingId: b.id, 
-                              rideId: ride.id, 
-                              wasApproved: isApproved, 
-                              currentSeats: ride.available_seats 
-                            })
-                          }
-                        }}
-                        disabled={cancelMyBooking.isPending}
-                        variant={isApproved ? "default" : "secondary"}
-                        className={cn(
-                          "flex-1 font-bold transition-all",
-                          isApproved 
-                            ? "bg-primary hover:bg-red-500 text-white" 
-                            : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
-                        )}
-                      >
-                        {cancelMyBooking.isPending ? 'Cancelling...' : 'Cancel Request'}
-                      </Button>
+
+                    {ride.status === 'completed' && isApproved && (
+                      <div className="mt-4 pt-2 border-t border-border">
+                        <RateRidematesDialog 
+                          rideId={ride.id} 
+                          currentUserId={currentUserId}
+                          ridemates={[
+                            { id: ride.driver.id, full_name: ride.driver.full_name, role: 'Driver' },
+                            ...ride.bookings
+                              .filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId)
+                              .map((bk: any) => ({
+                                id: bk.passenger.id,
+                                full_name: bk.passenger.full_name,
+                                role: 'Passenger' as const
+                              }))
+                          ]}
+                        />
+                      </div>
                     )}
-                    <a href={`tel:${ride.driver.mobile_number}`}>
-                      <Button variant="outline" size="icon" className="border-border">
-                        <Phone className="w-4 h-4 text-secondary-foreground" />
-                      </Button>
-                    </a>
-                  </CardFooter>
+                  </CardContent>
+
+                  {ride.status !== 'completed' && (
+                    <CardFooter className="pt-2 pb-4 flex gap-2">
+                      {ride.status === 'active' && (
+                        <Button 
+                          onClick={() => {
+                            if (window.confirm('Cancel this seat request?')) {
+                              cancelMyBooking.mutate({ 
+                                bookingId: b.id, 
+                                rideId: ride.id, 
+                                wasApproved: isApproved, 
+                                currentSeats: ride.available_seats 
+                              })
+                            }
+                          }}
+                          disabled={cancelMyBooking.isPending}
+                          variant={isApproved ? "default" : "secondary"}
+                          className={cn(
+                            "flex-1 font-bold transition-all",
+                            isApproved 
+                              ? "bg-primary hover:bg-red-500 text-white" 
+                              : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
+                          )}
+                        >
+                          {cancelMyBooking.isPending ? 'Cancelling...' : 'Cancel Request'}
+                        </Button>
+                      )}
+                      <a href={`tel:${ride.driver.mobile_number}`}>
+                        <Button variant="outline" size="icon" className="border-border">
+                          <Phone className="w-4 h-4 text-secondary-foreground" />
+                        </Button>
+                      </a>
+                    </CardFooter>
+                  )}
                 </Card>
               )
             })}
@@ -475,4 +549,3 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     </div>
   )
 }
-
