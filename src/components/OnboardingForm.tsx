@@ -79,6 +79,12 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
       // Compress image if it's too large to respect the 40kb limit
       const compressedBlob = await compressImage(file, 400, 400, 0.7)
       
+      if (compressedBlob.size > 40960) {
+        toast.error("Image too large. Please select a smaller photo (Max 40KB).")
+        setUploadingAvatar(false)
+        return
+      }
+
       const fileExt = file.name.split('.').pop()
       const fileName = `${userId}-${Date.now()}.${fileExt}`
 
@@ -205,7 +211,10 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                   className="space-y-4"
                 >
                   <div className="flex flex-col items-center justify-center space-y-3 mb-6">
-                    <Label className="font-semibold text-foreground">Profile Picture (Optional)</Label>
+                    <Label className="font-semibold text-foreground text-center">
+                      Profile Picture (Optional) <br/>
+                      <span className="text-[10px] opacity-70 font-normal">(Max size: 40KB)</span>
+                    </Label>
                     <div className="relative w-24 h-24 rounded-full border-2 border-dashed border-border flex items-center justify-center overflow-hidden bg-secondary hover:bg-secondary/80 transition-colors">
                       {formData.avatar_url ? (
                         <img src={formData.avatar_url} alt="Avatar" className="w-full h-full object-cover" />

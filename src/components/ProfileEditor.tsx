@@ -110,6 +110,13 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
     setUploadingAvatar(true)
     try {
       const compressedBlob = await compressImage(file, 400, 400, 0.7)
+      
+      if (compressedBlob.size > 40960) {
+        toast.error("Image too large. Please select a smaller photo (Max 40KB).")
+        setUploadingAvatar(false)
+        return
+      }
+
       const fileExt = file.name.split('.').pop()
       const fileName = `${currentUserId}-${Date.now()}.${fileExt}`
 
@@ -215,7 +222,10 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                     disabled={uploadingAvatar}
                   />
                 </div>
-                <Label className="text-xs text-muted-foreground">Tap to change profile picture</Label>
+                <Label className="text-xs text-muted-foreground text-center">
+                  Tap to change profile picture <br/>
+                  <span className="text-[10px] opacity-70">(Max size: 40KB)</span>
+                </Label>
               </div>
             )}
 
