@@ -85,7 +85,6 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
         
       await supabase.from('notifications').insert({
         user_id: passengerId,
-        type: 'booking_update',
         title,
         message
       })
@@ -121,8 +120,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           approved.map((b: any) => ({
             user_id: b.passenger.id,
             title: 'Ride Started! 🚗',
-            message: `${ride.origin} to ${ride.destination} has started. Have a safe journey!`,
-            type: 'ride_update'
+            message: `${ride.origin} to ${ride.destination} has started. Have a safe journey!`
           }))
         )
       }
@@ -145,8 +143,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           approved.map((b: any) => ({
             user_id: b.passenger.id,
             title: 'Ride Completed ✅',
-            message: `Your ride to ${ride.destination} has finished. Hope you had a great trip!`,
-            type: 'ride_update'
+            message: `Your ride to ${ride.destination} has finished. Hope you had a great trip!`
           }))
         )
       }
