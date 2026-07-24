@@ -50,7 +50,12 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           created_at,
           ride:rides (
             *,
-            driver:users!rides_driver_id_fkey(id, full_name, mobile_number, gender)
+            driver:users!rides_driver_id_fkey(id, full_name, mobile_number, gender),
+            bookings(
+              id,
+              status,
+              passenger:users!bookings_passenger_id_fkey(id, full_name, gender)
+            )
           )
         `)
         .eq('passenger_id', currentUserId)
@@ -303,6 +308,28 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         {new Date(ride.departure_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </div>
                     </div>
+
+                    {/* Co-passengers section */}
+                    {ride.bookings && ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId).length > 0 && (
+                      <div className="pt-3 border-t border-border/40 mt-3">
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+                          <Users className="w-3 h-3" /> Co-Passengers
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId).map((bk: any, idx: number) => (
+                            <div key={`${bk.passenger.id}-${idx}`} className="flex items-center gap-1.5 bg-secondary/60 border border-border/60 px-2 py-1 rounded-full text-xs font-semibold text-foreground">
+                              <div className={cn(
+                                "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black",
+                                bk.passenger.gender === 'female' ? "bg-pink-500" : "bg-blue-500"
+                              )}>
+                                {bk.passenger.full_name.charAt(0)}
+                              </div>
+                              {bk.passenger.full_name.split(' ')[0]}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                   <CardFooter className="pt-2 pb-4 flex gap-2">
                     <Button 
