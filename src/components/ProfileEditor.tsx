@@ -80,10 +80,8 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
       setOpen(val)
       if (!val) setIsEditing(false)
     }}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="relative p-2 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center w-10 h-10 transition-colors">
-          <UserIcon className="w-5 h-5 text-blue-500" />
-        </Button>
+      <DialogTrigger className="relative p-2 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center w-10 h-10 transition-colors">
+        <UserIcon className="w-5 h-5 text-blue-500" />
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-card/90 backdrop-blur-xl border-border overflow-hidden">
         <DialogHeader>
