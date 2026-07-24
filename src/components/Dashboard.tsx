@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils'
 import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { PublicProfileDialog } from '@/components/PublicProfileDialog'
 
 
 type Ride = {
@@ -41,7 +42,7 @@ type Ride = {
   price_per_seat: number
   is_women_only: boolean
   status: string
-  driver: { full_name: string, gender: string, mobile_number: string, total_rating_score: number, rating_count: number, avatar_url?: string }
+  driver: { id: string, full_name: string, gender: string, mobile_number: string, total_rating_score: number, rating_count: number, avatar_url?: string }
   bookings?: {
     id: string
     status: string
@@ -63,6 +64,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   const [womenOnlyFilter, setWomenOnlyFilter] = useState(false)
   
   const [chatRide, setChatRide] = useState<Ride | null>(null)
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null)
+  
   const supabase = createClient()
   const router = useRouter()
 
@@ -119,7 +122,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         .from('rides')
         .select(`
           *,
-          driver:users!rides_driver_id_fkey(full_name, gender, mobile_number, total_rating_score, rating_count, avatar_url),
+          driver:users!rides_driver_id_fkey(id, full_name, gender, mobile_number, total_rating_score, rating_count, avatar_url),
           bookings(
             id,
             status,
@@ -581,7 +584,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
                           {/* Driver avatar + name */}
-                          <div className="flex items-center gap-2.5">
+                          <div 
+                            className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => setSelectedProfileId(ride.driver.id)}
+                          >
                             <div className={cn(
                               "w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
                               !ride.driver.avatar_url && (ride.driver.gender === 'female'
@@ -690,7 +696,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {ride.bookings.filter(b => b.status === 'approved').map((b, idx) => (
-                              <div key={`${b.passenger.id}-${idx}`} className="flex items-center gap-1.5 bg-secondary/60 border border-border/60 px-2.5 py-1 rounded-full text-xs font-semibold text-foreground">
+                              <div 
+                                key={`${b.passenger.id}-${idx}`} 
+                                className="flex items-center gap-1.5 bg-secondary/60 hover:bg-secondary border border-border/60 px-2.5 py-1 rounded-full text-xs font-semibold text-foreground cursor-pointer transition-colors"
+                                onClick={() => setSelectedProfileId(b.passenger.id)}
+                              >
                                 <div className={cn(
                                   "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black overflow-hidden",
                                   !b.passenger.avatar_url && (b.passenger.gender === 'female' ? "bg-foreground" : "bg-blue-500")
@@ -967,6 +977,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           otherUserName={chatRide.driver.full_name}
         />
       )}
+
+      <PublicProfileDialog 
+        userId={selectedProfileId}
+        isOpen={!!selectedProfileId}
+        onClose={() => setSelectedProfileId(null)}
+      />
     </div>
   )
 }

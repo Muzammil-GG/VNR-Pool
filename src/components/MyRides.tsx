@@ -10,11 +10,13 @@ import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, 
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { RateRidematesDialog } from './RateRidematesDialog'
+import { PublicProfileDialog } from '@/components/PublicProfileDialog'
 
 export function MyRides({ currentUserId }: { currentUserId: string }) {
   const supabase = createClient()
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<'offered' | 'joined'>('offered')
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null)
 
   // Helper for 1-hour window check
   const isWithinOneHour = (dateString?: string) => {
@@ -447,10 +449,13 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
                         <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
-                          <div className={cn(
-                            "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black text-white overflow-hidden shadow-sm flex-shrink-0",
-                            !ride.driver.avatar_url && (ride.driver.gender === 'female' ? "bg-gradient-to-br from-pink-400 to-rose-500" : "bg-gradient-to-br from-emerald-400 to-teal-600")
-                          )}>
+                          <div 
+                            className={cn(
+                              "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black text-white overflow-hidden shadow-sm flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity",
+                              !ride.driver.avatar_url && (ride.driver.gender === 'female' ? "bg-gradient-to-br from-pink-400 to-rose-500" : "bg-gradient-to-br from-emerald-400 to-teal-600")
+                            )}
+                            onClick={() => setSelectedProfileId(ride.driver.id)}
+                          >
                             {ride.driver.avatar_url ? (
                               <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
@@ -506,7 +511,11 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId).map((bk: any, idx: number) => (
-                            <div key={`${bk.passenger.id}-${idx}`} className="flex items-center gap-1.5 bg-secondary/60 border border-border/60 px-2 py-1 rounded-full text-xs font-semibold text-foreground">
+                            <div 
+                              key={`${bk.passenger.id}-${idx}`} 
+                              className="flex items-center gap-1.5 bg-secondary/60 hover:bg-secondary border border-border/60 px-2 py-1 rounded-full text-xs font-semibold text-foreground cursor-pointer transition-colors"
+                              onClick={() => setSelectedProfileId(bk.passenger.id)}
+                            >
                               <div className={cn(
                                 "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black overflow-hidden",
                                 !bk.passenger.avatar_url && (bk.passenger.gender === 'female' ? "bg-foreground" : "bg-blue-500")
@@ -583,6 +592,12 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           </div>
         )
       )}
+
+      <PublicProfileDialog 
+        userId={selectedProfileId}
+        isOpen={!!selectedProfileId}
+        onClose={() => setSelectedProfileId(null)}
+      />
     </div>
   )
 }
