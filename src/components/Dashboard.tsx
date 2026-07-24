@@ -55,6 +55,37 @@ type Ride = {
 
 const TABS = ['Find a Ride', 'Offer a Seat', 'My Rides']
 
+const VantaBackground = () => {
+  const [vantaEffect, setVantaEffect] = useState<any>(null)
+  const myRef = useRef(null)
+
+  useEffect(() => {
+    if (!vantaEffect && myRef.current) {
+      try {
+        setVantaEffect(NET({
+          el: myRef.current,
+          THREE: THREE,
+          color: 0x475569, // Classic slate gray lines
+          backgroundColor: 0x020617, // Deep dark slate/navy background
+          points: 12.00,
+          maxDistance: 22.00,
+          spacing: 16.00,
+          showDots: true
+        }))
+      } catch (e) {
+        console.error("Vanta failed to load:", e)
+      }
+    }
+    return () => {
+      if (vantaEffect) vantaEffect.destroy()
+    }
+  }, [vantaEffect])
+
+  return (
+    <div ref={myRef} className="fixed inset-0 z-0 pointer-events-none opacity-20" />
+  )
+}
+
 export function Dashboard({ currentUserId }: { currentUserId: string }) {
   useRideReminders(currentUserId)
   
