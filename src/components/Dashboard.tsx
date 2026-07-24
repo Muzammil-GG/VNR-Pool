@@ -287,6 +287,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         throw new Error('Departure time cannot be in the past.')
       }
 
+      if (rideCategory === 'personal_vehicle' && !currentUserProfile?.is_verified_driver) {
+        throw new Error('You must verify your Driving License to offer Student Pool rides.')
+      }
+
       if (rideCategory === 'personal_vehicle' && !offerData.vehicle_number) {
         throw new Error('Vehicle number is required for Student Pool rides.')
       }
@@ -873,14 +877,14 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <p className="text-muted-foreground text-sm mt-1">Share your journey and split costs with fellow VNRians.</p>
             </div>
             
-            {!currentUserProfile?.is_verified_driver ? (
+            {!currentUserProfile?.is_verified_driver && rideCategory === 'personal_vehicle' ? (
               <div className="p-8 flex flex-col items-center justify-center text-center space-y-4">
                 <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-2">
                   <Shield className="w-8 h-8 text-blue-600" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">Driver Verification Required</h3>
                 <p className="text-muted-foreground text-sm">
-                  To ensure the safety of our student pool, you must verify your Driving License via DigiLocker before you can offer rides.
+                  To ensure the safety of our student pool, you must verify your Driving License via DigiLocker before you can offer rides in your personal vehicle.
                 </p>
                 <Button 
                   onClick={() => window.location.href = '/api/digilocker/login'}
