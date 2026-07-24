@@ -34,9 +34,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
   })
 
   const updateBookingStatus = useMutation({
-    mutationFn: async ({ bookingId, status }: { bookingId: string, status: 'approved' | 'rejected' }) => {
+    mutationFn: async ({ bookingId, status, rideId, currentSeats }: { bookingId: string, status: 'approved' | 'rejected', rideId: string, currentSeats: number }) => {
       const { error } = await supabase.from('bookings').update({ status }).eq('id', bookingId)
       if (error) throw error
+
+      // Decrement available seats if approved
+      if (status === 'approved' && currentSeats > 0) {
+        await supabase.from('rides').update({ available_seats: currentSeats - 1 }).eq('id', rideId)
+      }
     },
     onSuccess: (_, variables) => {
       toast.success(`Booking ${variables.status}!`)
@@ -132,14 +137,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'rejected' })}
+                          onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'rejected', rideId: ride.id, currentSeats: ride.available_seats })}
                           className="border-red-200 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
                         >
                           <XCircle className="w-4 h-4 mr-1" /> Reject
                         </Button>
                         <Button 
                           size="sm" 
-                          onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'approved' })}
+                          onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'approved', rideId: ride.id, currentSeats: ride.available_seats })}
                           className="bg-emerald-500 hover:bg-emerald-600 text-white"
                         >
                           <CheckCircle className="w-4 h-4 mr-1" /> Approve

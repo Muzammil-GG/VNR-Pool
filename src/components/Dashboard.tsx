@@ -394,7 +394,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             disabled={isPending || isApproved || ride.driver_id === currentUserId}
                             className="flex-1 bg-secondary hover:bg-emerald-600 text-secondary-foreground hover:text-white transition-colors font-semibold disabled:opacity-70 disabled:hover:bg-secondary disabled:hover:text-secondary-foreground"
                           >
-                            {isApproved ? 'Seat Approved!' : isPending ? 'Requested (Pending)' : ride.driver_id === currentUserId ? 'Your Ride' : 'Request Seat'}
+                            {isApproved ? 'Approved' : isPending ? 'Requested (Pending)' : ride.driver_id === currentUserId ? 'Your Ride' : 'Request Seat'}
                           </Button>
                         )
                       })()}
