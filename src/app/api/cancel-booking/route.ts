@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Use the user's session client to verify identity
+    // Verify identity via session cookie
     const userClient = await createClient()
     const { data: { user }, error: authError } = await userClient.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Verify this booking belongs to the current user
+    // Verify booking belongs to this user (SELECT is allowed for own bookings)
     const { data: booking, error: fetchError } = await userClient
       .from('bookings')
       .select('id, passenger_id')
@@ -32,43 +32,56 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden: not your booking' }, { status: 403 })
     }
 
-    // Use service role admin client to bypass RLS for deletion
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
     if (!serviceRoleKey) {
-      // Fallback: update status to cancelled using user client (driver update policy might allow it via a workaround)
-      // Actually just try deletion with user client anyway - it may work
-      const { error: deleteError } = await userClient
+      // No admin key — try with user client but check if anything was actually deleted
+      const { data: deleted, error: deleteError } = await userClient
         .from('bookings')
         .delete()
         .eq('id', bookingId)
         .eq('passenger_id', user.id)
-
-      if (deleteError) {
-        return NextResponse.json({ error: `No service key configured. DB error: ${deleteError.message}` }, { status: 500 })
-      }
-    } else {
-      // Admin client — completely bypasses RLS
-      const adminClient = createAdminClient(supabaseUrl, serviceRoleKey)
-
-      const { error: deleteError } = await adminClient
-        .from('bookings')
-        .delete()
-        .eq('id', bookingId)
-        .eq('passenger_id', user.id) // still enforce ownership even with admin key
+        .select()
 
       if (deleteError) {
         return NextResponse.json({ error: deleteError.message }, { status: 500 })
       }
 
-      // Restore available seat count if booking was approved
-      if (wasApproved && currentSeats !== undefined) {
-        await adminClient
-          .from('rides')
-          .update({ available_seats: currentSeats + 1 })
-          .eq('id', rideId)
+      // If 0 rows deleted, RLS silently blocked it — tell the user clearly
+      if (!deleted || deleted.length === 0) {
+        return NextResponse.json({
+          error: 'ACTION_REQUIRED: Your database security policy is blocking cancellations. Please add your SUPABASE_SERVICE_ROLE_KEY to Vercel environment variables, or run this SQL in your Supabase SQL Editor:\n\nCREATE POLICY "Passengers can delete their own bookings" ON public.bookings FOR DELETE USING (auth.uid() = passenger_id);'
+        }, { status: 403 })
       }
+
+      return NextResponse.json({ success: true })
+    }
+
+    // Admin client — completely bypasses RLS
+    const adminClient = createAdminClient(supabaseUrl, serviceRoleKey)
+
+    const { data: deleted, error: deleteError } = await adminClient
+      .from('bookings')
+      .delete()
+      .eq('id', bookingId)
+      .eq('passenger_id', user.id)
+      .select()
+
+    if (deleteError) {
+      return NextResponse.json({ error: deleteError.message }, { status: 500 })
+    }
+
+    if (!deleted || deleted.length === 0) {
+      return NextResponse.json({ error: 'Booking could not be deleted' }, { status: 500 })
+    }
+
+    // Restore seat count if booking was approved
+    if (wasApproved && currentSeats !== undefined) {
+      await adminClient
+        .from('rides')
+        .update({ available_seats: currentSeats + 1 })
+        .eq('id', rideId)
     }
 
     return NextResponse.json({ success: true })
