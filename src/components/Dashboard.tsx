@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import anime from 'animejs'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
@@ -14,7 +15,7 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
-import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star } from 'lucide-react'
+import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut } from 'lucide-react'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
@@ -59,6 +60,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   
   const [chatRide, setChatRide] = useState<Ride | null>(null)
   const supabase = createClient()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
   const queryClient = useQueryClient()
   const feedRef = useRef<HTMLDivElement>(null)
 
@@ -276,6 +284,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           <Notifications currentUserId={currentUserId} />
           <ThemeToggle />
           <ProfileEditor currentUserId={currentUserId} />
+          <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20 h-9 px-3 shrink-0">
+            <LogOut className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Sign Out</span>
+          </Button>
         </div>
         {/* Logo + tagline */}
         <motion.div
