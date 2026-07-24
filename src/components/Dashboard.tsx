@@ -350,8 +350,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             <Users className="w-3 h-3" /> Co-Passengers ({ride.bookings.filter(b => b.status === 'approved').length})
                           </p>
                           <div className="flex flex-wrap gap-2">
-                            {ride.bookings.filter(b => b.status === 'approved').map(b => (
-                              <div key={b.passenger.id} className="bg-secondary/50 border border-border px-2 py-1 rounded-full text-xs font-medium text-foreground flex items-center gap-1.5 shadow-sm">
+                            {ride.bookings.filter(b => b.status === 'approved').map((b, idx) => (
+                              <div key={`${b.passenger.id}-${idx}`} className="bg-secondary/50 border border-border px-2 py-1 rounded-full text-xs font-medium text-foreground flex items-center gap-1.5 shadow-sm">
                                 <div className={cn(
                                   "w-4 h-4 rounded-full flex items-center justify-center text-[10px] text-white",
                                   b.passenger.gender === 'female' ? "bg-pink-500" : "bg-blue-500"
