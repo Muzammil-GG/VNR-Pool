@@ -324,7 +324,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           <Sheet>
             <SheetTrigger 
               render={
-                <Button variant="ghost" className="w-12 h-12 rounded-full p-0 overflow-hidden border-2 border-border shadow-sm hover:ring-2 hover:ring-emerald-500 transition-all">
+                <button className="inline-flex items-center justify-center whitespace-nowrap bg-transparent w-12 h-12 rounded-full p-0 overflow-hidden border-2 border-border shadow-sm hover:ring-2 hover:ring-emerald-500 hover:bg-accent hover:text-accent-foreground transition-all cursor-pointer">
                   {currentUserProfile?.avatar_url ? (
                     <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
@@ -332,7 +332,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       {currentUserProfile?.full_name ? currentUserProfile.full_name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
-                </Button>
+                </button>
               }
             />
             <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col gap-6">
