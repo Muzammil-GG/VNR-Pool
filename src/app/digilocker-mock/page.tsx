@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Loader2, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { Loader2, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 import Image from 'next/image'
 
 export default function DigiLockerMock() {
@@ -21,6 +22,7 @@ export default function DigiLockerMock() {
     setTimeout(() => {
       setLoading(false)
       setStep(2)
+      toast.info("TESTING MODE: Use OTP '123456' to simulate success. Use any other OTP to simulate a failure.")
     }, 1500)
   }
 
@@ -31,6 +33,13 @@ export default function DigiLockerMock() {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 2000))
     
+    if (otp !== '123456') {
+      setLoading(false)
+      toast.error("DigiLocker Error: No Driving License found linked to this Aadhaar/Mobile number.")
+      setStep(4 as any)
+      return
+    }
+
     // Get current user email
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -128,6 +137,24 @@ export default function DigiLockerMock() {
               <p className="text-slate-500 text-center">
                 Driving License successfully fetched.<br/>Redirecting to VNR Pool...
               </p>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="py-8 flex flex-col items-center justify-center space-y-4 animate-in zoom-in duration-500">
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-2">
+                <XCircle className="w-12 h-12 text-red-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800">Verification Failed</h3>
+              <p className="text-slate-500 text-center mb-4">
+                No Driving License found for this number.<br/>Only users with a valid license can offer rides.
+              </p>
+              <Button 
+                onClick={() => window.location.href = '/'}
+                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-lg"
+              >
+                Return to VNR Pool
+              </Button>
             </div>
           )}
         </CardContent>
