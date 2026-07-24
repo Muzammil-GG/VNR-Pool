@@ -36,6 +36,7 @@ type Ride = {
   status: string
   driver: { full_name: string, gender: string, mobile_number: string }
   bookings?: {
+    id: string
     status: string
     passenger: { id: string, full_name: string, gender: string }
   }[]
@@ -84,6 +85,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           *,
           driver:users!rides_driver_id_fkey(full_name, gender, mobile_number),
           bookings(
+            id,
             status,
             passenger:users!bookings_passenger_id_fkey(id, full_name, gender)
           )
