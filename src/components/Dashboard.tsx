@@ -139,8 +139,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   })
 
   // Stagger animation when feed changes
+  const hasAnimatedFeed = useRef(false)
   useEffect(() => {
-    if (rides && rides.length > 0 && feedRef.current) {
+    if (rides && rides.length > 0 && feedRef.current && !hasAnimatedFeed.current) {
+      hasAnimatedFeed.current = true
       anime({
         targets: '.ride-card',
         translateY: [50, 0],
@@ -150,7 +152,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         duration: 800
       })
     }
-  }, [rides, activeTab])
+  }, [rides])
+
+  // Reset animation flag if tab changes
+  useEffect(() => {
+    hasAnimatedFeed.current = false
+  }, [activeTab])
 
   // Offer Ride Form State
   const [offerData, setOfferData] = useState({
