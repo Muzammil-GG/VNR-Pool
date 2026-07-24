@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Users, CheckCircle, XCircle } from 'lucide-react'
+import { Users, CheckCircle, XCircle, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export function MyRides({ currentUserId }: { currentUserId: string }) {
@@ -46,6 +46,19 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     onError: (err) => toast.error(`Error: ${err.message}`)
   })
 
+  const deleteRide = useMutation({
+    mutationFn: async (rideId: string) => {
+      const { error } = await supabase.from('rides').delete().eq('id', rideId)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      toast.success('Ride deleted successfully!')
+      queryClient.invalidateQueries({ queryKey: ['my_rides'] })
+      queryClient.invalidateQueries({ queryKey: ['rides'] })
+    },
+    onError: (err) => toast.error(`Failed to delete ride: ${err.message}`)
+  })
+
   if (isLoading) return <div className="text-center py-10">Loading your rides...</div>
   if (!myRides || myRides.length === 0) return <div className="text-center py-10 text-muted-foreground">You haven't offered any rides yet.</div>
 
@@ -54,17 +67,34 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
       {myRides.map(ride => (
         <Card key={ride.id} className="bg-card/70 backdrop-blur-xl border-emerald-500/20 shadow-md">
           <CardHeader className="bg-secondary/30 pb-4">
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-lg text-emerald-600 dark:text-emerald-400">
-                {ride.origin} → {ride.destination}
-              </CardTitle>
-              <span className="text-xs bg-emerald-100 dark:bg-emerald-950 px-2 py-1 rounded text-emerald-700 dark:text-emerald-400 font-bold">
-                {ride.status.toUpperCase()}
-              </span>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle className="text-lg text-emerald-600 dark:text-emerald-400">
+                  {ride.origin} → {ride.destination}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Departing: {new Date(ride.departure_time).toLocaleString()} • Seats: {ride.available_seats}/{ride.total_seats}
+                </p>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                <span className="text-xs bg-emerald-100 dark:bg-emerald-950 px-2 py-1 rounded text-emerald-700 dark:text-emerald-400 font-bold">
+                  {ride.status.toUpperCase()}
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to delete this ride?')) {
+                      deleteRide.mutate(ride.id)
+                    }
+                  }}
+                  className="h-8 px-2 text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-950/30"
+                  disabled={deleteRide.isPending}
+                >
+                  <Trash2 className="w-4 h-4 mr-1" /> Delete
+                </Button>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
-              Departing: {new Date(ride.departure_time).toLocaleString()} • Seats: {ride.available_seats}/{ride.total_seats}
-            </p>
           </CardHeader>
           <CardContent className="pt-4">
             <h4 className="text-sm font-bold flex items-center gap-2 mb-4 text-foreground">
