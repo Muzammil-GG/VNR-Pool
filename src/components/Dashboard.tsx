@@ -434,13 +434,15 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           )
                         }
 
+                        const isFull = ride.available_seats === 0;
+
                         return (
                           <Button 
                             onClick={() => handleBook(ride.id, ride.is_women_only)}
-                            disabled={ride.driver_id === currentUserId}
+                            disabled={ride.driver_id === currentUserId || isFull}
                             className="flex-1 bg-secondary hover:bg-emerald-600 text-secondary-foreground hover:text-white transition-colors font-semibold disabled:opacity-70 disabled:hover:bg-secondary disabled:hover:text-secondary-foreground"
                           >
-                            {ride.driver_id === currentUserId ? 'Your Ride' : 'Request Seat'}
+                            {ride.driver_id === currentUserId ? 'Your Ride' : isFull ? 'Fully Booked' : 'Request Seat'}
                           </Button>
                         )
                       })()}
