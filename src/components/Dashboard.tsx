@@ -65,8 +65,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   const { data: currentUserProfile } = useQuery({
     queryKey: ['currentUser', currentUserId],
     queryFn: async () => {
-      const { data } = await supabase.from('users').select('gender').eq('id', currentUserId).single()
-      return data
+      const { data } = await supabase.from('users').select('gender, car_number, bike_number').eq('id', currentUserId).single()
+      return data as any
     }
   })
 
