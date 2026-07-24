@@ -48,7 +48,7 @@ export function VehicleBackground() {
             className="absolute will-change-transform"
             style={{
               top: `${v.y}%`,
-              animation: `${driftAnim} ${v.dur}s linear ${v.delay}s infinite`,
+              animation: `${driftAnim} ${v.dur}s linear -${v.delay}s infinite`,
             }}
           >
             <span
