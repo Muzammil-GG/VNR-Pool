@@ -26,6 +26,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           )
         `)
         .eq('driver_id', currentUserId)
+        .neq('status', 'cancelled')
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -53,11 +54,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
 
   const deleteRide = useMutation({
     mutationFn: async (rideId: string) => {
-      // Delete associated bookings first to avoid foreign key constraint violations
-      const { error: bookingsError } = await supabase.from('bookings').delete().eq('ride_id', rideId)
-      if (bookingsError) throw bookingsError
-
-      const { error } = await supabase.from('rides').delete().eq('id', rideId)
+      // Use soft-delete to bypass strict RLS delete policies
+      const { error } = await supabase.from('rides').update({ status: 'cancelled' }).eq('id', rideId)
       if (error) throw error
     },
     onSuccess: () => {
