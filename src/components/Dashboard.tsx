@@ -22,6 +22,10 @@ import { Notifications } from '@/components/Notifications'
 import { ProfileEditor } from '@/components/ProfileEditor'
 import { MyRides } from '@/components/MyRides'
 import { cn } from '@/lib/utils'
+import { LocationAutocomplete } from '@/components/LocationAutocomplete'
+import { findBestMatchLocation } from '@/lib/locations'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 type Ride = {
   id: string
@@ -94,7 +98,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   const { data: currentUserProfile } = useQuery({
     queryKey: ['currentUser', currentUserId],
     queryFn: async () => {
-      const { data } = await supabase.from('users').select('gender, car_number, bike_number').eq('id', currentUserId).single()
+      const { data } = await supabase.from('users').select('full_name, gender, car_number, bike_number, avatar_url, total_rating_score, rating_count').eq('id', currentUserId).single()
       return data as any
     }
   })
@@ -125,8 +129,20 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         .eq('status', 'active')
         .eq('ride_category', rideCategory)
 
-      if (originFilter) q = q.ilike('origin', `%${originFilter}%`)
-      if (destinationFilter) q = q.ilike('destination', `%${destinationFilter}%`)
+      let effectiveOrigin = originFilter
+      let effectiveDest = destinationFilter
+      
+      if (originFilter) {
+        const match = findBestMatchLocation(originFilter)
+        if (match) effectiveOrigin = match.name
+      }
+      if (destinationFilter) {
+        const match = findBestMatchLocation(destinationFilter)
+        if (match) effectiveDest = match.name
+      }
+
+      if (effectiveOrigin) q = q.ilike('origin', `%${effectiveOrigin}%`)
+      if (effectiveDest) q = q.ilike('destination', `%${effectiveDest}%`)
       
       // Enforce women-only visibility rules
       if (currentUserProfile?.gender !== 'female') {
@@ -301,13 +317,81 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground">
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-6 relative pt-2">
-        <div className="absolute right-0 top-0 flex items-center gap-2 z-50">
-          <Notifications currentUserId={currentUserId} />
-          <ThemeToggle />
-          <ProfileEditor currentUserId={currentUserId} />
-          <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20 h-9 px-3 shrink-0">
-            <LogOut className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Sign Out</span>
-          </Button>
+        <div className="absolute left-0 top-0 flex items-center gap-2 z-50">
+          <Sheet>
+            <SheetTrigger 
+              render={
+                <Button variant="ghost" className="w-12 h-12 rounded-full p-0 overflow-hidden border-2 border-border shadow-sm hover:ring-2 hover:ring-emerald-500 transition-all">
+                  {currentUserProfile?.avatar_url ? (
+                    <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold text-lg">
+                      {currentUserProfile?.full_name ? currentUserProfile.full_name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
+                </Button>
+              }
+            />
+            <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col gap-6">
+              <SheetHeader className="text-left mt-6">
+                <SheetTitle className="text-2xl font-black">Menu</SheetTitle>
+              </SheetHeader>
+              <div className="flex flex-col gap-2 mt-4">
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                  <div className="w-16 h-16 rounded-full overflow-hidden border border-border shrink-0">
+                    {currentUserProfile?.avatar_url ? (
+                      <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold text-2xl">
+                        {currentUserProfile?.full_name ? currentUserProfile.full_name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg leading-none">{currentUserProfile?.full_name || 'User'}</h3>
+                    <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                      {currentUserProfile?.rating_count > 0 
+                        ? (currentUserProfile.total_rating_score / currentUserProfile.rating_count).toFixed(1)
+                        : "New"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
+                      <Zap className="w-4 h-4 text-emerald-500" />
+                    </div>
+                    <span className="font-medium">Theme</span>
+                  </div>
+                  <ThemeToggle />
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
+                      <ShieldAlert className="w-4 h-4 text-emerald-500" />
+                    </div>
+                    <span className="font-medium">Notifications</span>
+                  </div>
+                  <Notifications currentUserId={currentUserId} />
+                </div>
+
+                <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                  <ProfileEditor currentUserId={currentUserId} />
+                </div>
+
+                <Button 
+                  variant="destructive" 
+                  className="w-full justify-start gap-3 h-12 mt-auto font-bold"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-5 h-5" /> Sign Out
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
         {/* Logo + tagline */}
         <motion.div
@@ -411,22 +495,22 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-primary" /> From
               </Label>
-              <Input
+              <LocationAutocomplete
                 placeholder="e.g. JNTU Metro"
                 value={originFilter}
-                onChange={(e) => setOriginFilter(e.target.value)}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11 font-medium"
+                onChange={setOriginFilter}
+                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium"
               />
             </div>
             <div className="space-y-1.5 flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                 <Navigation className="w-3.5 h-3.5 text-muted-foreground" /> To
               </Label>
-              <Input
+              <LocationAutocomplete
                 placeholder="e.g. VNR VJIET"
                 value={destinationFilter}
-                onChange={(e) => setDestinationFilter(e.target.value)}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11 font-medium"
+                onChange={setDestinationFilter}
+                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium"
               />
             </div>
             {currentUserProfile?.gender === 'female' && (
@@ -723,20 +807,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             <div className="p-6 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="font-semibold text-foreground">Departure Location</Label>
-                  <Input 
+                  <Label className="font-semibold text-foreground">Pick-up Location</Label>
+                  <LocationAutocomplete 
                     value={offerData.origin}
-                    onChange={e => setOfferData({...offerData, origin: e.target.value})}
-                    className="bg-background border-border focus-visible:ring-emerald-500"
+                    onChange={(v) => setOfferData({...offerData, origin: v})}
                     placeholder="e.g. Miyapur Metro"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="font-semibold text-foreground">Drop-off Location</Label>
-                  <Input 
+                  <LocationAutocomplete 
                     value={offerData.destination}
-                    onChange={e => setOfferData({...offerData, destination: e.target.value})}
-                    className="bg-background border-border focus-visible:ring-emerald-500"
+                    onChange={(v) => setOfferData({...offerData, destination: v})}
                     placeholder="e.g. VNR VJIET"
                   />
                 </div>

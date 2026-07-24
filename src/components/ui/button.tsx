@@ -40,10 +40,6 @@ const buttonVariants = cva(
   }
 )
 
-import { motion } from "framer-motion"
-
-const MotionButton = motion.create(ButtonPrimitive)
-
 function Button({
   className,
   variant = "default",
@@ -51,13 +47,10 @@ function Button({
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
-    <MotionButton
+    <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.95 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-      {...(props as any)}
+      {...props}
     />
   )
 }

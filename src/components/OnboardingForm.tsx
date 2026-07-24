@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Upload, X } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
 const branches = ["CSE", "ECE", "IT", "EEE", "MECH", "CIVIL", "AIML", "DS", "CSBS"]
@@ -25,8 +25,10 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
     mobile_number: '',
     gender: '',
     car_number: '',
-    bike_number: ''
+    bike_number: '',
+    avatar_url: '' as string | null
   })
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -61,6 +63,90 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
       return
     }
     setStep(s => s + 1)
+  }
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please select an image file")
+      return
+    }
+
+    setUploadingAvatar(true)
+    try {
+      // Compress image if it's too large to respect the 40kb limit
+      const compressedBlob = await compressImage(file, 400, 400, 0.7)
+      
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${userId}-${Date.now()}.${fileExt}`
+
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, compressedBlob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        })
+
+      if (error) {
+        throw error
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName)
+
+      setFormData(prev => ({ ...prev, avatar_url: publicUrl }))
+      toast.success("Profile picture uploaded!")
+    } catch (error: any) {
+      toast.error(error.message || "Error uploading image")
+      console.error(error)
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
+  const compressImage = (file: File, maxWidth: number, maxHeight: number, quality: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error("Compression failed"));
+            }
+          }, 'image/jpeg', quality);
+        };
+      };
+      reader.onerror = error => reject(error);
+    });
   }
 
   const handleSubmit = async () => {
@@ -118,6 +204,25 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                   exit={{ x: -50, opacity: 0 }}
                   className="space-y-4"
                 >
+                  <div className="flex flex-col items-center justify-center space-y-3 mb-6">
+                    <Label className="font-semibold text-foreground">Profile Picture (Optional)</Label>
+                    <div className="relative w-24 h-24 rounded-full border-2 border-dashed border-border flex items-center justify-center overflow-hidden bg-secondary hover:bg-secondary/80 transition-colors">
+                      {formData.avatar_url ? (
+                        <img src={formData.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-muted-foreground p-2 text-center">
+                          {uploadingAvatar ? <Loader2 className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6 mb-1" />}
+                        </div>
+                      )}
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="absolute inset-0 opacity-0 cursor-pointer" 
+                        onChange={handleAvatarUpload}
+                        disabled={uploadingAvatar}
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="full_name" className="font-semibold text-foreground">Full Name</Label>
                     <Input

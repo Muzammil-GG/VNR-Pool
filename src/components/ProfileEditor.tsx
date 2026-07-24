@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { User as UserIcon, Loader2, LogOut } from 'lucide-react'
+import { User as UserIcon, Loader2, LogOut, Upload, UserCog } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from './ui/button'
@@ -37,8 +37,10 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
     full_name: '',
     mobile_number: '',
     car_number: '',
-    bike_number: ''
+    bike_number: '',
+    avatar_url: '' as string | null
   })
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   // Sync state when editing starts
   const startEditing = () => {
@@ -47,10 +49,90 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
         full_name: profile.full_name || '',
         mobile_number: profile.mobile_number || '',
         car_number: profile.car_number || '',
-        bike_number: profile.bike_number || ''
+        bike_number: profile.bike_number || '',
+        avatar_url: profile.avatar_url || null
       })
     }
     setIsEditing(true)
+  }
+
+  const compressImage = (file: File, maxWidth: number, maxHeight: number, quality: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error("Compression failed"));
+            }
+          }, 'image/jpeg', quality);
+        };
+      };
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please select an image file")
+      return
+    }
+
+    setUploadingAvatar(true)
+    try {
+      const compressedBlob = await compressImage(file, 400, 400, 0.7)
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${currentUserId}-${Date.now()}.${fileExt}`
+
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, compressedBlob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        })
+
+      if (error) throw error
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName)
+
+      setFormData(prev => ({ ...prev, avatar_url: publicUrl }))
+      toast.success("Profile picture uploaded temporarily. Save changes to keep it.")
+    } catch (error: any) {
+      toast.error(error.message || "Error uploading image")
+    } finally {
+      setUploadingAvatar(false)
+    }
   }
 
   const updateProfile = useMutation({
@@ -61,7 +143,8 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
           full_name: newData.full_name,
           mobile_number: newData.mobile_number,
           car_number: newData.car_number,
-          bike_number: newData.bike_number
+          bike_number: newData.bike_number,
+          avatar_url: newData.avatar_url
         })
         .eq('id', currentUserId)
 
@@ -92,8 +175,15 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
       setOpen(val)
       if (!val) setIsEditing(false)
     }}>
-      <DialogTrigger className="relative p-2 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center w-10 h-10 transition-colors">
-        <UserIcon className="w-5 h-5 text-blue-500" />
+      <DialogTrigger asChild>
+        <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer w-full text-left font-medium">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
+              <UserCog className="w-4 h-4 text-emerald-500" />
+            </div>
+            <span>Edit Profile</span>
+          </div>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-card/90 backdrop-blur-xl border-border overflow-hidden">
         <DialogHeader>
@@ -104,6 +194,31 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
           <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>
         ) : profile ? (
           <div className="space-y-5 mt-4">
+            
+            {isEditing && (
+              <div className="flex flex-col items-center justify-center space-y-3 mb-6">
+                <div className="relative w-24 h-24 rounded-full border-2 border-dashed border-border flex items-center justify-center overflow-hidden bg-secondary hover:bg-secondary/80 transition-colors">
+                  {formData.avatar_url ? (
+                    <img src={formData.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : profile.avatar_url ? (
+                    <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-muted-foreground p-2 text-center">
+                      {uploadingAvatar ? <Loader2 className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6 mb-1" />}
+                    </div>
+                  )}
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="absolute inset-0 opacity-0 cursor-pointer" 
+                    onChange={handleAvatarUpload}
+                    disabled={uploadingAvatar}
+                  />
+                </div>
+                <Label className="text-xs text-muted-foreground">Tap to change profile picture</Label>
+              </div>
+            )}
+
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
                 <Label className="text-right text-muted-foreground font-semibold">Full Name</Label>
