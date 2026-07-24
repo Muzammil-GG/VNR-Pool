@@ -58,6 +58,14 @@ export function RateRidematesDialog({
           throw error
         }
       } else {
+        // Send notifications to the rated users
+        const notificationsPayload = Object.entries(ratings).map(([ratee_id, score]) => ({
+          user_id: ratee_id,
+          title: 'New Rating Received! ⭐',
+          message: `You received a ${score}-star rating for your recent ride.`
+        }))
+        await supabase.from('notifications').insert(notificationsPayload)
+
         toast.success('Thank you for your ratings!')
         setOpen(false)
       }
