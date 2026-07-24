@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { User as UserIcon, Loader2 } from 'lucide-react'
+import { User as UserIcon, Loader2, LogOut } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from './ui/button'
@@ -10,8 +10,10 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
+  const router = useRouter()
   const supabase = createClient()
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
@@ -74,6 +76,16 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
       toast.error(`Error updating profile: ${err.message}`)
     }
   })
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut()
+      toast.success('Logged out successfully')
+      router.push('/auth')
+    } catch (e) {
+      toast.error('Failed to log out')
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
@@ -162,7 +174,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                 <>
                   <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
                   <Button 
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="bg-primary hover:opacity-90 text-primary-foreground"
                     onClick={() => updateProfile.mutate(formData)}
                     disabled={updateProfile.isPending}
                   >
@@ -171,9 +183,14 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                   </Button>
                 </>
               ) : (
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full" onClick={startEditing}>
-                  Edit Profile
-                </Button>
+                <>
+                  <Button variant="outline" className="w-full text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                  </Button>
+                  <Button className="bg-primary hover:opacity-90 text-primary-foreground w-full" onClick={startEditing}>
+                    Edit Profile
+                  </Button>
+                </>
               )}
             </div>
           </div>
