@@ -378,7 +378,9 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border",
                             isApproved ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"
                           )}>
-                            {b.status}
+                            {b.status === 'approved' && ride.status !== 'active' 
+                              ? ride.status.replace('_', ' ') 
+                              : b.status}
                           </span>
                         </div>
                       </div>
@@ -426,28 +428,30 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     )}
                   </CardContent>
                   <CardFooter className="pt-2 pb-4 flex gap-2">
-                    <Button 
-                      onClick={() => {
-                        if (window.confirm('Cancel this seat request?')) {
-                          cancelMyBooking.mutate({ 
-                            bookingId: b.id, 
-                            rideId: ride.id, 
-                            wasApproved: isApproved, 
-                            currentSeats: ride.available_seats 
-                          })
-                        }
-                      }}
-                      disabled={cancelMyBooking.isPending}
-                      variant={isApproved ? "default" : "secondary"}
-                      className={cn(
-                        "flex-1 font-bold transition-all",
-                        isApproved 
-                          ? "bg-emerald-500 hover:bg-red-500 text-white" 
-                          : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
-                      )}
-                    >
-                      {cancelMyBooking.isPending ? 'Cancelling...' : 'Cancel Request'}
-                    </Button>
+                    {ride.status === 'active' && (
+                      <Button 
+                        onClick={() => {
+                          if (window.confirm('Cancel this seat request?')) {
+                            cancelMyBooking.mutate({ 
+                              bookingId: b.id, 
+                              rideId: ride.id, 
+                              wasApproved: isApproved, 
+                              currentSeats: ride.available_seats 
+                            })
+                          }
+                        }}
+                        disabled={cancelMyBooking.isPending}
+                        variant={isApproved ? "default" : "secondary"}
+                        className={cn(
+                          "flex-1 font-bold transition-all",
+                          isApproved 
+                            ? "bg-emerald-500 hover:bg-red-500 text-white" 
+                            : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
+                        )}
+                      >
+                        {cancelMyBooking.isPending ? 'Cancelling...' : 'Cancel Request'}
+                      </Button>
+                    )}
                     <a href={`tel:${ride.driver.mobile_number}`}>
                       <Button variant="outline" size="icon" className="border-border">
                         <Phone className="w-4 h-4 text-blue-500" />
