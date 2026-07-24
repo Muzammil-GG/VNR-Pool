@@ -55,7 +55,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           bookings(
             id,
             status,
-            passenger:users!bookings_passenger_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count)
+            passenger:users!bookings_passenger_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count, avatar_url)
           )
         `)
         .eq('driver_id', currentUserId)
@@ -81,11 +81,11 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           created_at,
           ride:rides (
             *,
-            driver:users!rides_driver_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count),
+            driver:users!rides_driver_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count, avatar_url),
             bookings(
               id,
               status,
-              passenger:users!bookings_passenger_id_fkey(id, full_name, gender, total_rating_score, rating_count)
+              passenger:users!bookings_passenger_id_fkey(id, full_name, gender, total_rating_score, rating_count, avatar_url)
             )
           )
         `)
@@ -446,9 +446,21 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <CardTitle className="text-lg font-bold text-foreground flex items-center">
-                          {ride.driver.full_name}
-                          {renderStars(ride.driver.total_rating_score, ride.driver.rating_count)}
+                        <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                          <div className={cn(
+                            "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black text-white overflow-hidden shadow-sm flex-shrink-0",
+                            !ride.driver.avatar_url && (ride.driver.gender === 'female' ? "bg-gradient-to-br from-pink-400 to-rose-500" : "bg-gradient-to-br from-emerald-400 to-teal-600")
+                          )}>
+                            {ride.driver.avatar_url ? (
+                              <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              ride.driver.full_name.charAt(0)
+                            )}
+                          </div>
+                          <span>
+                            {ride.driver.full_name}
+                            {renderStars(ride.driver.total_rating_score, ride.driver.rating_count)}
+                          </span>
                         </CardTitle>
                         <div className="flex gap-1.5 mt-1">
                           <span className={cn(
@@ -496,10 +508,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                           {ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId).map((bk: any, idx: number) => (
                             <div key={`${bk.passenger.id}-${idx}`} className="flex items-center gap-1.5 bg-secondary/60 border border-border/60 px-2 py-1 rounded-full text-xs font-semibold text-foreground">
                               <div className={cn(
-                                "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black",
-                                bk.passenger.gender === 'female' ? "bg-foreground" : "bg-blue-500"
+                                "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black overflow-hidden",
+                                !bk.passenger.avatar_url && (bk.passenger.gender === 'female' ? "bg-foreground" : "bg-blue-500")
                               )}>
-                                {bk.passenger.full_name.charAt(0)}
+                                {bk.passenger.avatar_url ? (
+                                  <img src={bk.passenger.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                                ) : (
+                                  bk.passenger.full_name.charAt(0)
+                                )}
                               </div>
                               {bk.passenger.full_name.split(' ')[0]}
                             </div>
