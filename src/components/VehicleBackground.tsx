@@ -10,14 +10,14 @@ import { useEffect, useState, useRef, useCallback } from 'react'
  */
 
 const vehicles = [
-  { icon: '🚗', y: 8,  speed: 1.2,  dir: 1,  size: 48, wiggle: 12, startX: 5   },
-  { icon: '🛺', y: 25, speed: 0.8,  dir: -1, size: 40, wiggle: 8,  startX: 85  },
-  { icon: '🏍️', y: 45, speed: 1.5,  dir: 1,  size: 36, wiggle: 15, startX: 20  },
-  { icon: '🚕', y: 65, speed: 0.6,  dir: -1, size: 44, wiggle: 10, startX: 70  },
-  { icon: '🚌', y: 85, speed: 0.4,  dir: 1,  size: 56, wiggle: 6,  startX: 40  },
-  { icon: '🚗', y: 15, speed: 1.0,  dir: -1, size: 32, wiggle: 14, startX: 60  },
-  { icon: '🛺', y: 50, speed: 1.3,  dir: 1,  size: 38, wiggle: 9,  startX: 10  },
-  { icon: '🏍️', y: 72, speed: 0.9,  dir: -1, size: 30, wiggle: 18, startX: 90  },
+  { icon: '🚗', y: 8,  speed: 0.5,  dir: 1,  size: 48, wiggle: 12, startX: 5   },
+  { icon: '🛺', y: 25, speed: 0.35, dir: -1, size: 40, wiggle: 8,  startX: 85  },
+  { icon: '🏍️', y: 45, speed: 0.6,  dir: 1,  size: 36, wiggle: 15, startX: 20  },
+  { icon: '🚕', y: 65, speed: 0.25, dir: -1, size: 44, wiggle: 10, startX: 70  },
+  { icon: '🚌', y: 85, speed: 0.2,  dir: 1,  size: 56, wiggle: 6,  startX: 40  },
+  { icon: '🚗', y: 15, speed: 0.4,  dir: -1, size: 32, wiggle: 14, startX: 60  },
+  { icon: '🛺', y: 50, speed: 0.55, dir: 1,  size: 38, wiggle: 9,  startX: 10  },
+  { icon: '🏍️', y: 72, speed: 0.35, dir: -1, size: 30, wiggle: 18, startX: 90  },
 ]
 
 export function VehicleBackground() {
@@ -90,7 +90,7 @@ export function VehicleBackground() {
             <span
               style={{
                 fontSize: `${v.size}px`,
-                opacity: 0.08,
+                opacity: 0.12,
                 display: 'inline-block',
                 animation: `vehicle-wiggle ${wiggleDur}s ease-in-out infinite`,
                 transform: v.dir === -1 ? 'scaleX(-1)' : undefined,
