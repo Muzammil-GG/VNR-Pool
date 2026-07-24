@@ -526,7 +526,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                           className={cn(
                             "flex-1 font-bold transition-all",
                             isApproved 
-                              ? "bg-primary hover:bg-red-500 text-white" 
+                              ? "bg-primary hover:bg-red-500 text-primary-foreground hover:text-white" 
                               : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
                           )}
                         >

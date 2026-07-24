@@ -622,7 +622,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                     ride.status === 'in_progress'
                                       ? "bg-blue-500 text-white opacity-100"
                                       : isApproved
-                                        ? "bg-primary hover:bg-red-500 text-white shadow-md hover:shadow-red-500/30"
+                                        ? "bg-primary hover:bg-red-500 text-primary-foreground hover:text-white shadow-md hover:shadow-red-500/30"
                                         : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
                                   )}
                                 >
