@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Bell } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from './ui/button'
@@ -44,6 +45,30 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
   })
 
   const unreadCount = notifications?.filter(n => !n.is_read).length || 0
+
+  const prevNotifsRef = useRef<any[]>([])
+
+  useEffect(() => {
+    if (notifications && notifications.length > 0) {
+      const prev = prevNotifsRef.current
+      if (prev.length > 0) {
+        // Find new unread notifications that were not in the previous list
+        const newNotifs = notifications.filter(n => !n.is_read && !prev.find(p => p.id === n.id))
+        newNotifs.forEach(n => {
+          toast(n.title + '\n' + n.message, { 
+            icon: '🔔',
+            duration: 6000,
+            style: {
+              background: '#10b981',
+              color: '#fff',
+              fontWeight: 'bold'
+            }
+          })
+        })
+      }
+      prevNotifsRef.current = notifications
+    }
+  }, [notifications])
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
