@@ -101,7 +101,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   const { data: currentUserProfile } = useQuery({
     queryKey: ['currentUser', currentUserId],
     queryFn: async () => {
-      const { data } = await supabase.from('users').select('full_name, gender, car_number, bike_number, avatar_url, total_rating_score, rating_count').eq('id', currentUserId).single()
+      const { data } = await supabase.from('users').select('full_name, gender, car_number, bike_number, avatar_url, total_rating_score, rating_count, is_verified_driver').eq('id', currentUserId).single()
       return data as any
     }
   })
@@ -867,7 +867,25 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <h2 className="text-2xl font-black ">Offer a Ride 🚗</h2>
               <p className="text-muted-foreground text-sm mt-1">Share your journey and split costs with fellow VNRians.</p>
             </div>
-            <div className="p-6 space-y-5">
+            
+            {!currentUserProfile?.is_verified_driver ? (
+              <div className="p-8 flex flex-col items-center justify-center text-center space-y-4">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-2">
+                  <Shield className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-bold text-foreground">Driver Verification Required</h3>
+                <p className="text-muted-foreground text-sm">
+                  To ensure the safety of our student pool, you must verify your Driving License via DigiLocker before you can offer rides.
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/api/digilocker/login'}
+                  className="w-full mt-4 bg-[#2653a1] hover:bg-[#1a3b75] text-white font-semibold h-11"
+                >
+                  <Shield className="w-4 h-4 mr-2" /> Verify with DigiLocker
+                </Button>
+              </div>
+            ) : (
+              <div className="p-6 space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="font-semibold text-foreground">Pick-up Location</Label>
@@ -1004,8 +1022,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-lg hover:shadow-none transition-all "
               >
                 {offerMutation.isPending ? 'Publishing…' : '🚀 Publish Ride'}
-              </Button>
-            </div>
+                </Button>
+              </div>
+            )}
           </div>
         </motion.div>
       ) : activeTab === 'My Rides' ? (
