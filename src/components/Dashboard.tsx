@@ -433,6 +433,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             <span className="text-[10px] px-2 py-0.5 rounded-full font-bold capitalize border text-foreground/70 bg-secondary/50 border-border flex items-center gap-1">
                               <img src={`/${ride.vehicle_type}.png`} alt={ride.vehicle_type} className="w-3.5 h-3.5 object-contain" />
                               {ride.vehicle_type}
+                              {ride.vehicle_number && (
+                                <>
+                                  <span className="mx-1 h-3 border-l border-border/60" />
+                                  <span className="uppercase text-muted-foreground">{ride.vehicle_number}</span>
+                                </>
+                              )}
                             </span>
                           </div>
                         </div>
