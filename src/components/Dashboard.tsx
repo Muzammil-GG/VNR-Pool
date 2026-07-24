@@ -141,7 +141,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   // Stagger animation when feed changes
   
   // Calculate stars helper
-  const renderStars = (score, count) => {
+  const renderStars = (score: number, count: number) => {
     if (!count || count === 0) return <span className="text-[10px] font-normal text-muted-foreground ml-1">New</span>
     const avg = (score / count).toFixed(1)
     return (
