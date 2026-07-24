@@ -1,59 +1,73 @@
 "use client"
 
-import { motion, useScroll, useTransform } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { Car, Bike } from 'lucide-react'
 
-// Array of vehicle icons/emojis and their configuration
+/*
+ * Pure-CSS animated vehicles background.
+ * Every vehicle drifts smoothly from one edge of the screen to the other
+ * using a CSS @keyframes animation (linear, infinite).
+ * No JavaScript runs per-frame → buttery-smooth even while scrolling.
+ */
+
 const vehicles = [
-  { id: 1, type: 'car', icon: '🚗', y: 10, duration: 25, delay: 0, direction: 1, size: 'text-6xl' },
-  { id: 2, type: 'auto', icon: '🛺', y: 30, duration: 35, delay: 2, direction: -1, size: 'text-5xl' },
-  { id: 3, type: 'bike', icon: '🏍️', y: 55, duration: 20, delay: 5, direction: 1, size: 'text-4xl' },
-  { id: 4, type: 'taxi', icon: '🚕', y: 75, duration: 30, delay: 1, direction: -1, size: 'text-5xl' },
-  { id: 5, type: 'bus', icon: '🚌', y: 90, duration: 45, delay: 3, direction: 1, size: 'text-7xl' },
+  { icon: '🚗', y: 8,  dur: 22, delay: 0,  dir: 1,  size: 48 },
+  { icon: '🛺', y: 25, dur: 30, delay: 4,  dir: -1, size: 40 },
+  { icon: '🏍️', y: 45, dur: 18, delay: 2,  dir: 1,  size: 36 },
+  { icon: '🚕', y: 65, dur: 28, delay: 6,  dir: -1, size: 44 },
+  { icon: '🚌', y: 85, dur: 38, delay: 1,  dir: 1,  size: 56 },
+  { icon: '🚗', y: 15, dur: 35, delay: 8,  dir: -1, size: 32 },
+  { icon: '🛺', y: 50, dur: 24, delay: 10, dir: 1,  size: 38 },
+  { icon: '🏍️', y: 72, dur: 20, delay: 3,  dir: -1, size: 30 },
 ]
 
-export function VehicleBackground({ withScroll = false }: { withScroll?: boolean }) {
+export function VehicleBackground() {
   const [mounted, setMounted] = useState(false)
-  const { scrollYProgress } = useScroll()
-
-  // We use scroll to shift vehicles left/right slightly if withScroll is true
-  const scrollOffset1 = useTransform(scrollYProgress, [0, 1], [0, 200])
-  const scrollOffset2 = useTransform(scrollYProgress, [0, 1], [0, -200])
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  useEffect(() => setMounted(true), [])
 
   if (!mounted) return <div className="fixed inset-0 z-0 bg-slate-50 dark:bg-slate-950 pointer-events-none" />
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-slate-50 dark:bg-slate-950">
-      <div className="absolute inset-0 opacity-40 dark:opacity-20" 
-           style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-      
-      {vehicles.map((v) => (
-        <motion.div
-          key={v.id}
-          className={`absolute opacity-10 dark:opacity-[0.07] ${v.size}`}
-          style={{
-            top: `${v.y}%`,
-            ...(withScroll ? { x: v.direction === 1 ? scrollOffset1 : scrollOffset2 } : {})
-          }}
-          animate={{
-            x: v.direction === 1 ? ['-20vw', '120vw'] : ['120vw', '-20vw'],
-            y: [0, -15, 15, 0] // Subtle bobbing motion
-          }}
-          transition={{
-            x: { duration: v.duration, repeat: Infinity, ease: "linear", delay: v.delay },
-            y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-          }}
-        >
-          <div style={{ transform: v.direction === -1 ? 'scaleX(-1)' : 'none' }}>
+      {/* Subtle dot grid */}
+      <div
+        className="absolute inset-0 opacity-30 dark:opacity-15"
+        style={{
+          backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      {/* Vehicles */}
+      {vehicles.map((v, i) => {
+        const animName = v.dir === 1 ? 'drift-ltr' : 'drift-rtl'
+        return (
+          <span
+            key={i}
+            className="absolute will-change-transform"
+            style={{
+              top: `${v.y}%`,
+              fontSize: `${v.size}px`,
+              opacity: 0.08,
+              animation: `${animName} ${v.dur}s linear ${v.delay}s infinite`,
+              transform: v.dir === -1 ? 'scaleX(-1)' : undefined,
+            }}
+          >
             {v.icon}
-          </div>
-        </motion.div>
-      ))}
+          </span>
+        )
+      })}
+
+      {/* Inline keyframes — keeps everything self-contained */}
+      <style jsx global>{`
+        @keyframes drift-ltr {
+          0%   { left: -10%; }
+          100% { left: 110%; }
+        }
+        @keyframes drift-rtl {
+          0%   { left: 110%; }
+          100% { left: -10%; }
+        }
+      `}</style>
     </div>
   )
 }

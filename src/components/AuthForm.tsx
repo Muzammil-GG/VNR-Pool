@@ -97,7 +97,7 @@ export function AuthForm() {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-slate-50 dark:bg-slate-950">
-      <VehicleBackground withScroll={false} />
+      <VehicleBackground />
       
       <div className="absolute top-6 right-6 z-20">
         <ThemeToggle />

@@ -336,7 +336,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground relative z-10">
-      <VehicleBackground withScroll={true} />
+      <VehicleBackground />
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-6 relative pt-2">
         <div className="absolute left-0 top-0 flex items-center gap-2 z-50">
