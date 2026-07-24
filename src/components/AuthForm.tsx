@@ -1,50 +1,50 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import * as THREE from 'three'
+// @ts-ignore
+import NET from 'vanta/dist/vanta.net.min'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { Loader2, Car, MapPin } from 'lucide-react'
+import { Loader2, Car } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
-const AnimatedBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-slate-50 dark:bg-slate-950">
-    <div className="absolute inset-0 opacity-30 dark:opacity-20" 
-         style={{ backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-    <motion.div
-      animate={{
-        x: [0, 100, -50, 0],
-        y: [0, -100, 50, 0],
-        scale: [1, 1.2, 0.8, 1],
-      }}
-      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      className="absolute top-[10%] left-[20%] w-96 h-96 bg-emerald-400/30 dark:bg-emerald-600/20 rounded-full blur-[100px]"
-    />
-    <motion.div
-      animate={{
-        x: [0, -150, 100, 0],
-        y: [0, 150, -50, 0],
-        scale: [1, 1.5, 0.9, 1],
-      }}
-      transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-      className="absolute bottom-[10%] right-[10%] w-[30rem] h-[30rem] bg-cyan-400/30 dark:bg-cyan-600/20 rounded-full blur-[120px]"
-    />
-    <motion.div
-      animate={{
-        x: [0, 50, -100, 0],
-        y: [0, 100, -150, 0],
-        scale: [1, 0.8, 1.3, 1],
-      }}
-      transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-      className="absolute top-[40%] left-[50%] w-72 h-72 bg-blue-400/30 dark:bg-blue-600/20 rounded-full blur-[90px]"
-    />
-  </div>
-)
+const VantaBackground = () => {
+  const [vantaEffect, setVantaEffect] = useState<any>(null)
+  const myRef = useRef(null)
+
+  useEffect(() => {
+    if (!vantaEffect && myRef.current) {
+      try {
+        setVantaEffect(NET({
+          el: myRef.current,
+          THREE: THREE,
+          color: 0x475569, // Classic slate gray lines
+          backgroundColor: 0x020617, // Deep dark slate/navy background
+          points: 12.00,
+          maxDistance: 22.00,
+          spacing: 16.00,
+          showDots: true
+        }))
+      } catch (e) {
+        console.error("Vanta failed to load:", e)
+      }
+    }
+    return () => {
+      if (vantaEffect) vantaEffect.destroy()
+    }
+  }, [vantaEffect])
+
+  return (
+    <div ref={myRef} className="absolute inset-0 z-0 pointer-events-none" />
+  )
+}
 
 export function AuthForm() {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
@@ -129,8 +129,8 @@ export function AuthForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden">
-      <AnimatedBackground />
+    <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-[#020617]">
+      <VantaBackground />
       
       <div className="absolute top-6 right-6 z-20">
         <ThemeToggle />
@@ -142,18 +142,17 @@ export function AuthForm() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="w-full max-w-[420px] relative z-10"
       >
-        <Card className="w-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-3xl overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
+        <Card className="w-full bg-[#f8fafc] dark:bg-[#0f172a]/80 backdrop-blur-3xl border-slate-200 dark:border-slate-800 shadow-2xl rounded-3xl overflow-hidden relative">
           
-          <CardHeader className="relative z-10 text-center pb-2 pt-8">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-tr from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg mb-4 shadow-emerald-500/20 rotate-3 hover:rotate-6 transition-transform">
-              <Car className="w-8 h-8 text-white" />
+          <CardHeader className="relative z-10 text-center pb-4 pt-8">
+            <div className="w-16 h-16 mx-auto bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center shadow-lg mb-4 hover:scale-105 transition-transform">
+              <Car className="w-8 h-8 text-white dark:text-slate-900" />
             </div>
-            <CardTitle className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+            <CardTitle className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
               VNR Pool
             </CardTitle>
             <CardDescription className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
-              {mode === 'login' ? "Welcome back, Rider!" :
+              {mode === 'login' ? "Sign in to continue" :
              mode === 'signup' ? "Create a new student account" :
              mode === 'forgot_password' ? "Reset your password" :
              "Enter OTP and New Password"}
@@ -169,7 +168,7 @@ export function AuthForm() {
                 placeholder="21071A05XX@vnrvjiet.in"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="bg-background/50 border-border text-foreground focus-visible:ring-emerald-500 placeholder:text-muted-foreground/50 h-11"
+                className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus-visible:ring-slate-900 dark:focus-visible:ring-slate-400 h-11"
                 required
               />
             </div>
@@ -183,7 +182,7 @@ export function AuthForm() {
                   placeholder="123456"
                   value={otp}
                   onChange={e => setOtp(e.target.value)}
-                  className="bg-background/50 border-border text-foreground focus-visible:ring-emerald-500 h-11 tracking-widest text-center"
+                  className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus-visible:ring-slate-900 dark:focus-visible:ring-slate-400 h-11 tracking-widest text-center"
                   required
                 />
               </div>
@@ -199,7 +198,7 @@ export function AuthForm() {
                     <button 
                       type="button" 
                       onClick={() => setMode('forgot_password')}
-                      className="text-xs text-emerald-500 hover:text-emerald-400 font-medium"
+                      className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-medium"
                     >
                       Forgot Password?
                     </button>
@@ -210,7 +209,7 @@ export function AuthForm() {
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="bg-background/50 border-border text-foreground focus-visible:ring-emerald-500 h-11"
+                  className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus-visible:ring-slate-900 dark:focus-visible:ring-slate-400 h-11"
                   required
                 />
               </div>
@@ -219,7 +218,7 @@ export function AuthForm() {
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-lg hover:shadow-emerald-500/30 text-base font-semibold rounded-lg"
+              className="w-full h-12 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-slate-900 transition-all text-base font-bold rounded-lg shadow-md"
             >
               {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
               {mode === 'login' ? "Sign In" : 
@@ -235,9 +234,9 @@ export function AuthForm() {
               <button 
                 type="button"
                 onClick={() => setMode(mode === 'login' ? 'signup' : 'login')} 
-                className="text-emerald-500 hover:text-emerald-400 font-semibold underline underline-offset-4 transition-colors"
+                className="text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-slate-300 font-bold transition-colors"
               >
-                {mode === 'login' ? "Sign up" : "Sign in"}
+                {mode === 'login' ? "Sign up now" : "Sign in instead"}
               </button>
             </div>
             {(mode === 'forgot_password' || mode === 'reset_password' || mode === 'signup_verify') && (

@@ -7,7 +7,7 @@ export async function GET(req: Request) {
   const email = url.searchParams.get('email') // Passed from our mock UI for simulation
 
   if (code !== 'mock_success_code' || !email) {
-    return NextResponse.redirect(new URL('/dashboard?error=digilocker_failed', req.url))
+    return NextResponse.redirect(new URL('/?error=digilocker_failed', req.url))
   }
 
   try {
@@ -33,10 +33,10 @@ export async function GET(req: Request) {
     if (error) throw error
 
     // Redirect back to dashboard with success message
-    return NextResponse.redirect(new URL('/dashboard?verified=true', req.url))
+    return NextResponse.redirect(new URL('/?verified=true', req.url))
 
   } catch (error) {
     console.error('DigiLocker Callback Error:', error)
-    return NextResponse.redirect(new URL('/dashboard?error=digilocker_server_error', req.url))
+    return NextResponse.redirect(new URL('/?error=digilocker_server_error', req.url))
   }
 }
