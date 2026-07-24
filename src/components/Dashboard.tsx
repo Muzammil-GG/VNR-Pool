@@ -149,6 +149,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
   const offerMutation = useMutation({
     mutationFn: async () => {
+      const now = new Date();
+      const selectedDate = new Date(offerData.departure_time);
+      
+      if (selectedDate < now) {
+        throw new Error('Departure time cannot be in the past.')
+      }
+
       if (rideCategory === 'personal_vehicle' && !offerData.vehicle_number) {
         throw new Error('Vehicle number is required for Student Pool rides.')
       }
@@ -660,6 +667,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <Input 
                   type="datetime-local"
                   value={offerData.departure_time}
+                  min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                   onChange={e => setOfferData({...offerData, departure_time: e.target.value})}
                   className="bg-background border-border focus-visible:ring-emerald-500"
                 />

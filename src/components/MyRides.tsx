@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, MessageCircle } from 'lucide-react'
+import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, MessageCircle, Play, Flag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 
@@ -98,6 +98,54 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     onError: (err) => toast.error(`Failed to delete ride: ${err.message}`)
   })
 
+  const startRideMutation = useMutation({
+    mutationFn: async (ride: any) => {
+      const { error } = await supabase.from('rides').update({ status: 'in_progress' }).eq('id', ride.id);
+      if (error) throw error;
+      const approved = ride.bookings?.filter((b: any) => b.status === 'approved') || [];
+      if (approved.length > 0) {
+        await supabase.from('notifications').insert(
+          approved.map((b: any) => ({
+            user_id: b.passenger.id,
+            title: 'Ride Started! 🚗',
+            message: `${ride.origin} to ${ride.destination} has started. Have a safe journey!`,
+            type: 'ride_update'
+          }))
+        )
+      }
+    },
+    onSuccess: () => {
+      toast.success('Ride started! Passengers notified.');
+      queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] });
+      queryClient.invalidateQueries({ queryKey: ['rides'] });
+    },
+    onError: (err) => toast.error(`Error: ${err.message}`)
+  })
+
+  const completeRideMutation = useMutation({
+    mutationFn: async (ride: any) => {
+      const { error } = await supabase.from('rides').update({ status: 'completed' }).eq('id', ride.id);
+      if (error) throw error;
+      const approved = ride.bookings?.filter((b: any) => b.status === 'approved') || [];
+      if (approved.length > 0) {
+        await supabase.from('notifications').insert(
+          approved.map((b: any) => ({
+            user_id: b.passenger.id,
+            title: 'Ride Completed ✅',
+            message: `Your ride to ${ride.destination} has finished. Hope you had a great trip!`,
+            type: 'ride_update'
+          }))
+        )
+      }
+    },
+    onSuccess: () => {
+      toast.success('Ride completed! Passengers notified.');
+      queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] });
+      queryClient.invalidateQueries({ queryKey: ['rides'] });
+    },
+    onError: (err) => toast.error(`Error: ${err.message}`)
+  })
+
   const cancelMyBooking = useMutation({
     mutationFn: async ({ bookingId, rideId, wasApproved, currentSeats }: any) => {
       const res = await fetch('/api/cancel-booking', {
@@ -176,19 +224,52 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                       <span className="text-xs bg-emerald-100 dark:bg-emerald-950 px-2.5 py-1 rounded-full text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider shadow-sm">
                         {ride.status}
                       </span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => {
-                          if (window.confirm('Are you sure you want to delete this ride? This will notify all approved passengers.')) {
-                            deleteRide.mutate(ride.id)
-                          }
-                        }}
-                        className="h-8 text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
-                        disabled={deleteRide.isPending}
-                      >
-                        <Trash2 className="w-4 h-4 mr-1.5" /> Cancel Ride
-                      </Button>
+                      {ride.status === 'active' && (
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                              if (window.confirm('Start this ride and notify passengers?')) {
+                                startRideMutation.mutate(ride)
+                              }
+                            }}
+                            className="h-8 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
+                            disabled={startRideMutation.isPending}
+                          >
+                            <Play className="w-4 h-4 mr-1.5" /> Start Ride
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to delete this ride? This will notify all approved passengers.')) {
+                                deleteRide.mutate(ride.id)
+                              }
+                            }}
+                            className="h-8 text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
+                            disabled={deleteRide.isPending}
+                          >
+                            <Trash2 className="w-4 h-4 mr-1.5" /> Cancel Ride
+                          </Button>
+                        </div>
+                      )}
+
+                      {ride.status === 'in_progress' && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            if (window.confirm('Complete this ride?')) {
+                              completeRideMutation.mutate(ride)
+                            }
+                          }}
+                          className="h-8 text-blue-500 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
+                          disabled={completeRideMutation.isPending}
+                        >
+                          <Flag className="w-4 h-4 mr-1.5" /> Complete
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
