@@ -1,10 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import * as THREE from 'three'
-// @ts-ignore
-import NET from 'vanta/dist/vanta.net.min'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -14,37 +11,7 @@ import { toast } from 'sonner'
 import { Loader2, Car } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
-
-const VantaBackground = () => {
-  const [vantaEffect, setVantaEffect] = useState<any>(null)
-  const myRef = useRef(null)
-
-  useEffect(() => {
-    if (!vantaEffect && myRef.current) {
-      try {
-        setVantaEffect(NET({
-          el: myRef.current,
-          THREE: THREE,
-          color: 0x475569, // Classic slate gray lines
-          backgroundColor: 0x020617, // Deep dark slate/navy background
-          points: 12.00,
-          maxDistance: 22.00,
-          spacing: 16.00,
-          showDots: true
-        }))
-      } catch (e) {
-        console.error("Vanta failed to load:", e)
-      }
-    }
-    return () => {
-      if (vantaEffect) vantaEffect.destroy()
-    }
-  }, [vantaEffect])
-
-  return (
-    <div ref={myRef} className="absolute inset-0 z-0 pointer-events-none" />
-  )
-}
+import { VehicleBackground } from '@/components/VehicleBackground'
 
 export function AuthForm() {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
@@ -129,8 +96,8 @@ export function AuthForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-[#020617]">
-      <VantaBackground />
+    <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-slate-50 dark:bg-slate-950">
+      <VehicleBackground withScroll={false} />
       
       <div className="absolute top-6 right-6 z-20">
         <ThemeToggle />
