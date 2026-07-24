@@ -14,7 +14,7 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
-import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap } from 'lucide-react'
+import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star } from 'lucide-react'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
@@ -36,11 +36,11 @@ type Ride = {
   price_per_seat: number
   is_women_only: boolean
   status: string
-  driver: { full_name: string, gender: string, mobile_number: string }
+  driver: { full_name: string, gender: string, mobile_number: string, total_rating_score: number, rating_count: number }
   bookings?: {
     id: string
     status: string
-    passenger: { id: string, full_name: string, gender: string }
+    passenger: { id: string, full_name: string, gender: string, total_rating_score: number, rating_count: number }
   }[]
 }
 

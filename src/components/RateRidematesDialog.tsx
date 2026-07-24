@@ -70,10 +70,8 @@ export function RateRidematesDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold shadow-md animate-pulse">
-          <Star className="w-4 h-4 mr-2 fill-current" /> Rate Ridemates
-        </Button>
+      <DialogTrigger className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold shadow-md animate-pulse inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2">
+        <Star className="w-4 h-4 mr-2 fill-current" /> Rate Ridemates
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-card border-border">
         <DialogHeader>
