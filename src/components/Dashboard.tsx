@@ -178,6 +178,25 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     }
   }
 
+  const cancelBookingMutation = useMutation({
+    mutationFn: async ({ bookingId, rideId, wasApproved, currentSeats }: { bookingId: string, rideId: string, wasApproved: boolean, currentSeats: number }) => {
+      // 1. Mark booking as cancelled
+      const { error } = await supabase.from('bookings').update({ status: 'cancelled' }).eq('id', bookingId)
+      if (error) throw error
+      
+      // 2. Increment seats back if it was previously approved
+      if (wasApproved) {
+        await supabase.from('rides').update({ available_seats: currentSeats + 1 }).eq('id', rideId)
+      }
+    },
+    onSuccess: () => {
+      toast.success('Booking cancelled successfully.')
+      queryClient.invalidateQueries({ queryKey: ['rides'] })
+      queryClient.invalidateQueries({ queryKey: ['my_rides'] })
+    },
+    onError: (e) => toast.error(`Failed to cancel: ${e.message}`)
+  })
+
   // Obfuscator helper
   const obfuscatePhone = (phone: string) => {
     if (!phone || phone.length < 10) return phone
@@ -384,17 +403,44 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     </CardContent>
                     <CardFooter className="pt-2 pb-4 flex gap-2">
                       {(() => {
-                        const myBooking = ride.bookings?.find(b => b.passenger.id === currentUserId)
+                        const myBooking = ride.bookings?.find(b => b.passenger.id === currentUserId && (b.status === 'pending' || b.status === 'approved'))
                         const isPending = myBooking?.status === 'pending'
                         const isApproved = myBooking?.status === 'approved'
+
+                        if (myBooking) {
+                          return (
+                            <Button 
+                              onClick={() => {
+                                if (window.confirm('Are you sure you want to cancel your seat request?')) {
+                                  cancelBookingMutation.mutate({ 
+                                    bookingId: myBooking.id, 
+                                    rideId: ride.id, 
+                                    wasApproved: isApproved, 
+                                    currentSeats: ride.available_seats 
+                                  })
+                                }
+                              }}
+                              disabled={cancelBookingMutation.isPending}
+                              variant={isApproved ? "default" : "secondary"}
+                              className={cn(
+                                "flex-1 font-semibold transition-colors",
+                                isApproved 
+                                  ? "bg-emerald-600 hover:bg-red-500 text-white hover:text-white" 
+                                  : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
+                              )}
+                            >
+                              {isApproved ? 'Approved (Click to Cancel)' : 'Pending (Click to Cancel)'}
+                            </Button>
+                          )
+                        }
 
                         return (
                           <Button 
                             onClick={() => handleBook(ride.id, ride.is_women_only)}
-                            disabled={isPending || isApproved || ride.driver_id === currentUserId}
+                            disabled={ride.driver_id === currentUserId}
                             className="flex-1 bg-secondary hover:bg-emerald-600 text-secondary-foreground hover:text-white transition-colors font-semibold disabled:opacity-70 disabled:hover:bg-secondary disabled:hover:text-secondary-foreground"
                           >
-                            {isApproved ? 'Approved' : isPending ? 'Requested (Pending)' : ride.driver_id === currentUserId ? 'Your Ride' : 'Request Seat'}
+                            {ride.driver_id === currentUserId ? 'Your Ride' : 'Request Seat'}
                           </Button>
                         )
                       })()}
