@@ -30,7 +30,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           )
         `)
         .eq('driver_id', currentUserId)
-        .neq('status', 'cancelled')
+        .in('status', ['active', 'in_progress'])
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -63,8 +63,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      // Filter out bookings where the ride itself is cancelled
-      return data?.filter((b: any) => b.ride && b.ride.status !== 'cancelled') || []
+      // Filter out bookings where the ride itself is cancelled or completed
+      return data?.filter((b: any) => b.ride && !['cancelled', 'completed'].includes(b.ride.status)) || []
     }
   })
 
