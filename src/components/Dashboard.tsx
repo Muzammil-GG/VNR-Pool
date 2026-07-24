@@ -499,7 +499,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       <div className="flex items-center gap-3 text-xs font-bold">
                         <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1.5 rounded-lg border border-blue-100 dark:border-blue-900/40">
                           <Clock className="w-3.5 h-3.5" />
-                          {new Date(ride.departure_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                          {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
                         </div>
                         <div className={cn(
                           "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border",
