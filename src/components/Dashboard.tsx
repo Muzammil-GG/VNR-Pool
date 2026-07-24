@@ -121,6 +121,21 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     enabled: !!currentUserProfile
   })
 
+  const { data: hasActiveBooking } = useQuery({
+    queryKey: ['has_active_booking', currentUserId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('id, status, ride:rides(status)')
+        .eq('passenger_id', currentUserId)
+        .in('status', ['pending', 'approved'])
+      
+      if (error) throw error
+      // Check if any of these bookings are on an active/in_progress ride
+      return data?.some(b => b.ride && ['active', 'in_progress'].includes(b.ride.status)) || false
+    }
+  })
+
   // Stagger animation when feed changes
   useEffect(() => {
     if (rides && rides.length > 0 && feedRef.current) {
@@ -587,17 +602,25 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             <motion.div className="flex-1" whileTap={{ scale: 0.97 }}>
                               <Button
                                 onClick={() => handleBook(ride.id, ride.is_women_only)}
-                                disabled={ride.driver_id === currentUserId || isFull}
+                                disabled={ride.driver_id === currentUserId || isFull || hasActiveBooking}
                                 className={cn(
                                   "w-full font-bold btn-glow transition-all duration-300",
-                                  isFull
+                                  ride.driver_id === currentUserId
                                     ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                    : ride.driver_id === currentUserId
+                                    : isFull
                                       ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                      : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md hover:shadow-emerald-500/30"
+                                      : hasActiveBooking
+                                        ? "bg-muted text-muted-foreground cursor-not-allowed border border-border/50 shadow-inner"
+                                        : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md hover:shadow-emerald-500/30"
                                 )}
                               >
-                                {ride.driver_id === currentUserId ? 'Your Ride' : isFull ? '🔒 Fully Booked' : '🚗 Request Seat'}
+                                {ride.driver_id === currentUserId 
+                                  ? 'Your Ride' 
+                                  : isFull 
+                                    ? '🔒 Fully Booked' 
+                                    : hasActiveBooking 
+                                      ? 'Already Booked a Ride' 
+                                      : '🚗 Request Seat'}
                               </Button>
                             </motion.div>
                           )
