@@ -48,6 +48,10 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
 
   const deleteRide = useMutation({
     mutationFn: async (rideId: string) => {
+      // Delete associated bookings first to avoid foreign key constraint violations
+      const { error: bookingsError } = await supabase.from('bookings').delete().eq('ride_id', rideId)
+      if (bookingsError) throw bookingsError
+
       const { error } = await supabase.from('rides').delete().eq('id', rideId)
       if (error) throw error
     },
