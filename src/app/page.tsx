@@ -6,9 +6,9 @@ import { Dashboard } from '@/components/Dashboard'
 export default async function Home() {
   const supabase = await createClient()
   
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     return <AuthForm />
   }
 
@@ -16,16 +16,18 @@ export default async function Home() {
   const { data: userProfile } = await supabase
     .from('users')
     .select('profile_completed')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single()
 
   if (!userProfile?.profile_completed) {
-    return <OnboardingForm userEmail={session.user.email!} userId={session.user.id} />
+    return <OnboardingForm userEmail={user.email!} userId={user.id} />
   }
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <Dashboard currentUserId={session.user.id} />
+    <main className="min-h-screen relative overflow-hidden">
+      <div className="relative z-10">
+        <Dashboard currentUserId={user.id} />
+      </div>
     </main>
   )
 }

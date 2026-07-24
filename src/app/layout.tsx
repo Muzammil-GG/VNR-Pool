@@ -10,16 +10,21 @@ export const metadata: Metadata = {
   description: "Hyperlocal ride-pooling and carpooling platform for VNR VJIET college students.",
 };
 
+import { Footer } from "@/components/Footer";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-black min-h-screen text-white antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} bg-background text-foreground min-h-screen antialiased flex flex-col`}>
         <Providers>
-          {children}
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
         </Providers>
       </body>
     </html>
