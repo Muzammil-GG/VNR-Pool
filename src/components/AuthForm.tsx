@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
 export function AuthForm() {
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password'>('login')
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [otp, setOtp] = useState('')
@@ -36,9 +36,30 @@ export function AuthForm() {
         if (error) throw error
         router.refresh()
       } else if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password })
-        if (error) throw error
-        toast.success("Check your email for the confirmation link.")
+        const res = await fetch('/api/send-signup-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
+        
+        toast.success("OTP sent! Please check your email to verify.")
+        setMode('signup_verify')
+      } else if (mode === 'signup_verify') {
+        const res = await fetch('/api/verify-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, otp })
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to verify OTP')
+
+        // Now that the account is created, log the user in directly
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+        if (signInError) throw signInError
+
+        toast.success("Email verified and account created!")
       } else if (mode === 'forgot_password') {
         const res = await fetch('/api/forgot-password', {
           method: 'POST',
@@ -112,7 +133,7 @@ export function AuthForm() {
               />
             </div>
             
-            {mode === 'reset_password' && (
+            {(mode === 'reset_password' || mode === 'signup_verify') && (
               <div className="space-y-2">
                 <Label htmlFor="otp" className="text-foreground font-semibold">6-Digit OTP</Label>
                 <Input 
@@ -127,7 +148,7 @@ export function AuthForm() {
               </div>
             )}
 
-            {mode !== 'forgot_password' && (
+            {(mode !== 'forgot_password' && mode !== 'signup_verify') && (
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="password" className="text-foreground font-semibold">
@@ -162,6 +183,7 @@ export function AuthForm() {
               {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
               {mode === 'login' ? "Sign In" : 
                mode === 'signup' ? "Sign Up" : 
+               mode === 'signup_verify' ? "Verify & Create Account" :
                mode === 'forgot_password' ? "Send OTP" : 
                "Reset & Sign In"}
             </Button>
@@ -177,7 +199,7 @@ export function AuthForm() {
                 {mode === 'login' ? "Sign up" : "Sign in"}
               </button>
             </div>
-            {(mode === 'forgot_password' || mode === 'reset_password') && (
+            {(mode === 'forgot_password' || mode === 'reset_password' || mode === 'signup_verify') && (
               <div>
                 <button 
                   type="button"
