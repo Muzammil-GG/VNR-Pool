@@ -40,28 +40,31 @@ export function AuthForm() {
         if (error) throw error
         toast.success("Check your email for the confirmation link.")
       } else if (mode === 'forgot_password') {
-        const { error } = await supabase.auth.resetPasswordForEmail(email)
-        if (error) throw error
+        const res = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
+        
         toast.success("OTP sent to your email! Please check your inbox.")
         setMode('reset_password')
       } else if (mode === 'reset_password') {
-        // Verify OTP first
-        const { error: verifyError } = await supabase.auth.verifyOtp({
-          email,
-          token: otp,
-          type: 'recovery'
+        const res = await fetch('/api/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp, newPassword: password })
         })
-        if (verifyError) throw verifyError
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Failed to reset password')
 
-        // If verified, the user is now logged in. Update password:
-        const { error: updateError } = await supabase.auth.updateUser({
-          password: password
-        })
-        if (updateError) throw updateError
-
-        toast.success("Password reset successfully! You are now logged in.")
-        router.refresh()
+        toast.success("Password reset successfully! Please log in.")
+        setMode('login')
+        setPassword('')
+        setOtp('')
       }
+      router.refresh()
     } catch (error: any) {
       toast.error(error.message)
     } finally {
