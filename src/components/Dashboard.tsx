@@ -15,7 +15,10 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
-import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut } from 'lucide-react'
+import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut, CheckCircle2 } from 'lucide-react'
+import * as THREE from 'three'
+// @ts-ignore
+import NET from 'vanta/dist/vanta.net.min'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
@@ -331,6 +334,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground">
+      <VantaBackground />
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-6 relative pt-2">
         <div className="absolute left-0 top-0 flex items-center gap-2 z-50">
