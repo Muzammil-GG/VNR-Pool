@@ -58,8 +58,8 @@ export function useRideReminders(userId: string | undefined) {
 
       bookings.forEach((booking) => {
         // @ts-ignore
-        const ride = booking.rides
-        if (!ride || !ride.departure_time) return
+        const ride = booking.rides as any;
+        if (!ride || !ride.departure_time) return;
 
         const departureTime = new Date(ride.departure_time).getTime()
         const timeDiff = departureTime - now
