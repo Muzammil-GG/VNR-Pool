@@ -134,7 +134,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       if (error) throw error
       // Check if any of these bookings are on an active/in_progress ride
       return data?.some((b: any) => b.ride && ['active', 'in_progress'].includes(b.ride.status)) || false
-    }
+    },
+    refetchInterval: 5000
   })
 
   // Stagger animation when feed changes
@@ -217,6 +218,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     } else {
       toast.success('Booking requested! Wait for approval.')
       queryClient.invalidateQueries({ queryKey: ['rides'] })
+      queryClient.invalidateQueries({ queryKey: ['has_active_booking'] })
     }
   }
 
@@ -235,6 +237,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       toast.success('Booking cancelled successfully.')
       queryClient.invalidateQueries({ queryKey: ['rides'] })
       queryClient.invalidateQueries({ queryKey: ['my_rides'] })
+      queryClient.invalidateQueries({ queryKey: ['has_active_booking'] })
     },
     onError: (e) => toast.error(`Failed to cancel: ${e.message}`)
   })
@@ -584,15 +587,17 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                       })
                                     }
                                   }}
-                                  disabled={cancelBookingMutation.isPending}
+                                  disabled={cancelBookingMutation.isPending || ride.status === 'in_progress'}
                                   className={cn(
                                     "w-full font-bold transition-all duration-300",
-                                    isApproved
-                                      ? "bg-emerald-500 hover:bg-red-500 text-white shadow-md hover:shadow-red-500/30"
-                                      : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
+                                    ride.status === 'in_progress'
+                                      ? "bg-blue-500 text-white opacity-100"
+                                      : isApproved
+                                        ? "bg-emerald-500 hover:bg-red-500 text-white shadow-md hover:shadow-red-500/30"
+                                        : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
                                   )}
                                 >
-                                  {cancelBookingMutation.isPending ? 'Cancelling…' : isApproved ? '✓ Approved — Click to Cancel' : '⏳ Pending — Click to Cancel'}
+                                  {ride.status === 'in_progress' ? '🚗 Ride in Progress (Cannot Cancel)' : cancelBookingMutation.isPending ? 'Cancelling…' : isApproved ? '✓ Approved — Click to Cancel' : '⏳ Pending — Click to Cancel'}
                                 </Button>
                               </motion.div>
                             )
