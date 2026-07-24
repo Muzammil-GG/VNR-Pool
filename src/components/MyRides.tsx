@@ -221,13 +221,13 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
                       <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-emerald-500" /> {ride.origin}
+                        <MapPin className="w-4 h-4 text-primary" /> {ride.origin}
                       </CardTitle>
                       <CardTitle className="text-lg font-bold text-foreground/80 flex items-center gap-2">
-                        <Navigation className="w-4 h-4 text-cyan-500" /> {ride.destination}
+                        <Navigation className="w-4 h-4 text-muted-foreground" /> {ride.destination}
                       </CardTitle>
                       <p className="text-sm text-muted-foreground font-medium flex items-center gap-2 mt-2">
-                        <Clock className="w-4 h-4 text-blue-500" /> {new Date(ride.departure_time).toLocaleString()}
+                        <Clock className="w-4 h-4 text-secondary-foreground" /> {new Date(ride.departure_time).toLocaleString()}
                         <span className="mx-2 opacity-30">|</span>
                         Seats: {ride.available_seats}/{ride.total_seats}
                       </p>
@@ -252,7 +252,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 startRideMutation.mutate(ride)
                               }
                             }}
-                            className="h-8 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
+                            className="h-8 text-primary hover:text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
                             disabled={startRideMutation.isPending}
                           >
                             <Play className="w-4 h-4 mr-1.5" /> Start Ride
@@ -282,7 +282,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                               completeRideMutation.mutate(ride)
                             }
                           }}
-                          className="h-8 text-blue-500 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
+                          className="h-8 text-secondary-foreground hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
                           disabled={completeRideMutation.isPending}
                         >
                           <Flag className="w-4 h-4 mr-1.5" /> Complete
@@ -308,19 +308,19 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 {booking.passenger.full_name} 
                                 <span className={cn(
                                   "w-2 h-2 rounded-full",
-                                  booking.passenger.gender === 'female' ? 'bg-pink-500' : 'bg-blue-500'
+                                  booking.passenger.gender === 'female' ? 'bg-foreground' : 'bg-blue-500'
                                 )} />
                               </p>
                               <p className="text-xs text-muted-foreground font-medium mt-1">
                                 Status: <span className={cn(
                                   "font-bold uppercase tracking-wider",
-                                  booking.status === 'pending' ? "text-amber-500" : booking.status === 'approved' ? "text-emerald-500" : "text-red-500"
+                                  booking.status === 'pending' ? "text-muted-foreground" : booking.status === 'approved' ? "text-primary" : "text-red-500"
                                 )}>{booking.status}</span>
                               </p>
                             </div>
                             {booking.status === 'approved' && (
                               <a href={`tel:${booking.passenger.mobile_number}`}>
-                                <Button variant="outline" size="icon" className="h-8 w-8 rounded-full border-blue-200 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950">
+                                <Button variant="outline" size="icon" className="h-8 w-8 rounded-full border-blue-200 text-secondary-foreground hover:bg-blue-50 dark:hover:bg-blue-950">
                                   <Phone className="w-3.5 h-3.5" />
                                 </Button>
                               </a>
@@ -393,21 +393,21 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-black text-emerald-500">₹{ride.price_per_seat}</div>
+                        <div className="text-2xl font-black text-primary">₹{ride.price_per_seat}</div>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="route-line pl-5 space-y-2">
                       <div className="flex items-center gap-2 text-sm font-semibold">
-                        <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0" /> {ride.origin}
+                        <MapPin className="w-4 h-4 text-primary flex-shrink-0" /> {ride.origin}
                       </div>
                       <div className="flex items-center gap-2 text-sm font-semibold text-foreground/80">
-                        <Navigation className="w-4 h-4 text-cyan-500 flex-shrink-0" /> {ride.destination}
+                        <Navigation className="w-4 h-4 text-muted-foreground flex-shrink-0" /> {ride.destination}
                       </div>
                     </div>
                     <div className="flex items-center gap-3 text-xs font-bold">
-                      <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 px-2 py-1 rounded-md border border-blue-100">
+                      <div className="flex items-center gap-1.5 text-secondary-foreground bg-blue-50 px-2 py-1 rounded-md border border-blue-100">
                         <Clock className="w-3.5 h-3.5" />
                         {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
                       </div>
@@ -424,7 +424,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             <div key={`${bk.passenger.id}-${idx}`} className="flex items-center gap-1.5 bg-secondary/60 border border-border/60 px-2 py-1 rounded-full text-xs font-semibold text-foreground">
                               <div className={cn(
                                 "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black",
-                                bk.passenger.gender === 'female' ? "bg-pink-500" : "bg-blue-500"
+                                bk.passenger.gender === 'female' ? "bg-foreground" : "bg-blue-500"
                               )}>
                                 {bk.passenger.full_name.charAt(0)}
                               </div>
@@ -453,7 +453,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         className={cn(
                           "flex-1 font-bold transition-all",
                           isApproved 
-                            ? "bg-emerald-500 hover:bg-red-500 text-white" 
+                            ? "bg-primary hover:bg-red-500 text-white" 
                             : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
                         )}
                       >
@@ -462,7 +462,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     )}
                     <a href={`tel:${ride.driver.mobile_number}`}>
                       <Button variant="outline" size="icon" className="border-border">
-                        <Phone className="w-4 h-4 text-blue-500" />
+                        <Phone className="w-4 h-4 text-secondary-foreground" />
                       </Button>
                     </a>
                   </CardFooter>
@@ -475,3 +475,4 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     </div>
   )
 }
+
