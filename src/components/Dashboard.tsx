@@ -209,186 +209,301 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 py-8 space-y-8 text-foreground">
-      {/* Header & Tabs */}
-      <div className="flex flex-col items-center gap-6 relative">
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground">
+      {/* ── Header ────────────────────────────── */}
+      <div className="flex flex-col items-center gap-6 relative pt-2">
         <div className="absolute right-0 top-0">
           <ThemeToggle />
         </div>
-        <div className="text-center space-y-3 mt-4 mb-2">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-emerald-400 to-cyan-500 drop-shadow-sm">
+
+        {/* Logo + tagline */}
+        <motion.div
+          initial={{ opacity: 0, y: -24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22,1,0.36,1] }}
+          className="text-center space-y-2 mt-4"
+        >
+          {/* Live pulse */}
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            </span>
+            <span className="text-[11px] font-bold text-emerald-500 uppercase tracking-widest">Live Rides</span>
+          </div>
+
+          <h1 className="text-6xl md:text-7xl font-black tracking-tight text-gradient">
             VNR Pool
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto px-4">
-            Share rides. Split costs. Make campus commutes smarter, greener, and more fun!
+          <p className="text-base md:text-lg text-muted-foreground font-medium max-w-xl mx-auto">
+            Share rides · Split costs · Commute smarter 🚗
           </p>
-        </div>
-        <div className="flex p-1 bg-muted/50 rounded-full border border-border w-fit backdrop-blur-md shadow-sm">
+        </motion.div>
+
+        {/* Tabs */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.93 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.15, duration: 0.5, ease: [0.22,1,0.36,1] }}
+          className="flex p-1.5 bg-muted/60 rounded-full border border-border w-fit backdrop-blur-md shadow-md"
+        >
           {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                "relative px-6 py-2.5 rounded-full text-sm font-bold transition-colors z-10",
-                activeTab === tab ? "text-emerald-950 dark:text-black" : "text-muted-foreground hover:text-foreground"
+                "relative px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 z-10",
+                activeTab === tab
+                  ? "text-white"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
               {activeTab === tab && (
                 <motion.div
                   layoutId="active-tab"
-                  className="absolute inset-0 bg-emerald-400 rounded-full -z-10 shadow-sm"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  className="absolute inset-0 rounded-full -z-10 tab-active-glow"
+                  style={{ background: 'linear-gradient(135deg, oklch(0.58 0.22 160), oklch(0.65 0.2 200))' }}
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.55 }}
                 />
               )}
               {tab}
             </button>
           ))}
-        </div>
+        </motion.div>
       </div>
 
-      {/* Ride Category Toggle */}
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={() => setRideCategory('auto_split')}
-          className={cn(
-            "flex flex-col items-center p-5 rounded-2xl border transition-all duration-300 w-40",
-            rideCategory === 'auto_split' 
-              ? "border-yellow-500/50 bg-yellow-500/10 shadow-[0_0_20px_rgba(234,179,8,0.15)]" 
-              : "border-border bg-card/50 hover:bg-card/80 opacity-60 hover:opacity-100"
-          )}
-        >
-          <Navigation className="w-8 h-8 text-yellow-500 mb-2" />
-          <span className="text-sm font-bold text-foreground">Auto / Cab Split</span>
-        </button>
-        <button
-          onClick={() => setRideCategory('personal_vehicle')}
-          className={cn(
-            "flex flex-col items-center p-5 rounded-2xl border transition-all duration-300 w-40",
-            rideCategory === 'personal_vehicle' 
-              ? "border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.15)]" 
-              : "border-border bg-card/50 hover:bg-card/80 opacity-60 hover:opacity-100"
-          )}
-        >
-          <Car className="w-8 h-8 text-emerald-500 mb-2" />
-          <span className="text-sm font-bold text-foreground">Student Pool</span>
-        </button>
-      </div>
+      {/* ── Category Toggle ────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25, duration: 0.5 }}
+        className="flex justify-center gap-4"
+      >
+        {[
+          { key: 'auto_split',       label: 'Auto / Cab Split', icon: Navigation, color: 'yellow' },
+          { key: 'personal_vehicle', label: 'Student Pool',     icon: Car,        color: 'emerald' },
+        ].map(({ key, label, icon: Icon, color }) => (
+          <button
+            key={key}
+            onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
+            className={cn(
+              "flex flex-col items-center p-5 rounded-2xl border transition-all duration-300 w-44 group",
+              rideCategory === key
+                ? color === 'yellow'
+                  ? "border-yellow-400/60 bg-yellow-400/10 shadow-[0_0_28px_rgba(234,179,8,0.2)] scale-105"
+                  : "border-emerald-400/60 bg-emerald-400/10 shadow-[0_0_28px_rgba(16,185,129,0.2)] scale-105"
+                : "border-border bg-card/50 hover:bg-card/80 opacity-60 hover:opacity-100 hover:scale-102"
+            )}
+          >
+            <Icon className={cn(
+              "w-9 h-9 mb-2 transition-transform group-hover:scale-110 duration-300",
+              color === 'yellow' ? 'text-yellow-500' : 'text-emerald-500'
+            )} />
+            <span className="text-sm font-bold text-foreground">{label}</span>
+          </button>
+        ))}
+      </motion.div>
 
       {/* Content Area */}
       {activeTab === 'Find a Ride' ? (
         <div className="space-y-6">
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 items-end bg-card/50 p-5 rounded-2xl border border-border backdrop-blur-md shadow-sm">
-            <div className="space-y-2 flex-1 min-w-[150px]">
-              <Label className="text-foreground font-medium">Origin</Label>
-              <Input 
-                placeholder="e.g. JNTU Metro" 
+          {/* ── Search bar ─────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className="glass-card rounded-2xl p-5 flex flex-wrap gap-4 items-end"
+          >
+            <div className="space-y-1.5 flex-1 min-w-[140px]">
+              <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-emerald-500" /> From
+              </Label>
+              <Input
+                placeholder="e.g. JNTU Metro"
                 value={originFilter}
                 onChange={(e) => setOriginFilter(e.target.value)}
-                className="bg-background border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11"
+                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11 font-medium"
               />
             </div>
-            <div className="space-y-2 flex-1 min-w-[150px]">
-              <Label className="text-foreground font-medium">Destination</Label>
-              <Input 
-                placeholder="e.g. VNR VJIET" 
+            <div className="space-y-1.5 flex-1 min-w-[140px]">
+              <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                <Navigation className="w-3.5 h-3.5 text-cyan-500" /> To
+              </Label>
+              <Input
+                placeholder="e.g. VNR VJIET"
                 value={destinationFilter}
                 onChange={(e) => setDestinationFilter(e.target.value)}
-                className="bg-background border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11"
+                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11 font-medium"
               />
             </div>
             {currentUserProfile?.gender === 'female' && (
               <div className="flex items-center gap-2 pb-2">
-                <Switch 
-                  id="women-only" 
+                <Switch
+                  id="women-only"
                   checked={womenOnlyFilter}
                   onCheckedChange={setWomenOnlyFilter}
                   className="data-[state=checked]:bg-pink-500"
                 />
-                <Label htmlFor="women-only" className="text-pink-500 dark:text-pink-400 flex items-center gap-1 cursor-pointer font-medium">
+                <Label htmlFor="women-only" className="text-pink-500 dark:text-pink-400 flex items-center gap-1.5 cursor-pointer font-semibold text-sm">
                   <Shield className="w-4 h-4" /> Women Only
                 </Label>
               </div>
             )}
-          </div>
+          </motion.div>
 
-          {/* Feed */}
+          {/* ── Ride Feed ──────────────────────── */}
           <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-48 rounded-2xl bg-card border border-border" />
+                <div key={i} className="skeleton-shimmer rounded-2xl h-52 border border-border" style={{ animationDelay: `${i * 0.1}s` }} />
               ))
             ) : rides?.length === 0 ? (
-              <div className="col-span-full text-center py-12 text-muted-foreground">
-                <Car className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                No rides found matching your criteria.
-              </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full flex flex-col items-center justify-center py-20 text-muted-foreground gap-4"
+              >
+                <div className="w-20 h-20 rounded-full bg-muted/60 flex items-center justify-center">
+                  <Car className="w-10 h-10 opacity-30" />
+                </div>
+                <p className="font-semibold text-lg">No rides found</p>
+                <p className="text-sm">Try adjusting your search filters</p>
+              </motion.div>
             ) : (
-              rides?.map((ride) => (
+              rides?.map((ride, i) => (
                 <motion.div
                   key={ride.id}
-                  whileHover={{ y: -5 }}
-                  className="ride-card opacity-0 translate-y-[50px]"
+                  initial={{ opacity: 0, y: 28, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: i * 0.06, duration: 0.45, ease: [0.22,1,0.36,1] }}
+                  whileHover={{ y: -6, transition: { duration: 0.25 } }}
                 >
-                  <Card className={cn(
-                    "bg-card/70 backdrop-blur-xl border-border overflow-hidden relative group shadow-sm hover:shadow-md transition-shadow",
-                    ride.is_women_only ? "border-pink-500/50" : "hover:border-emerald-500/50"
+                  <div className={cn(
+                    "glass-card rounded-2xl overflow-hidden relative group",
+                    ride.is_women_only ? "border-pink-400/50" : ""
                   )}>
+                    {/* Subtle top gradient stripe */}
+                    <div className={cn(
+                      "absolute top-0 inset-x-0 h-1 rounded-t-2xl",
+                      ride.is_women_only
+                        ? "bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500"
+                        : ride.ride_category === 'auto_split'
+                          ? "bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400"
+                          : "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400"
+                    )} />
+
                     {ride.is_women_only && (
-                      <div className="absolute top-0 right-0 bg-pink-500 text-white text-xs px-3 py-1 font-semibold rounded-bl-xl flex items-center gap-1 shadow-sm">
+                      <div className="absolute top-1 right-0 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl flex items-center gap-1 shadow">
                         <Shield className="w-3 h-3" /> Women Only
                       </div>
                     )}
-                    <CardHeader className="pb-3">
+
+                    {/* Card body */}
+                    <div className="p-5 space-y-4">
+                      {/* Top row: driver + price */}
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
-                          <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2 flex-wrap">
-                            {ride.driver.full_name}
-                            <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-emerald-600 dark:text-emerald-400 font-medium border border-border">
-                              {rideCategory === 'auto_split' ? 'Auto Split' : 'Student Pool'}
+                          {/* Driver avatar + name */}
+                          <div className="flex items-center gap-2.5">
+                            <div className={cn(
+                              "w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0",
+                              ride.driver.gender === 'female'
+                                ? "bg-gradient-to-br from-pink-400 to-rose-500"
+                                : "bg-gradient-to-br from-emerald-400 to-teal-600"
+                            )}>
+                              {ride.driver.full_name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <p className="text-base font-extrabold text-foreground leading-tight">{ride.driver.full_name}</p>
+                              <p className="text-[11px] text-muted-foreground font-medium">{obfuscatePhone(ride.driver.mobile_number)}</p>
+                            </div>
+                          </div>
+                          {/* Badges */}
+                          <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            <span className={cn(
+                              "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide border",
+                              ride.ride_category === 'auto_split'
+                                ? "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800/40"
+                                : "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800/40"
+                            )}>
+                              {ride.ride_category === 'auto_split' ? 'Auto Split' : 'Student Pool'}
                             </span>
-                            <span className="text-xs bg-emerald-100 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full text-emerald-700 dark:text-emerald-400 font-medium border border-emerald-200 dark:border-emerald-900/50 capitalize flex items-center gap-1 shadow-sm">
-                              <img src={`/${ride.vehicle_type}.png`} alt={ride.vehicle_type} className="w-4 h-4 object-contain drop-shadow-sm" />
+                            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold capitalize border text-foreground/70 bg-secondary/50 border-border flex items-center gap-1">
+                              <img src={`/${ride.vehicle_type}.png`} alt={ride.vehicle_type} className="w-3.5 h-3.5 object-contain" />
                               {ride.vehicle_type}
                             </span>
-                          </CardTitle>
-                          <CardDescription className="text-muted-foreground font-medium text-sm">
-                            Contact: {obfuscatePhone(ride.driver.mobile_number)}
-                          </CardDescription>
+                          </div>
                         </div>
-                        <div className="text-right flex flex-col items-end">
+
+                        {/* Price */}
+                        <div className="text-right flex-shrink-0">
                           {ride.ride_category === 'auto_split' ? (
                             <>
-                              <div className="text-2xl font-black text-amber-500">
+                              <div className="text-3xl font-black text-amber-500 price-glow">
                                 ₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}
                               </div>
-                              <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded flex items-center gap-1 mt-1 shadow-sm">
-                                <Zap className="w-3 h-3 fill-current" /> Dynamic Split
+                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex items-center gap-0.5 justify-end mt-0.5">
+                                <Zap className="w-2.5 h-2.5 fill-current" /> Dynamic
                               </div>
                             </>
                           ) : (
                             <>
-                              <div className="text-2xl font-black text-emerald-500">₹{ride.price_per_seat}</div>
-                              <div className="text-xs text-muted-foreground font-medium">per seat</div>
+                              <div className="text-3xl font-black text-emerald-500 price-glow">₹{ride.price_per_seat}</div>
+                              <div className="text-[10px] text-muted-foreground font-semibold">per seat</div>
                             </>
                           )}
                         </div>
                       </div>
-                      
-                      {/* Passenger Display */}
+
+                      {/* Route */}
+                      <div className="route-line pl-5 space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                          <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                          <span>{ride.origin}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm font-semibold text-foreground/80">
+                          <Navigation className="w-4 h-4 text-cyan-500 flex-shrink-0" />
+                          <span>{ride.destination}</span>
+                        </div>
+                      </div>
+
+                      {/* Time + Seats */}
+                      <div className="flex items-center gap-3 text-xs font-bold">
+                        <div className="flex items-center gap-1.5 text-blue-500 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1.5 rounded-lg border border-blue-100 dark:border-blue-900/40">
+                          <Clock className="w-3.5 h-3.5" />
+                          {new Date(ride.departure_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </div>
+                        <div className={cn(
+                          "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border",
+                          ride.available_seats === 0
+                            ? "text-red-500 bg-red-50 dark:bg-red-950/40 border-red-100 dark:border-red-900/40"
+                            : "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-100 dark:border-amber-900/40"
+                        )}>
+                          <Users className="w-3.5 h-3.5" />
+                          {ride.available_seats === 0 ? 'Full' : `${ride.available_seats} left`}
+                        </div>
+                        {/* Seat dots */}
+                        <div className="flex gap-1 ml-auto">
+                          {Array.from({ length: ride.total_seats }).map((_, si) => (
+                            <span key={si} className={cn('seat-dot', si < (ride.total_seats - ride.available_seats) ? 'filled' : 'empty')} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Co-passengers */}
                       {ride.bookings && ride.bookings.filter(b => b.status === 'approved').length > 0 && (
-                        <div className="mt-4 pt-3 border-t border-border/50">
-                          <p className="text-xs text-muted-foreground font-semibold mb-2 flex items-center gap-1">
-                            <Users className="w-3 h-3" /> Co-Passengers ({ride.bookings.filter(b => b.status === 'approved').length})
+                        <div className="pt-2 border-t border-border/40">
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <Users className="w-3 h-3" /> Co-Passengers
                           </p>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1.5">
                             {ride.bookings.filter(b => b.status === 'approved').map((b, idx) => (
-                              <div key={`${b.passenger.id}-${idx}`} className="bg-secondary/50 border border-border px-2 py-1 rounded-full text-xs font-medium text-foreground flex items-center gap-1.5 shadow-sm">
+                              <div key={`${b.passenger.id}-${idx}`} className="flex items-center gap-1.5 bg-secondary/60 border border-border/60 px-2.5 py-1 rounded-full text-xs font-semibold text-foreground">
                                 <div className={cn(
-                                  "w-4 h-4 rounded-full flex items-center justify-center text-[10px] text-white",
+                                  "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black",
                                   b.passenger.gender === 'female' ? "bg-pink-500" : "bg-blue-500"
                                 )}>
-                                  {b.passenger.full_name.charAt(0).toUpperCase()}
+                                  {b.passenger.full_name.charAt(0)}
                                 </div>
                                 {b.passenger.full_name.split(' ')[0]}
                               </div>
@@ -396,103 +511,102 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           </div>
                         </div>
                       )}
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex flex-col gap-2 text-sm text-foreground/80 font-medium">
-                        <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-emerald-500"/> {ride.origin}</div>
-                        <div className="pl-2 border-l-2 border-border ml-2 h-3" />
-                        <div className="flex items-center gap-2 text-foreground/90"><Navigation className="w-4 h-4 text-cyan-500"/> {ride.destination}</div>
-                      </div>
-                      <div className="flex items-center gap-5 text-sm font-semibold">
-                        <div className="flex items-center gap-1.5 text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-1 rounded-md">
-                          <Clock className="w-4 h-4"/>
-                          {new Date(ride.departure_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        </div>
-                        <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-2 py-1 rounded-md">
-                          <Users className="w-4 h-4"/>
-                          {ride.available_seats} seats left
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="pt-2 pb-4 flex gap-2">
-                      {(() => {
-                        const myBooking = ride.bookings?.find(b => b.passenger.id === currentUserId && (b.status === 'pending' || b.status === 'approved'))
-                        const isPending = myBooking?.status === 'pending'
-                        const isApproved = myBooking?.status === 'approved'
 
-                        if (myBooking) {
+                      {/* Action buttons */}
+                      <div className="flex gap-2 pt-1">
+                        {(() => {
+                          const myBooking = ride.bookings?.find(b => b.passenger.id === currentUserId && (b.status === 'pending' || b.status === 'approved'))
+                          const isPending = myBooking?.status === 'pending'
+                          const isApproved = myBooking?.status === 'approved'
+
+                          if (myBooking) {
+                            return (
+                              <motion.div className="flex-1" whileTap={{ scale: 0.97 }}>
+                                <Button
+                                  onClick={() => {
+                                    if (window.confirm('Are you sure you want to cancel your seat request?')) {
+                                      cancelBookingMutation.mutate({
+                                        bookingId: myBooking.id,
+                                        rideId: ride.id,
+                                        wasApproved: isApproved,
+                                        currentSeats: ride.available_seats
+                                      })
+                                    }
+                                  }}
+                                  disabled={cancelBookingMutation.isPending}
+                                  className={cn(
+                                    "w-full font-bold transition-all duration-300",
+                                    isApproved
+                                      ? "bg-emerald-500 hover:bg-red-500 text-white shadow-md hover:shadow-red-500/30"
+                                      : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
+                                  )}
+                                >
+                                  {cancelBookingMutation.isPending ? 'Cancelling…' : isApproved ? '✓ Approved — Click to Cancel' : '⏳ Pending — Click to Cancel'}
+                                </Button>
+                              </motion.div>
+                            )
+                          }
+
+                          const isFull = ride.available_seats === 0
                           return (
-                            <Button 
-                              onClick={() => {
-                                if (window.confirm('Are you sure you want to cancel your seat request?')) {
-                                  cancelBookingMutation.mutate({ 
-                                    bookingId: myBooking.id, 
-                                    rideId: ride.id, 
-                                    wasApproved: isApproved, 
-                                    currentSeats: ride.available_seats 
-                                  })
-                                }
-                              }}
-                              disabled={cancelBookingMutation.isPending}
-                              variant={isApproved ? "default" : "secondary"}
-                              className={cn(
-                                "flex-1 font-semibold transition-colors",
-                                isApproved 
-                                  ? "bg-emerald-600 hover:bg-red-500 text-white hover:text-white" 
-                                  : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
-                              )}
-                            >
-                              {isApproved ? 'Approved (Click to Cancel)' : 'Pending (Click to Cancel)'}
-                            </Button>
+                            <motion.div className="flex-1" whileTap={{ scale: 0.97 }}>
+                              <Button
+                                onClick={() => handleBook(ride.id, ride.is_women_only)}
+                                disabled={ride.driver_id === currentUserId || isFull}
+                                className={cn(
+                                  "w-full font-bold btn-glow transition-all duration-300",
+                                  isFull
+                                    ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                    : ride.driver_id === currentUserId
+                                      ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                      : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md hover:shadow-emerald-500/30"
+                                )}
+                              >
+                                {ride.driver_id === currentUserId ? 'Your Ride' : isFull ? '🔒 Fully Booked' : '🚗 Request Seat'}
+                              </Button>
+                            </motion.div>
                           )
-                        }
+                        })()}
 
-                        const isFull = ride.available_seats === 0;
-
-                        return (
-                          <Button 
-                            onClick={() => handleBook(ride.id, ride.is_women_only)}
-                            disabled={ride.driver_id === currentUserId || isFull}
-                            className="flex-1 bg-secondary hover:bg-emerald-600 text-secondary-foreground hover:text-white transition-colors font-semibold disabled:opacity-70 disabled:hover:bg-secondary disabled:hover:text-secondary-foreground"
-                          >
-                            {ride.driver_id === currentUserId ? 'Your Ride' : isFull ? 'Fully Booked' : 'Request Seat'}
-                          </Button>
-                        )
-                      })()}
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="bg-transparent border-border hover:bg-secondary flex-shrink-0"
-                        onClick={() => setChatRide(ride)}
-                        title="Chat with Rider"
-                      >
-                        <MessageCircle className="w-5 h-5 text-emerald-500" />
-                      </Button>
-                      <a href={`tel:${ride.driver.mobile_number}`}>
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="bg-transparent border-border hover:bg-secondary flex-shrink-0"
-                          title="Call Rider"
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="bg-transparent border-border hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-300 flex-shrink-0 transition-colors"
+                          onClick={() => setChatRide(ride)}
+                          title="Chat with Rider"
                         >
-                          <Phone className="w-5 h-5 text-blue-500" />
+                          <MessageCircle className="w-4 h-4 text-emerald-500" />
                         </Button>
-                      </a>
-                    </CardFooter>
-                  </Card>
+                        <a href={`tel:${ride.driver.mobile_number}`}>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="bg-transparent border-border hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-300 flex-shrink-0 transition-colors"
+                            title="Call Rider"
+                          >
+                            <Phone className="w-4 h-4 text-blue-500" />
+                          </Button>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               ))
             )}
           </div>
         </div>
       ) : activeTab === 'Offer a Seat' ? (
-        <div className="max-w-md mx-auto">
-          <Card className="bg-card/70 backdrop-blur-xl border-border shadow-md">
-            <CardHeader>
-              <CardTitle className="text-2xl text-emerald-500 font-bold">Offer a Ride</CardTitle>
-              <CardDescription className="text-muted-foreground">Share your journey and split costs.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md mx-auto"
+        >
+          <div className="glass-card rounded-2xl">
+            <div className="p-6 border-b border-border/40">
+              <h2 className="text-2xl font-black text-gradient">Offer a Ride 🚗</h2>
+              <p className="text-muted-foreground text-sm mt-1">Share your journey and split costs with fellow VNRians.</p>
+            </div>
+            <div className="p-6 space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="font-semibold text-foreground">Departure Location</Label>
@@ -619,16 +733,16 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 </div>
               )}
 
-              <Button 
+              <Button
                 onClick={() => offerMutation.mutate()}
                 disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time}
-                className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 mt-6 text-white font-semibold text-base rounded-lg shadow-lg hover:shadow-emerald-500/30 transition-all"
+                className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-lg hover:shadow-emerald-500/30 transition-all btn-glow"
               >
-                Publish Ride
+                {offerMutation.isPending ? 'Publishing…' : '🚀 Publish Ride'}
               </Button>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </div>
+        </motion.div>
       ) : activeTab === 'My Rides' ? (
         <MyRides currentUserId={currentUserId} />
       ) : null}
