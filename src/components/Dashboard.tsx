@@ -170,18 +170,31 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     refetchInterval: 5000
   })
 
+  const isWithinOneHour = (dateString?: string) => {
+    if (!dateString) return false
+    const now = new Date()
+    const target = new Date(dateString)
+    const diffInHours = (now.getTime() - target.getTime()) / (1000 * 60 * 60)
+    return diffInHours <= 1
+  }
+
   const { data: hasActiveBooking } = useQuery({
     queryKey: ['has_active_booking', currentUserId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('bookings')
-        .select('id, status, ride:rides(status)')
+        .select('id, status, ride:rides(status, completed_at)')
         .eq('passenger_id', currentUserId)
         .in('status', ['pending', 'approved'])
       
       if (error) throw error
-      // Check if any of these bookings are on an active/in_progress ride
-      return data?.some((b: any) => b.ride && ['active', 'in_progress'].includes(b.ride.status)) || false
+      // Check if they are currently tied to an active, in-progress, or recently completed ride
+      return data?.some((b: any) => {
+        if (!b.ride) return false
+        if (['active', 'in_progress'].includes(b.ride.status)) return true
+        if (b.ride.status === 'completed' && isWithinOneHour(b.ride.completed_at)) return true
+        return false
+      }) || false
     },
     refetchInterval: 5000
   })
