@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap } from 'lucide-react'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { Notifications } from '@/components/Notifications'
 import { MyRides } from '@/components/MyRides'
 import { cn } from '@/lib/utils'
 
@@ -212,7 +213,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground">
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-6 relative pt-2">
-        <div className="absolute right-0 top-0">
+        <div className="absolute right-0 top-0 flex items-center gap-3">
+          <Notifications currentUserId={currentUserId} />
           <ThemeToggle />
         </div>
 
