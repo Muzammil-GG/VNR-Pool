@@ -105,7 +105,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
         ) : profile ? (
           <div className="space-y-5 mt-4">
             <div className="space-y-3">
-              <div className="grid grid-cols-[1fr_2fr] gap-4 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
                 <Label className="text-right text-muted-foreground font-semibold">Full Name</Label>
                 {isEditing ? (
                   <Input 
@@ -118,12 +118,12 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                 )}
               </div>
               
-              <div className="grid grid-cols-[1fr_2fr] gap-4 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
                 <Label className="text-right text-muted-foreground font-semibold">Email</Label>
                 <div className="font-medium text-muted-foreground">{profile.email}</div>
               </div>
               
-              <div className="grid grid-cols-[1fr_2fr] gap-4 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
                 <Label className="text-right text-muted-foreground font-semibold">Mobile</Label>
                 {isEditing ? (
                   <Input 
@@ -136,7 +136,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                 )}
               </div>
 
-              <div className="grid grid-cols-[1fr_2fr] gap-4 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
                 <Label className="text-right text-muted-foreground font-semibold">Car Number</Label>
                 {isEditing ? (
                   <Input 
@@ -152,7 +152,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                 )}
               </div>
 
-              <div className="grid grid-cols-[1fr_2fr] gap-4 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
                 <Label className="text-right text-muted-foreground font-semibold">Bike Number</Label>
                 {isEditing ? (
                   <Input 

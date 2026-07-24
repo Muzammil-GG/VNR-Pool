@@ -272,12 +272,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground">
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-6 relative pt-2">
-        <div className="absolute right-0 top-0 flex items-center gap-2">
+        <div className="absolute right-0 top-0 flex items-center gap-2 z-50">
           <Notifications currentUserId={currentUserId} />
-          <ProfileEditor currentUserId={currentUserId} />
           <ThemeToggle />
+          <ProfileEditor currentUserId={currentUserId} />
         </div>
-
         {/* Logo + tagline */}
         <motion.div
           initial={{ opacity: 0, y: -24 }}
@@ -307,7 +306,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           initial={{ opacity: 0, scale: 0.93 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.15, duration: 0.5, ease: [0.22,1,0.36,1] }}
-          className="flex p-1.5 bg-muted/60 rounded-full border border-border w-fit backdrop-blur-md shadow-md"
+          className="flex p-1 bg-muted/60 rounded-full border border-border w-full sm:w-fit backdrop-blur-md shadow-sm overflow-x-auto hide-scrollbar"
         >
           {TABS.map((tab) => (
             <button
@@ -690,7 +689,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <p className="text-muted-foreground text-sm mt-1">Share your journey and split costs with fellow VNRians.</p>
             </div>
             <div className="p-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="font-semibold text-foreground">Departure Location</Label>
                   <Input 
@@ -720,7 +719,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   className="bg-background border-border focus-visible:ring-emerald-500"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="font-semibold text-foreground flex items-center gap-2">
                     Vehicle Type
@@ -773,7 +772,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   </div>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="font-semibold text-foreground flex items-center gap-2">
                     Total Seats
