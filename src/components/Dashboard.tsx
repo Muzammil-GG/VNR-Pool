@@ -111,6 +111,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         q = q.not('driver_id', 'in', `(${blockedIds.join(',')})`)
       }
 
+      // Hide rides that have already departed
+      q = q.gte('departure_time', new Date().toISOString())
+
       const { data, error } = await q.order('created_at', { ascending: false })
       if (error) throw error
       return data as Ride[]
