@@ -32,6 +32,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden: not your booking' }, { status: 403 })
     }
 
+    // Verify ride is not in progress or completed
+    const { data: ride, error: rideError } = await userClient
+      .from('rides')
+      .select('status')
+      .eq('id', rideId)
+      .single()
+
+    if (rideError || !ride) {
+      return NextResponse.json({ error: 'Ride not found' }, { status: 404 })
+    }
+
+    if (ride.status === 'in_progress' || ride.status === 'completed') {
+      return NextResponse.json({ error: 'Cannot cancel an active or completed ride' }, { status: 400 })
+    }
+
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 

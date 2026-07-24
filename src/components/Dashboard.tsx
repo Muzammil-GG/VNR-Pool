@@ -70,6 +70,27 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   const queryClient = useQueryClient()
   const feedRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    const ridesChannel = supabase.channel('public:rides')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rides' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['rides'] })
+        queryClient.invalidateQueries({ queryKey: ['has_active_booking'] })
+      })
+      .subscribe()
+
+    const bookingsChannel = supabase.channel('public:bookings')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['rides'] })
+        queryClient.invalidateQueries({ queryKey: ['has_active_booking'] })
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(ridesChannel)
+      supabase.removeChannel(bookingsChannel)
+    }
+  }, [queryClient, supabase])
+
   const { data: currentUserProfile } = useQuery({
     queryKey: ['currentUser', currentUserId],
     queryFn: async () => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
@@ -22,6 +22,27 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     const oneHour = 60 * 60 * 1000
     return (new Date().getTime() - new Date(dateString).getTime()) < oneHour
   }
+
+  useEffect(() => {
+    const ridesChannel = supabase.channel('public:rides:myrides')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rides' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] })
+        queryClient.invalidateQueries({ queryKey: ['my_joined_rides'] })
+      })
+      .subscribe()
+
+    const bookingsChannel = supabase.channel('public:bookings:myrides')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] })
+        queryClient.invalidateQueries({ queryKey: ['my_joined_rides'] })
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(ridesChannel)
+      supabase.removeChannel(bookingsChannel)
+    }
+  }, [queryClient, supabase])
 
   // 1. Offered Rides
   const { data: offeredRides, isLoading: offeredLoading } = useQuery({
