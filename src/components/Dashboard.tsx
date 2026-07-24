@@ -424,7 +424,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             )}
           </div>
         </div>
-      ) : (
+      ) : activeTab === 'Offer a Seat' ? (
         <div className="max-w-md mx-auto">
           <Card className="bg-card/70 backdrop-blur-xl border-border shadow-md">
             <CardHeader>
