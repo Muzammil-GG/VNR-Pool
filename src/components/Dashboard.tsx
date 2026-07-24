@@ -398,6 +398,38 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   <ProfileEditor currentUserId={currentUserId} />
                 </div>
 
+                <div className="mt-4 pt-4 border-t border-border/50 flex flex-col gap-1">
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2">More</p>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => toast.info('Coming soon!')}>
+                    <div className="w-8 h-8 rounded-full bg-background/50 flex items-center justify-center shadow-sm shrink-0">
+                      <Navigation className="w-4 h-4" />
+                    </div>
+                    <span className="font-medium text-sm">My Activity</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => toast.info('Coming soon!')}>
+                    <div className="w-8 h-8 rounded-full bg-background/50 flex items-center justify-center shadow-sm shrink-0">
+                      <div className="font-bold text-xs">$</div>
+                    </div>
+                    <span className="font-medium text-sm">Payment Settings</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => toast.info('Coming soon!')}>
+                    <div className="w-8 h-8 rounded-full bg-background/50 flex items-center justify-center shadow-sm shrink-0">
+                      <Users className="w-4 h-4" />
+                    </div>
+                    <span className="font-medium text-sm">Invite Friends</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => toast.info('Coming soon!')}>
+                    <div className="w-8 h-8 rounded-full bg-background/50 flex items-center justify-center shadow-sm shrink-0">
+                      <MessageCircle className="w-4 h-4" />
+                    </div>
+                    <span className="font-medium text-sm">Help & Support</span>
+                  </div>
+                </div>
+
                 <Button 
                   variant="destructive" 
                   className="w-full justify-start gap-3 h-12 mt-auto font-bold"
