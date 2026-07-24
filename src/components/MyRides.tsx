@@ -70,12 +70,25 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
 
   // Mutations
   const updateBookingStatus = useMutation({
-    mutationFn: async ({ bookingId, status, rideId, currentSeats }: { bookingId: string, status: 'approved' | 'rejected', rideId: string, currentSeats: number }) => {
+    mutationFn: async ({ bookingId, status, rideId, currentSeats, passengerId }: { bookingId: string, status: 'approved' | 'rejected', rideId: string, currentSeats: number, passengerId: string }) => {
       const { error } = await supabase.from('bookings').update({ status }).eq('id', bookingId)
       if (error) throw error
       if (status === 'approved' && currentSeats > 0) {
         await supabase.from('rides').update({ available_seats: currentSeats - 1 }).eq('id', rideId)
       }
+      
+      // Notify the passenger
+      const title = status === 'approved' ? 'Ride Request Approved! 🎉' : 'Ride Request Declined';
+      const message = status === 'approved' 
+        ? 'The driver has accepted your request. Have a safe journey!' 
+        : 'The driver could not accept your request at this time.';
+        
+      await supabase.from('notifications').insert({
+        user_id: passengerId,
+        type: 'booking_update',
+        title,
+        message
+      })
     },
     onSuccess: (_, variables) => {
       toast.success(`Booking ${variables.status}!`)
@@ -314,14 +327,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                               <Button 
                                 size="sm" 
                                 variant="outline"
-                                onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'rejected', rideId: ride.id, currentSeats: ride.available_seats })}
+                                onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'rejected', rideId: ride.id, currentSeats: ride.available_seats, passengerId: booking.passenger.id })}
                                 className="flex-1 border-red-200 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 h-8"
                               >
                                 <XCircle className="w-4 h-4 mr-1.5" /> Reject
                               </Button>
                               <Button 
                                 size="sm" 
-                                onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'approved', rideId: ride.id, currentSeats: ride.available_seats })}
+                                onClick={() => updateBookingStatus.mutate({ bookingId: booking.id, status: 'approved', rideId: ride.id, currentSeats: ride.available_seats, passengerId: booking.passenger.id })}
                                 className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 shadow-md h-8"
                                 disabled={ride.available_seats === 0}
                               >
