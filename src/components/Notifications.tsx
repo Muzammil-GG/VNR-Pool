@@ -52,15 +52,13 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
         markAsRead.mutate()
       }
     }}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="relative rounded-full">
-          <Bell className="w-5 h-5 text-emerald-500" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-background animate-in zoom-in">
-              {unreadCount}
-            </span>
-          )}
-        </Button>
+      <DialogTrigger className="relative p-2 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center w-10 h-10 transition-colors">
+        <Bell className="w-5 h-5 text-emerald-500" />
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-background animate-in zoom-in">
+            {unreadCount}
+          </span>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md max-h-[80vh] overflow-hidden flex flex-col bg-card/80 backdrop-blur-xl border-border">
         <DialogHeader>
