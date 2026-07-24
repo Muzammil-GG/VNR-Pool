@@ -192,7 +192,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
           </div>
         </button>
       } />
-      <DialogContent className="sm:max-w-md bg-card/90 backdrop-blur-xl border-border overflow-hidden">
+      <DialogContent className="sm:max-w-md bg-card/90 backdrop-blur-xl border-border overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-foreground">My Profile</DialogTitle>
         </DialogHeader>
