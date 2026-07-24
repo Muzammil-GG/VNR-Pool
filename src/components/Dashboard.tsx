@@ -52,6 +52,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   
   // Filters
   const [originFilter, setOriginFilter] = useState('')
+  const [destinationFilter, setDestinationFilter] = useState('')
   const [womenOnlyFilter, setWomenOnlyFilter] = useState(false)
   
   const [chatRide, setChatRide] = useState<Ride | null>(null)
@@ -68,7 +69,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   })
 
   const { data: rides, isLoading } = useQuery({
-    queryKey: ['rides', rideCategory, originFilter, womenOnlyFilter, currentUserProfile?.gender],
+    queryKey: ['rides', rideCategory, originFilter, destinationFilter, womenOnlyFilter, currentUserProfile?.gender],
     queryFn: async () => {
       // Fetch blocked relations
       const { data: blockedByMe } = await supabase.from('blocked_users').select('blocked_id').eq('blocker_id', currentUserId)
@@ -94,6 +95,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         .eq('ride_category', rideCategory)
 
       if (originFilter) q = q.ilike('origin', `%${originFilter}%`)
+      if (destinationFilter) q = q.ilike('destination', `%${destinationFilter}%`)
       
       // Enforce women-only visibility rules
       if (currentUserProfile?.gender !== 'female') {
@@ -277,12 +279,21 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         <div className="space-y-6">
           {/* Filters */}
           <div className="flex flex-wrap gap-4 items-end bg-card/50 p-5 rounded-2xl border border-border backdrop-blur-md shadow-sm">
-            <div className="space-y-2 flex-1 min-w-[200px]">
-              <Label className="text-foreground font-medium">Origin / Location</Label>
+            <div className="space-y-2 flex-1 min-w-[150px]">
+              <Label className="text-foreground font-medium">Origin</Label>
               <Input 
                 placeholder="e.g. JNTU Metro" 
                 value={originFilter}
                 onChange={(e) => setOriginFilter(e.target.value)}
+                className="bg-background border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11"
+              />
+            </div>
+            <div className="space-y-2 flex-1 min-w-[150px]">
+              <Label className="text-foreground font-medium">Destination</Label>
+              <Input 
+                placeholder="e.g. VNR VJIET" 
+                value={destinationFilter}
+                onChange={(e) => setDestinationFilter(e.target.value)}
                 className="bg-background border-border text-foreground focus-visible:ring-emerald-500 rounded-xl h-11"
               />
             </div>
