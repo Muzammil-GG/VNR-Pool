@@ -149,6 +149,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       if (rideCategory === 'personal_vehicle' && !offerData.vehicle_number) {
         throw new Error('Vehicle number is required for Student Pool rides.')
       }
+
+      const originLower = offerData.origin.toLowerCase();
+      const destLower = offerData.destination.toLowerCase();
+      if (!originLower.includes('vnr') && !destLower.includes('vnr')) {
+        throw new Error('Either the pickup or drop location must be VNR VJIET.')
+      }
       
       // Convert the local datetime-local string to a proper UTC ISO string for Supabase
       const isoDepartureTime = new Date(offerData.departure_time).toISOString();
