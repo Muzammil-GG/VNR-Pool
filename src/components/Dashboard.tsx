@@ -18,6 +18,7 @@ import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Na
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
+import { ProfileEditor } from '@/components/ProfileEditor'
 import { MyRides } from '@/components/MyRides'
 import { cn } from '@/lib/utils'
 
@@ -213,8 +214,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground">
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-6 relative pt-2">
-        <div className="absolute right-0 top-0 flex items-center gap-3">
+        <div className="absolute right-0 top-0 flex items-center gap-2">
           <Notifications currentUserId={currentUserId} />
+          <ProfileEditor currentUserId={currentUserId} />
           <ThemeToggle />
         </div>
 
@@ -655,9 +657,14 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   <Select onValueChange={(v) => { 
                     if (v) {
                       const maxSeats = v === 'bike' ? 1 : v === 'auto' ? 2 : 4;
+                      let defaultNum = offerData.vehicle_number;
+                      if (v === 'car' && currentUserProfile?.car_number) defaultNum = currentUserProfile.car_number;
+                      if (v === 'bike' && currentUserProfile?.bike_number) defaultNum = currentUserProfile.bike_number;
+                      
                       setOfferData({
                         ...offerData, 
-                        vehicle_type: v,
+                        vehicle_type: v as 'bike' | 'auto' | 'car',
+                        vehicle_number: defaultNum,
                         total_seats: offerData.total_seats > maxSeats ? maxSeats : offerData.total_seats
                       })
                     }

@@ -23,7 +23,9 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
     roll_no: '',
     branch: '',
     mobile_number: '',
-    gender: ''
+    gender: '',
+    car_number: '',
+    bike_number: ''
   })
   const router = useRouter()
   const supabase = createClient()
@@ -54,14 +56,14 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
       toast.error("Please select branch and gender")
       return
     }
+    if (step === 3 && (!formData.mobile_number || formData.mobile_number.length < 10)) {
+      toast.error("Please enter a valid mobile number")
+      return
+    }
     setStep(s => s + 1)
   }
 
   const handleSubmit = async () => {
-    if (!formData.mobile_number || formData.mobile_number.length < 10) {
-      toast.error("Please enter a valid mobile number")
-      return
-    }
 
     setLoading(true)
     try {
@@ -102,7 +104,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
             Complete your profile
           </CardTitle>
           <CardDescription className="text-muted-foreground font-medium">
-            Step {step} of 3
+            Step {step} of 4
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -211,14 +213,60 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                     <Button variant="outline" className="w-1/2 h-11 font-semibold bg-transparent border-border text-foreground hover:bg-secondary" onClick={() => setStep(2)}>
                       Back
                     </Button>
-                    <Button 
-                      className="w-1/2 h-11 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-lg hover:shadow-emerald-500/30 transition-all" 
-                      onClick={handleSubmit}
-                      disabled={loading}
-                    >
-                      {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : null}
-                      Complete
+                    <Button type="button" className="w-1/2 h-11 font-bold bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleNext}>
+                      Next Step
                     </Button>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 4 && (
+                <motion.div
+                  key="step4"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <CardHeader className="px-0 pt-0">
+                    <CardTitle className="text-2xl font-bold">Vehicle Details</CardTitle>
+                    <CardDescription>Step 4 of 4: Optional Vehicle Info</CardDescription>
+                  </CardHeader>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="car_number">Car Number (Optional)</Label>
+                      <Input
+                        id="car_number"
+                        placeholder="e.g. TS09XX1234"
+                        value={formData.car_number}
+                        onChange={(e) => setFormData({ ...formData, car_number: e.target.value.toUpperCase() })}
+                        className="uppercase bg-secondary/50 border-border h-12 text-lg"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="bike_number">Bike Number (Optional)</Label>
+                      <Input
+                        id="bike_number"
+                        placeholder="e.g. TS09YY5678"
+                        value={formData.bike_number}
+                        onChange={(e) => setFormData({ ...formData, bike_number: e.target.value.toUpperCase() })}
+                        className="uppercase bg-secondary/50 border-border h-12 text-lg"
+                      />
+                    </div>
+                    <div className="flex justify-between gap-4 mt-6">
+                      <Button variant="outline" type="button" className="w-1/3 h-12 font-semibold bg-transparent border-border text-foreground hover:bg-secondary" onClick={() => setStep(3)}>
+                        Back
+                      </Button>
+                      <Button 
+                        type="button" 
+                        className="w-2/3 h-12 text-lg font-bold bg-emerald-600 hover:bg-emerald-700 text-white" 
+                        onClick={handleSubmit}
+                        disabled={loading}
+                      >
+                        {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                        {loading ? "Completing..." : "Complete Profile"}
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               )}
