@@ -132,7 +132,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       
       if (error) throw error
       // Check if any of these bookings are on an active/in_progress ride
-      return data?.some(b => b.ride && ['active', 'in_progress'].includes(b.ride.status)) || false
+      return data?.some((b: any) => b.ride && ['active', 'in_progress'].includes(b.ride.status)) || false
     }
   })
 
