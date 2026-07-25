@@ -23,6 +23,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
 import { ProfileEditor } from '@/components/ProfileEditor'
 import { MyRides } from '@/components/MyRides'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
@@ -510,6 +511,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
             </span>
             <span className="retro-badge text-blue-500 border-blue-500/30 px-2 py-0.5">Live Rides</span>
+          </div>
+
+          <div className="flex justify-center mb-6">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center shadow-[0_8px_32px_rgba(29,78,216,0.2)] hover:scale-105 transition-transform duration-300 overflow-hidden relative border-2 border-blue-500/20 bg-[#1e3a8a]">
+              <Image src="/vnr-logo.png" alt="VNR VJIET" fill className="object-contain p-1.5" />
+            </div>
           </div>
 
           <h1 className="hero-title gradient-text">
