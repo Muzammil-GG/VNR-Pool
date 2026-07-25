@@ -69,6 +69,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   // Filters
   const [originFilter, setOriginFilter] = useState('')
   const [destinationFilter, setDestinationFilter] = useState('')
+  const [dateFilter, setDateFilter] = useState('')
   const [womenOnlyFilter, setWomenOnlyFilter] = useState(false)
   
   const [chatRide, setChatRide] = useState<Ride | null>(null)
@@ -115,7 +116,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   })
 
   const { data: rides, isLoading } = useQuery({
-    queryKey: ['rides', rideCategory, originFilter, destinationFilter, womenOnlyFilter, currentUserProfile?.gender],
+    queryKey: ['rides', rideCategory, originFilter, destinationFilter, dateFilter, womenOnlyFilter, currentUserProfile?.gender],
     queryFn: async () => {
       // Fetch blocked relations
       const { data: blockedByMe } = await supabase.from('blocked_users').select('blocked_id').eq('blocker_id', currentUserId)
@@ -152,10 +153,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         q = q.not('driver_id', 'in', `(${blockedIds.join(',')})`)
       }
 
-      // Hide rides that have already departed
-      q = q.gte('departure_time', new Date().toISOString())
+      // Filter by Date or just show upcoming rides
+      if (dateFilter) {
+        // Find rides on the specific date (from 00:00 to 23:59 local time)
+        const startOfDay = new Date(`${dateFilter}T00:00:00`).toISOString()
+        const endOfDay = new Date(`${dateFilter}T23:59:59.999`).toISOString()
+        q = q.gte('departure_time', startOfDay).lte('departure_time', endOfDay)
+      } else {
+        // Default: Hide rides that have already departed
+        q = q.gte('departure_time', new Date().toISOString())
+      }
 
-      const { data, error } = await q.order('created_at', { ascending: false })
+      const { data, error } = await q.order('departure_time', { ascending: true })
       if (error) throw error
 
       let fetchedRides = data as Ride[]
@@ -309,6 +318,25 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       
       // Convert the local datetime-local string to a proper UTC ISO string for Supabase
       const isoDepartureTime = new Date(offerData.departure_time).toISOString();
+      const targetDateStr = isoDepartureTime.split('T')[0];
+
+      // Check if user already has an active or in_progress ride on this date
+      const { data: existingRides } = await supabase
+        .from('rides')
+        .select('id, departure_time')
+        .eq('driver_id', currentUserId)
+        .in('status', ['active', 'in_progress']);
+
+      if (existingRides) {
+        const hasRideOnSameDay = existingRides.some(r => {
+          if (!r.departure_time) return false;
+          return r.departure_time.split('T')[0] === targetDateStr;
+        });
+
+        if (hasRideOnSameDay) {
+          throw new Error('You can only offer one ride per day. Please complete or cancel your existing active ride for this date first.');
+        }
+      }
       
       const { error } = await supabase.from('rides').insert({
         ...offerData,
@@ -585,6 +613,17 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 value={destinationFilter}
                 onChange={setDestinationFilter}
                 className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium"
+              />
+            </div>
+            <div className="space-y-1.5 flex-[0.5] min-w-[120px]">
+              <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-muted-foreground" /> Date
+              </Label>
+              <Input
+                type="date"
+                value={dateFilter}
+                onChange={e => setDateFilter(e.target.value)}
+                className="h-[42px] bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium px-3"
               />
             </div>
             {currentUserProfile?.gender === 'female' && (

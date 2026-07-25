@@ -60,7 +60,28 @@ export default function RouteMap({ waypoints, className = "h-48 w-full rounded-x
     }).filter(Boolean) as {name: string, lat: number, lng: number}[]
     
     setValidWaypoints(mapped)
-    setRouteCoords(mapped.map(m => [m.lat, m.lng]))
+
+    // Fetch exact road path from OSRM
+    if (mapped.length > 1) {
+      const coordsString = mapped.map(m => `${m.lng},${m.lat}`).join(';')
+      fetch(`https://router.project-osrm.org/route/v1/driving/${coordsString}?overview=full&geometries=geojson`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.routes && data.routes.length > 0) {
+            const geojsonCoords = data.routes[0].geometry.coordinates // [lng, lat][]
+            const latLngCoords = geojsonCoords.map((c: number[]) => [c[1], c[0]])
+            setRouteCoords(latLngCoords)
+          } else {
+            setRouteCoords(mapped.map(m => [m.lat, m.lng])) // fallback to straight lines
+          }
+        })
+        .catch(err => {
+          console.error("OSRM Routing Error:", err)
+          setRouteCoords(mapped.map(m => [m.lat, m.lng])) // fallback to straight lines
+        })
+    } else {
+      setRouteCoords(mapped.map(m => [m.lat, m.lng]))
+    }
   }, [waypoints])
 
   if (!mounted) return <div className={`bg-secondary animate-pulse ${className}`} />
@@ -83,7 +104,7 @@ export default function RouteMap({ waypoints, className = "h-48 w-full rounded-x
         
         {routeCoords.length > 0 && (
           <>
-            <Polyline positions={routeCoords} color="#10b981" weight={4} opacity={0.8} />
+            <Polyline positions={routeCoords} color="#3b82f6" weight={5} opacity={0.8} />
             <FitBounds coords={routeCoords} />
           </>
         )}
