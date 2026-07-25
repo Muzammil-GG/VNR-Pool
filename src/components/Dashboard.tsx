@@ -975,7 +975,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   <SelectTrigger className="bg-background border-border focus-visible:ring-emerald-500">
                     <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
                   </SelectTrigger>
-                  <SelectContent className="bg-card border-border max-h-[300px]">
+                  <SelectContent className="bg-background border-border shadow-xl max-h-[300px]">
                     <SelectItem value="none">Custom Route (No En-Route Matches)</SelectItem>
                     {COLLEGE_ROUTES.map(route => (
                       <SelectItem key={route.id} value={route.id}>{route.name}</SelectItem>
@@ -1028,7 +1028,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     <SelectTrigger className="bg-background border-border focus-visible:ring-emerald-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-card border-border">
+                    <SelectContent className="bg-background border-border shadow-xl">
                       {rideCategory === 'personal_vehicle' ? (
                         <>
                           <SelectItem value="bike">Bike</SelectItem>
