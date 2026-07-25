@@ -30,8 +30,8 @@ import { findBestMatchLocation } from '@/lib/locations'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
 import { PublicProfileDialog } from '@/components/PublicProfileDialog'
-import { COLLEGE_ROUTES, getRouteById, getSlicedWaypoints } from '@/lib/routes'
-import { calculateFractionalPrice, checkFractionalMatch, calculateDynamicSplitPricing, PassengerTrip } from '@/lib/pricing'
+import { COLLEGE_ROUTES, getRouteById, checkFractionalMatch, getSlicedWaypoints } from '@/lib/routes'
+import { calculateFractionalPrice, calculateDynamicSplitPricing, PassengerTrip } from '@/lib/pricing'
 
 const RouteMap = dynamic(() => import('@/components/RouteMap'), { ssr: false, loading: () => <div className="h-48 w-full bg-secondary animate-pulse rounded-xl" /> })
 

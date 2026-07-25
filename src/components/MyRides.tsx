@@ -489,8 +489,9 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                               </Button>
                             </div>
                           )}
-                        </div>
-                      );
+                          </div>
+                        );
+                      });
                     })()}
                     </div>
                   )}
