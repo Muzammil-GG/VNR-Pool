@@ -9,7 +9,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "S1",
     name: "Patancheru to VNRVJIET (via BHEL)",
-    waypoints: ["Muthangi ORR", "Patancheru Bus Stand", "Patancheru", "Beeramguda Kaman", "BHEL Circle", "BHEL", "Chandanagar Circle", "Chandanagar", "Miyapur Allwyn X Roads", "Miyapur", "VNR VJIET"]
+    waypoints: ["Muthangi ORR", "Patancheru Bus Stand", "Patancheru", "Beeramguda Kaman", "BHEL MIG", "BHEL Circle", "BHEL", "Gangaram", "Deepthisri Nagar", "Madinaguda", "Chandanagar Circle", "Chandanagar", "Miyapur Allwyn X Roads", "Miyapur", "VNR VJIET"]
   },
   {
     id: "S2",
@@ -19,7 +19,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "S3",
     name: "Yusufguda to VNRVJIET (via Jubilee Check Post)",
-    waypoints: ["Yusufguda Temple", "Yusufguda Check post", "Jubilee check post", "Peddamma Temple", "Madhapur Metro Station", "Madapur", "Durgam Cheruvu Metro Station", "Hi-Tech City", "Kothaguda", "Botanical Garden, Kondapur", "Kondapur X Roads", "Kondapur", "Hafeezpet X Roads", "Hafeezpet", "Miyapur X Roads", "VNR VJIET"]
+    waypoints: ["Maitrivanam (Ameerpet)", "Yellareddyguda", "Srinagar Colony", "Krishna Nagar", "Yusufguda Basti", "Yusufguda Temple", "Yusufguda Check post", "Jubilee check post", "Peddamma Temple", "Madhapur Metro Station", "Madapur", "Durgam Cheruvu Metro Station", "Hi-Tech City", "Kothaguda", "Botanical Garden, Kondapur", "Kondapur X Roads", "Kondapur", "Hafeezpet X Roads", "Hafeezpet", "Miyapur X Roads", "VNR VJIET"]
   },
   {
     id: "S5",
@@ -54,7 +54,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "S12",
     name: "Nagole to VNRVJIET (via Balanagar)",
-    waypoints: ["Nagole", "Uppal X Roads", "Uppal", "Tarnaka X Roads", "Tarnaka", "Secunderabad East Metro", "Secunderabad", "Secunderabad (Paradise Circle)", "Himalaya Book Store", "JBS", "Tadbund X Roads", "Tadbund", "Bowenpally Check Post", "Bowenpally", "Balanagar X Roads", "Balanagar", "VNR VJIET"]
+    waypoints: ["Ghatkesar", "Medipally", "Peerzadiguda", "Boduppal X Roads", "Nagole", "Uppal Depot", "Uppal X Roads", "Uppal", "NGRI Metro Station", "Ramanthapur TV Studio", "Tarnaka X Roads", "Tarnaka", "Secunderabad East Metro", "Secunderabad", "Secunderabad (Paradise Circle)", "Himalaya Book Store", "JBS", "Tadbund X Roads", "Tadbund", "Bowenpally Check Post", "Bowenpally", "Balanagar X Roads", "Balanagar", "VNR VJIET"]
   },
   {
     id: "41",
@@ -71,7 +71,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "C1",
     name: "Attapur Corridor",
-    waypoints: ["APPA Junction (Peerancheru)", "Kalimandir", "Kismatpur X Roads", "Bandlaguda Jagir", "Sun City (Bandlaguda)", "Shivrampally", "Rajendra Nagar", "Attapur Ring Road", "Hyderguda (Attapur)", "Attapur (Pillar No 143)", "Rambagh (Attapur)", "Attapur Pillar 80", "Attapur", "Upperpally", "Langar Houz", "Mehdipatnam Bus Stop", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Tolichowki Flyover", "Gachibowli", "Hitech City", "Kukatpally", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["Gandipet X Roads", "CBIT (Gandipet)", "Taramati Baradari", "APPA Junction (Peerancheru)", "Kalimandir", "Kismatpur X Roads", "Bandlaguda Jagir", "Sun City (Bandlaguda)", "Shivrampally", "Rajendra Nagar", "Attapur Ring Road", "Hyderguda (Attapur)", "Attapur (Pillar No 143)", "Rambagh (Attapur)", "Attapur Pillar 80", "Attapur", "Upperpally", "Langar Houz", "Nanal Nagar X Roads", "Mehdipatnam Bus Stop", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Tolichowki Flyover", "Kakatiya Nagar (Tolichowki)", "Shaikpet Nala", "OU Colony", "G Narayanamma College (GNITS)", "Gachibowli", "Hitech City", "Kukatpally", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C2",
