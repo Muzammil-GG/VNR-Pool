@@ -6,8 +6,9 @@ import { Environment, ContactShadows, PerspectiveCamera } from "@react-three/dre
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { Suspense } from "react";
 import * as THREE from "three";
-import { StylizedCar } from "../3d/StylizedCar";
+import { RealisticCar } from "../3d/RealisticCar";
 import { AuthForm } from "../AuthForm";
 import { useFrame } from "@react-three/fiber";
 
@@ -173,10 +174,16 @@ export function CinematicAuth() {
           <PerspectiveCamera ref={cameraRef} makeDefault fov={45} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
-          <Environment preset="city" />
+          {/* Beautiful Blurred Environment */}
+          <Environment preset="city" background blur={0.8} />
 
-          {/* The Car */}
-          <StylizedCar ref={carGroupRef} />
+          {/* The Car - wrapped in Suspense to load smoothly */}
+          <Suspense fallback={null}>
+            <RealisticCar ref={carGroupRef} />
+          </Suspense>
+
+          {/* Ground reflection shadow for realism */}
+          <ContactShadows resolution={2048} scale={30} blur={1.5} opacity={0.8} far={10} color="#000000" />
 
           {/* The Road */}
           <mesh ref={roadRef} position={[0, -0.01, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
@@ -189,8 +196,6 @@ export function CinematicAuth() {
             <planeGeometry args={[0.2, 200]} />
             <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.2} opacity={0.5} transparent />
           </mesh>
-
-          <ContactShadows resolution={1024} scale={20} blur={2} opacity={0.5} far={10} color="#000000" />
           
           <SceneNotifier />
           <CameraRig cameraRef={cameraRef} />
