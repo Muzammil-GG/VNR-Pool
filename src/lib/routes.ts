@@ -9,7 +9,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "S1",
     name: "Patancheru to VNRVJIET (via BHEL)",
-    waypoints: ["Muthangi ORR", "Patancheru Bus Stand", "Patancheru", "Beeramguda Kaman", "BHEL MIG", "BHEL Circle", "BHEL", "Gangaram", "Deepthisri Nagar", "Madinaguda", "Chandanagar Circle", "Chandanagar", "Miyapur Allwyn X Roads", "Miyapur", "VNR VJIET"]
+    waypoints: ["Sadashivpet", "Sangareddy X Roads", "Kandi (IIT Hyderabad)", "Rudraram (GITAM)", "Isnapur X Roads", "Muthangi ORR", "Patancheru Bus Stand", "Patancheru", "RC Puram (Ramachandrapuram)", "Beeramguda Kaman", "BHEL MIG", "BHEL Circle", "BHEL", "Gangaram", "Deepthisri Nagar", "Madinaguda", "Chandanagar Circle", "Chandanagar", "Miyapur Allwyn X Roads", "Miyapur", "VNR VJIET"]
   },
   {
     id: "S2",
@@ -59,7 +59,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "41",
     name: "ECIL to VNRVJIET (via Suchithra)",
-    waypoints: ["ECIL X Roads", "ECIL", "AS Rao Nagar", "Radhika X Roads", "Radhika", "Sainikpuri", "Neredmet X Roads", "Trimulgherry X Roads", "Thirumalgiri", "Bowenpally", "Bapuji Nagar", "Suchitra Circle", "Suchitra", "Kompally X Roads", "Kompally", "Dullapally X Roads", "Gundlapochampally", "Kandlakoya (ORR Exit 6)", "VNR VJIET"]
+    waypoints: ["ECIL X Roads", "ECIL", "AS Rao Nagar", "Radhika X Roads", "Radhika", "Sainikpuri", "Neredmet X Roads", "Trimulgherry X Roads", "Thirumalgiri", "Bolarum Check Post", "Bowenpally", "Bapuji Nagar", "Suchitra Circle", "Suchitra", "Kompally CinePlanet", "Kompally X Roads", "Kompally", "Dullapally X Roads", "Gundlapochampally", "Kandlakoya (ORR Exit 6)", "CMR College (Kandlakoya)", "Medchal Check Post", "Medchal Bus Depot", "VNR VJIET"]
   },
   {
     id: "42",

@@ -192,6 +192,18 @@ const rawLocations: Omit<Location, 'id' | 'distanceToVnr'>[] = [
   { name: "Shivrampally", lat: 17.3235, lng: 78.4320 },
   { name: "Rambagh (Attapur)", lat: 17.3695, lng: 78.4310 },
   { name: "Attapur Pillar 80", lat: 17.3750, lng: 78.4370 },
+  // ── NEW: Sangareddy & Medchal Regions ──
+  { name: "Sangareddy X Roads", lat: 17.6190, lng: 78.0930 },
+  { name: "Kandi (IIT Hyderabad)", lat: 17.5950, lng: 78.1170 },
+  { name: "Rudraram (GITAM)", lat: 17.5750, lng: 78.1560 },
+  { name: "Isnapur X Roads", lat: 17.5450, lng: 78.1960 },
+  { name: "Sadashivpet", lat: 17.6160, lng: 77.9470 },
+  { name: "RC Puram (Ramachandrapuram)", lat: 17.5140, lng: 78.2930 },
+  { name: "Medchal Check Post", lat: 17.6270, lng: 78.4860 },
+  { name: "CMR College (Kandlakoya)", lat: 17.6040, lng: 78.4850 },
+  { name: "Malla Reddy College (Maisammaguda)", lat: 17.5560, lng: 78.4440 },
+  { name: "Bolarum Check Post", lat: 17.5250, lng: 78.5080 },
+  { name: "Kompally CinePlanet", lat: 17.5400, lng: 78.4830 },
   // ── NEW: Gandipet / Mehdipatnam / Uppal / Chandanagar / Ameerpet Regions ──
   { name: "Gandipet X Roads", lat: 17.3820, lng: 78.3320 },
   { name: "CBIT (Gandipet)", lat: 17.3916, lng: 78.3190 },
