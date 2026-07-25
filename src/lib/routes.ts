@@ -408,6 +408,83 @@ export const COLLEGE_ROUTES: Route[] = [
     id: "I3",
     name: "East Institutional Route",
     waypoints: ["Anurag University", "SNIST", "BITS Pilani", "NALSAR University", "Osmania University", "VNR VJIET"]
+  },
+
+  // --- Practical Commuter Routes to VNR (From Every Corner) ---
+  {
+    id: "P1",
+    name: "Medchal Express to VNR",
+    waypoints: ["Medchal Railway Station", "Gundlapochampally ORR", "Kandlakoya (ORR Exit 6)", "Bowrampet", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P2",
+    name: "Sangareddy / IIT Hyd to VNR",
+    waypoints: ["Sangareddy Bus Stand", "Kandi X Roads", "Isnapur X Roads", "Patancheru", "BHEL Circle", "Miyapur", "Nizampet", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P3",
+    name: "Shamirpet to VNR (via ORR)",
+    waypoints: ["Aliabad (Shamirpet)", "Leo Splash (Leonia Shamirpet)", "BITS Pilani Hyderabad Campus", "Kandlakoya (ORR Exit 6)", "Bowrampet", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P4",
+    name: "Ghatkesar / Pocharam to VNR",
+    waypoints: ["Ghatkesar", "Pocharam (Infosys SEZ)", "Uppal", "Tarnaka", "Secunderabad", "Balanagar", "Kukatpally", "JNTU", "Nizampet", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P5",
+    name: "Shamshabad Airport to VNR",
+    waypoints: ["Rajiv Gandhi International Airport", "Shamshabad ORR (Exit 15)", "Narsingi ORR", "Gachibowli", "Kondapur", "Miyapur", "Nizampet", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P6",
+    name: "Adibatla (TCS) to VNR (via ORR)",
+    waypoints: ["Adibatla (TCS Synergy Park)", "Tukkuguda ORR (Exit 14)", "Shamshabad ORR (Exit 15)", "Kokapet", "Patancheru Exit", "Bachupally Exit", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P7",
+    name: "Moinabad / Chevella to VNR",
+    waypoints: ["Chevella", "Moinabad Police Station", "JBIET", "APPA Junction (Peerancheru)", "Narsingi ORR", "Kollur ORR (Exit 2)", "Patancheru", "Miyapur", "Nizampet", "VNR VJIET"]
+  },
+  {
+    id: "P8",
+    name: "LB Nagar Direct to VNR",
+    waypoints: ["LB Nagar Metro Station", "Kothapet", "Dilsukhnagar Metro Station", "Malakpet", "Koti", "Abids", "Lakdikapul", "Punjagutta", "Ameerpet", "Kukatpally", "JNTU", "Nizampet", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P9",
+    name: "ECIL / AS Rao Nagar to VNR",
+    waypoints: ["ECIL X Roads", "AS Rao Nagar", "Neredmet", "Malkajgiri", "Bowenpally", "Balanagar", "Moosapet", "KPHB", "JNTU", "Pragathi Nagar", "VNR VJIET"]
+  },
+  {
+    id: "P10",
+    name: "Gachibowli / Financial Dist to VNR",
+    waypoints: ["Financial District", "Wipro Circle", "IIIT Hyderabad", "Gachibowli", "Botanical Garden", "Kondapur", "Hafeezpet", "Miyapur", "Nizampet", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P11",
+    name: "Patancheru Direct to VNR",
+    waypoints: ["Patancheru Bus Stand", "Beeramguda", "BHEL Circle", "Chandanagar", "Madinaguda", "Miyapur Allwyn X Roads", "Nizampet Village", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P12",
+    name: "Jeedimetla & Suraram to VNR",
+    waypoints: ["Jeedimetla Village", "Subash Nagar", "Quthbullapur", "Suraram Colony", "Bahadurpally", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P13",
+    name: "Old City (Charminar) to VNR",
+    waypoints: ["Charminar", "Afzalgunj", "MGBS", "Nampally", "Lakdikapul", "Ameerpet", "Kukatpally", "JNTU", "Pragathi Nagar", "VNR VJIET"]
+  },
+  {
+    id: "P14",
+    name: "Attapur to VNR (via Mehdipatnam)",
+    waypoints: ["Attapur", "Rethibowli", "Mehdipatnam", "Masab Tank", "Banjara Hills", "Punjagutta", "Ameerpet", "KPHB", "JNTU", "Bachupally", "VNR VJIET"]
+  },
+  {
+    id: "P15",
+    name: "Ameenpur to VNR",
+    waypoints: ["Ameenpur", "Ameenpur Lake", "Miyapur", "Nizampet", "Pragathi Nagar", "VNR VJIET"]
   }
 ];
 
