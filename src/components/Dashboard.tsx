@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
 import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut, CheckCircle2 } from 'lucide-react'
 import { WavyBackground } from '@/components/ui/wavy-background'
+import { VehicleBackground } from '@/components/VehicleBackground'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
@@ -424,6 +425,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           waveWidth={40}
         />
       </div>
+      <VehicleBackground />
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-5 sm:gap-6 relative pt-1 sm:pt-2">
         <div className="absolute left-0 top-0 flex items-center gap-2 z-50">

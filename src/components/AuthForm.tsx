@@ -12,6 +12,7 @@ import { Loader2, Car } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { WavyBackground } from '@/components/ui/wavy-background'
+import { VehicleBackground } from '@/components/VehicleBackground'
 
 export function AuthForm() {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
@@ -105,6 +106,9 @@ export function AuthForm() {
           speed="slow"
           waveWidth={30}
         />
+      </div>
+      <div className="absolute inset-0 z-[1] pointer-events-none">
+        <VehicleBackground />
       </div>
       
       <div className="absolute top-6 right-6 z-20">
