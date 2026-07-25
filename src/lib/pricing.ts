@@ -71,23 +71,30 @@ export function calculateDynamicSplitPricing(
   passengers: PassengerTrip[]
 ): Record<string, number> {
   const route = routeId ? getRouteById(routeId) : null;
+  const costMap: Record<string, number> = {};
+  
+  if (passengers.length === 0) return costMap;
   
   // Fallback to simple equal split if no valid predefined route
   if (!route || route.waypoints.length <= 1) {
-    const costPerPerson = passengers.length > 0 ? Math.round(totalTripCost / passengers.length) : totalTripCost;
-    return passengers.reduce((acc, p) => ({ ...acc, [p.id]: costPerPerson }), {});
+    const costPerPerson = Math.round(totalTripCost / passengers.length);
+    const result = passengers.reduce((acc, p) => ({ ...acc, [p.id]: costPerPerson }), {});
+    
+    // Correct rounding errors for equal split
+    const currentSum = Object.values(result).reduce((a: any, b: any) => a + b, 0);
+    if (currentSum !== totalTripCost && passengers.length > 0) {
+      result[passengers[0].id] += (totalTripCost - currentSum);
+    }
+    return result;
   }
 
   const clean = (s: string) => s.toLowerCase().trim();
   const waypoints = route.waypoints.map(clean);
   const totalSegments = waypoints.length - 1;
-  const costPerSegment = totalTripCost / totalSegments;
 
-  const costMap: Record<string, number> = {};
   passengers.forEach(p => costMap[p.id] = 0);
 
-  // Map each passenger to the segments they travel
-  // segment i represents travel from waypoints[i] to waypoints[i+1]
+  // 1. Calculate the distance (in segments) each passenger travels
   const passengerSegments = passengers.map(p => {
     const startIdx = waypoints.findIndex(w => w.includes(clean(p.startLoc)) || clean(p.startLoc).includes(w));
     const endIdx = waypoints.findIndex(w => w.includes(clean(p.endLoc)) || clean(p.endLoc).includes(w));
@@ -96,19 +103,18 @@ export function calculateDynamicSplitPricing(
     const actualStart = startIdx !== -1 ? startIdx : 0;
     const actualEnd = endIdx !== -1 && endIdx > actualStart ? endIdx : totalSegments;
     
-    return { id: p.id, start: actualStart, end: actualEnd };
+    const distance = actualEnd - actualStart;
+    return { id: p.id, distance: distance > 0 ? distance : 1 }; // Fallback to 1 to prevent division by zero
   });
 
-  // Split the cost of each segment among passengers present in that segment
-  for (let i = 0; i < totalSegments; i++) {
-    const activePassengers = passengerSegments.filter(p => p.start <= i && p.end > i);
-    if (activePassengers.length > 0) {
-      const splitCost = costPerSegment / activePassengers.length;
-      activePassengers.forEach(p => {
-        costMap[p.id] += splitCost;
-      });
-    }
-  }
+  // 2. Sum all the passenger distances
+  const totalCombinedDistance = passengerSegments.reduce((sum, p) => sum + p.distance, 0);
+
+  // 3. Assign fractional price to each passenger
+  // Formula: (passenger_distance / total_combined_distance) * totalTripCost
+  passengerSegments.forEach(p => {
+    costMap[p.id] = (p.distance / totalCombinedDistance) * totalTripCost;
+  });
 
   // Round prices
   for (const id in costMap) {
@@ -117,7 +123,7 @@ export function calculateDynamicSplitPricing(
 
   // Correct rounding errors so the total always exactly matches totalTripCost
   const currentSum = Object.values(costMap).reduce((a, b) => a + b, 0);
-  if (currentSum !== totalTripCost && passengers.length > 0) {
+  if (currentSum !== totalTripCost) {
     const diff = totalTripCost - currentSum;
     // Apply difference to the first passenger (usually the ride creator who is taking responsibility)
     costMap[passengers[0].id] += diff;
