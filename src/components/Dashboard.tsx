@@ -616,15 +616,28 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               />
             </div>
             <div className="space-y-1.5 flex-[0.5] min-w-[120px]">
-              <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-muted-foreground" /> Date
-              </Label>
-              <Input
-                type="date"
-                value={dateFilter}
-                onChange={e => setDateFilter(e.target.value)}
-                className="h-[42px] bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium px-3"
-              />
+              <div className="flex items-center justify-between">
+                <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-muted-foreground" /> Date
+                </Label>
+                {dateFilter && (
+                  <button 
+                    onClick={() => setDateFilter('')}
+                    className="text-xs text-rose-500 hover:text-rose-400 font-medium transition-colors"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Input
+                  type="date"
+                  value={dateFilter}
+                  min={new Date().toISOString().split('T')[0]}
+                  onChange={e => setDateFilter(e.target.value)}
+                  className="h-[42px] bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium px-3 w-full"
+                />
+              </div>
             </div>
             {currentUserProfile?.gender === 'female' && (
               <div className="flex items-center gap-2 pb-2">
