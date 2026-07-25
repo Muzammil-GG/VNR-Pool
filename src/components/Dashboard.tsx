@@ -836,11 +836,15 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         <div className="text-right flex-shrink-0">
                           {ride.ride_category === 'auto_split' ? (
                             <>
-                              <div className="text-3xl font-black text-muted-foreground price-glow flex items-end justify-end gap-1">
+                              <div className="text-[11px] text-muted-foreground font-bold mb-0.5 flex items-center justify-end gap-1">
+                                <span>Total Trip:</span>
+                                <span className="text-foreground/80">₹{ride.price_per_seat}</span>
+                              </div>
+                              <div className="text-3xl font-black text-amber-600 dark:text-amber-500 price-glow flex items-end justify-end gap-1 leading-none">
                                 ₹{(ride as any).dynamic_price}
                               </div>
-                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex flex-col items-end gap-1 mt-1">
-                                <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Live Share</span>
+                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex flex-col items-end gap-1 mt-1.5">
+                                <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Your Share</span>
                               </div>
                             </>
                           ) : (
