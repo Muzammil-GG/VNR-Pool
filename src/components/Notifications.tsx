@@ -46,6 +46,7 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
   })
 
   const unreadCount = notifications?.filter(n => !n.is_read).length || 0
+  const notifiedIdsRef = useRef<Set<string>>(new Set())
 
   const pushNativeNotification = (title: string, body: string) => {
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
