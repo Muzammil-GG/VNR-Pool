@@ -28,17 +28,29 @@ const CameraRig = ({ cameraRef }: { cameraRef: React.RefObject<THREE.Perspective
 const EnvironmentScenery = () => {
   return (
     <group>
-      {/* Abstract Dark Monoliths framing the road */}
+      {/* Abstract Dark Monoliths framing the road with random neon glows */}
       {Array.from({ length: 30 }).map((_, i) => (
-        <mesh key={`building-l-${i}`} position={[-12 - Math.random() * 5, 5 + Math.random() * 10, -100 + i * 8]}>
+        <mesh key={`building-l-${i}`} position={[-15 - Math.random() * 10, 5 + Math.random() * 10, -100 + i * 8]}>
           <boxGeometry args={[4, 20 + Math.random() * 20, 4]} />
-          <meshStandardMaterial color="#050505" roughness={0.2} metalness={0.8} />
+          <meshStandardMaterial 
+            color="#050505" 
+            roughness={0.2} 
+            metalness={0.8} 
+            emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
+            emissiveIntensity={1.5}
+          />
         </mesh>
       ))}
       {Array.from({ length: 30 }).map((_, i) => (
-        <mesh key={`building-r-${i}`} position={[12 + Math.random() * 5, 5 + Math.random() * 10, -100 + i * 8]}>
+        <mesh key={`building-r-${i}`} position={[15 + Math.random() * 10, 5 + Math.random() * 10, -100 + i * 8]}>
           <boxGeometry args={[4, 20 + Math.random() * 20, 4]} />
-          <meshStandardMaterial color="#050505" roughness={0.2} metalness={0.8} />
+          <meshStandardMaterial 
+            color="#050505" 
+            roughness={0.2} 
+            metalness={0.8} 
+            emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
+            emissiveIntensity={1.5}
+          />
         </mesh>
       ))}
 
@@ -65,7 +77,12 @@ export function CinematicAuth() {
   const authFormRef = useRef<HTMLDivElement>(null);
   const sceneBgRef = useRef<HTMLDivElement>(null);
   const classicBgRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Audio Refs
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const engineOscRef = useRef<OscillatorNode | null>(null);
+  const engineGainRef = useRef<GainNode | null>(null);
+  
   const { theme } = useTheme();
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
@@ -73,28 +90,51 @@ export function CinematicAuth() {
   const [sceneReady, setSceneReady] = useState(false);
 
   useEffect(() => {
-    // Initialize audio
-    audioRef.current = new Audio("/sounds/engine.mp3");
-    audioRef.current.loop = true;
+    // Procedural Engine Sound using Web Audio API
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+      const ctx = new AudioContextClass();
+      audioCtxRef.current = ctx;
 
-    // Browsers block autoplay until interaction. We attempt to unlock on first click/tap.
-    const unlockAudio = () => {
-      if (audioRef.current && audioRef.current.paused) {
-        audioRef.current.play().catch(() => {});
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth'; // Raspy engine sound
+      osc.frequency.value = 40; // Idle RPM rumble
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 120; // Muffle it to sound like a distant engine
+
+      const gain = ctx.createGain();
+      gain.gain.value = 0; // Start silent
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+
+      engineOscRef.current = osc;
+      engineGainRef.current = gain;
+
+      const unlockAudio = () => {
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
         window.removeEventListener('pointerdown', unlockAudio);
         window.removeEventListener('keydown', unlockAudio);
-      }
-    };
-    window.addEventListener('pointerdown', unlockAudio);
-    window.addEventListener('keydown', unlockAudio);
+        window.removeEventListener('click', unlockAudio);
+      };
+      window.addEventListener('pointerdown', unlockAudio);
+      window.addEventListener('keydown', unlockAudio);
+      window.addEventListener('click', unlockAudio);
 
-    return () => {
-      window.removeEventListener('pointerdown', unlockAudio);
-      window.removeEventListener('keydown', unlockAudio);
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
+      return () => {
+        window.removeEventListener('pointerdown', unlockAudio);
+        window.removeEventListener('keydown', unlockAudio);
+        window.removeEventListener('click', unlockAudio);
+        osc.stop();
+        ctx.close();
+      };
+    }
   }, []);
 
   useGSAP(() => {
@@ -115,19 +155,28 @@ export function CinematicAuth() {
             setAuthInteractive(false);
           }
 
-          // Handle audio fading as car drives away
-          if (audioRef.current) {
-            // Attempt to play on scroll (will silently fail if browser blocks it)
-            if (audioRef.current.paused && self.progress > 0.01) {
-              audioRef.current.play().catch(() => {});
-            }
+          // Handle procedural audio engine fading and revving
+          if (audioCtxRef.current && engineOscRef.current && engineGainRef.current) {
+            let vol = 0;
+            let pitch = 40; // Idle
 
-            // Phase 3 (50% to 75%) is where car drives away (z goes to 30)
-            let vol = 1;
-            if (self.progress > 0.5) {
-              vol = 1 - ((self.progress - 0.5) / 0.25);
+            if (self.progress > 0.01 && self.progress < 0.95) {
+              vol = 0.6; // Base volume
+              
+              // Phase 3 (50% to 75%) is where car drives away
+              if (self.progress > 0.5) {
+                // Fade out volume
+                vol = 0.6 * (1 - ((self.progress - 0.5) / 0.25));
+                // Rev up engine pitch as it accelerates
+                pitch = 40 + ((self.progress - 0.5) / 0.25) * 80; // revs up to 120hz
+              }
+              vol = Math.max(0, Math.min(0.6, vol));
             }
-            audioRef.current.volume = Math.max(0, Math.min(1, vol));
+            
+            // Smoothly ramp audio parameters
+            const now = audioCtxRef.current.currentTime;
+            engineGainRef.current.gain.setTargetAtTime(vol, now, 0.1);
+            engineOscRef.current.frequency.setTargetAtTime(pitch, now, 0.1);
           }
         },
       },
@@ -271,9 +320,9 @@ export function CinematicAuth() {
           {/* Ground reflection shadow for realism */}
           <ContactShadows resolution={2048} scale={30} blur={1.5} opacity={0.8} far={10} color="#000000" />
 
-          {/* The Road */}
+          {/* The Road - Extruded very wide to prevent seeing the void edge */}
           <mesh ref={roadRef} position={[0, -0.01, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-            <planeGeometry args={[10, 250]} />
+            <planeGeometry args={[500, 500]} />
             <meshStandardMaterial color="#111111" roughness={0.9} />
           </mesh>
 
