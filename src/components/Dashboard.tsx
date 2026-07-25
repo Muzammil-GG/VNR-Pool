@@ -1253,6 +1253,24 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         <MyRides currentUserId={currentUserId} />
       ) : null}
 
+      {/* Guidelines Box */}
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-12 sm:mt-16 mb-4 max-w-2xl mx-auto bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 flex gap-3 text-sm shadow-sm backdrop-blur-sm"
+      >
+        <ShieldAlert className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+        <div className="space-y-1.5">
+          <p className="font-semibold text-blue-900 dark:text-blue-200">Safety & Payment Guidelines</p>
+          <ul className="list-disc list-outside ml-4 text-muted-foreground space-y-1 text-xs sm:text-sm">
+            <li><strong>Settle payments directly:</strong> Only pay via UPI or cash when you meet the driver in person.</li>
+            <li><strong>No third-party links:</strong> VNR Pool will never ask for your payment details or send payment links.</li>
+            <li><strong>Be punctual:</strong> Please respect the departure time and coordinate via chat.</li>
+          </ul>
+        </div>
+      </motion.div>
+
       {chatRide && (
         <ChatModal 
           isOpen={!!chatRide}
