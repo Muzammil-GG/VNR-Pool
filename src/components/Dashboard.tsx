@@ -108,7 +108,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     const handleOpenChat = async (e: any) => {
       const rideId = e.detail?.rideId;
       if (!rideId) return;
-      const { data } = await supabase.from('rides').select('*, driver:profiles!driver_id(*)').eq('id', rideId).single();
+      const { data } = await supabase.from('rides').select('*, driver:users!rides_driver_id_fkey(id, full_name, gender, mobile_number, total_rating_score, rating_count, avatar_url)').eq('id', rideId).single();
       if (data) {
         setChatRide(data as any);
       }

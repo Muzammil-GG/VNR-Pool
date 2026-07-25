@@ -16,6 +16,7 @@ type Message = {
   sender_id: string
   text: string
   created_at: string
+  sender?: { full_name: string }
 }
 
 export function ChatModal({
@@ -46,7 +47,7 @@ export function ChatModal({
     const fetchMessages = async () => {
       const { data } = await supabase
         .from('messages')
-        .select('*')
+        .select('*, sender:users(full_name)')
         .eq('ride_id', rideId)
         .order('created_at', { ascending: true })
 
@@ -62,8 +63,15 @@ export function ChatModal({
         schema: 'public',
         table: 'messages',
         filter: `ride_id=eq.${rideId}`
-      }, (payload) => {
-        setMessages(prev => [...prev, payload.new as Message])
+      }, async (payload) => {
+        const newMsg = payload.new as Message
+        if (newMsg.sender_id !== currentUserId) {
+          const { data: senderData } = await supabase.from('users').select('full_name').eq('id', newMsg.sender_id).single()
+          if (senderData) {
+            newMsg.sender = senderData
+          }
+        }
+        setMessages(prev => [...prev, newMsg])
       })
       .subscribe()
 
@@ -179,13 +187,16 @@ export function ChatModal({
               <div 
                 key={msg.id}
                 className={cn(
-                  "px-4 py-2 rounded-2xl max-w-[80%] break-words",
+                  "px-4 py-2 rounded-2xl max-w-[80%] break-words flex flex-col",
                   isMe 
                     ? "bg-blue-600 self-end rounded-br-sm" 
                     : "bg-neutral-800 self-start rounded-bl-sm"
                 )}
               >
-                {msg.text}
+                {!isMe && msg.sender?.full_name && (
+                  <span className="text-[10px] font-bold text-blue-400 mb-0.5">{msg.sender.full_name}</span>
+                )}
+                <span>{msg.text}</span>
               </div>
             )
           })}
