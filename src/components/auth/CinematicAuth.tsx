@@ -24,6 +24,37 @@ const CameraRig = ({ cameraRef }: { cameraRef: React.RefObject<THREE.Perspective
   return null;
 };
 
+// Abstract City Scenery to make the environment look premium and populated
+const EnvironmentScenery = () => {
+  return (
+    <group>
+      {/* Abstract Dark Monoliths framing the road */}
+      {Array.from({ length: 30 }).map((_, i) => (
+        <mesh key={`building-l-${i}`} position={[-12 - Math.random() * 5, 5 + Math.random() * 10, -100 + i * 8]}>
+          <boxGeometry args={[4, 20 + Math.random() * 20, 4]} />
+          <meshStandardMaterial color="#050505" roughness={0.2} metalness={0.8} />
+        </mesh>
+      ))}
+      {Array.from({ length: 30 }).map((_, i) => (
+        <mesh key={`building-r-${i}`} position={[12 + Math.random() * 5, 5 + Math.random() * 10, -100 + i * 8]}>
+          <boxGeometry args={[4, 20 + Math.random() * 20, 4]} />
+          <meshStandardMaterial color="#050505" roughness={0.2} metalness={0.8} />
+        </mesh>
+      ))}
+
+      {/* Glowing Neon Rails bounding the road (VNR Blue) */}
+      <mesh position={[-4.5, 0.05, 0]}>
+        <boxGeometry args={[0.1, 0.1, 250]} />
+        <meshStandardMaterial color="#0056A3" emissive="#0056A3" emissiveIntensity={2} toneMapped={false} />
+      </mesh>
+      <mesh position={[4.5, 0.05, 0]}>
+        <boxGeometry args={[0.1, 0.1, 250]} />
+        <meshStandardMaterial color="#0056A3" emissive="#0056A3" emissiveIntensity={2} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+};
+
 export function CinematicAuth() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera>(null);
@@ -184,6 +215,7 @@ export function CinematicAuth() {
       {/* 3D Canvas Layer */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <Canvas shadows dpr={[1, 2]} gl={{ antialias: true }}>
+          <fog attach="fog" args={["#020617", 20, 120]} />
           <PerspectiveCamera ref={cameraRef} makeDefault fov={45} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
@@ -200,15 +232,18 @@ export function CinematicAuth() {
 
           {/* The Road */}
           <mesh ref={roadRef} position={[0, -0.01, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-            <planeGeometry args={[20, 200]} />
-            <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
+            <planeGeometry args={[10, 250]} />
+            <meshStandardMaterial color="#111111" roughness={0.9} />
           </mesh>
 
           {/* Road Lines */}
           <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <planeGeometry args={[0.2, 200]} />
+            <planeGeometry args={[0.15, 250]} />
             <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.2} opacity={0.5} transparent />
           </mesh>
+
+          {/* Abstract City Scenery */}
+          <EnvironmentScenery />
           
           <SceneNotifier />
           <CameraRig cameraRef={cameraRef} />
