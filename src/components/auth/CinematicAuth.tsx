@@ -72,14 +72,13 @@ export function CinematicAuth() {
     });
 
     // Setup initial states
-    gsap.set(cameraRef.current.position, { x: 10, y: 2, z: 0 }); // Side view
-    cameraRef.current.lookAt(0, 0, 0);
+    gsap.set(cameraRef.current.position, { x: 12, y: 2, z: 4 }); // Forward-right side view
 
-    // Phase 1 -> 2: Side to Top (0% to 25% of timeline)
+    // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
-      x: 0,
-      y: 12,
-      z: 0.1, // Slight offset to prevent gimbal lock
+      x: 6,
+      y: 10,
+      z: -4, // smoothly orbit towards the back
       duration: 1,
       ease: "power1.inOut",
     }, 0);
@@ -87,7 +86,7 @@ export function CinematicAuth() {
     // Fade out initial scroll text
     tl.to(textOverlayRef.current, { opacity: 0, duration: 0.2 }, 0.1);
 
-    // Phase 2 -> 3: Top to Back (25% to 50% of timeline)
+    // Phase 2 -> 3: Top-Diagonal to Direct Back (25% to 50% of timeline)
     tl.to(cameraRef.current.position, {
       x: 0,
       y: 3,
