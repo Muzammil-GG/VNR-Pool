@@ -3,8 +3,8 @@
 import * as React from "react"
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { MapPin, Search } from "lucide-react"
-import { VALID_LOCATIONS, Location } from "@/lib/locations"
+import { MapPin, Search, Navigation, Loader2 } from "lucide-react"
+import { VALID_LOCATIONS, Location, calculateDistance } from "@/lib/locations"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
@@ -27,7 +27,47 @@ export function LocationAutocomplete({
 }: LocationAutocompleteProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState(value)
+  const [isLocating, setIsLocating] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  const handleCurrentLocation = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser")
+      return
+    }
+    
+    setIsLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords
+        
+        let closestLoc = VALID_LOCATIONS[0]
+        let minDistance = Infinity
+        
+        VALID_LOCATIONS.forEach(loc => {
+          const dist = calculateDistance(latitude, longitude, loc.lat, loc.lng)
+          if (dist < minDistance) {
+            minDistance = dist
+            closestLoc = loc
+          }
+        })
+        
+        if (closestLoc) {
+          handleSelect(closestLoc)
+        }
+        setIsLocating(false)
+      },
+      (error) => {
+        console.error("Error getting location:", error)
+        alert("Failed to get current location. Please check your permissions.")
+        setIsLocating(false)
+      },
+      { enableHighAccuracy: true }
+    )
+  }
 
   // Update internal search state if external value changes (e.g. cleared)
   useEffect(() => {
@@ -81,7 +121,7 @@ export function LocationAutocomplete({
       </div>
 
       <AnimatePresence>
-        {isOpen && search.length > 0 && (
+        {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,9 +129,24 @@ export function LocationAutocomplete({
             transition={{ duration: 0.15 }}
             className="absolute z-[100] w-full mt-1 bg-popover border border-border rounded-xl shadow-2xl max-h-60 overflow-y-auto"
           >
-            {filteredLocations.length > 0 ? (
-              <ul className="py-2">
-                {filteredLocations.map(loc => (
+            <ul className="py-2">
+              <li 
+                onClick={handleCurrentLocation}
+                className="px-4 py-3 mb-1 border-b border-border/50 hover:bg-emerald-500/10 cursor-pointer flex items-center gap-3 text-emerald-600 dark:text-emerald-400 transition-colors"
+              >
+                {isLocating ? (
+                  <Loader2 className="w-5 h-5 shrink-0 animate-spin" />
+                ) : (
+                  <Navigation className="w-5 h-5 shrink-0" />
+                )}
+                <div>
+                  <p className="text-sm font-bold">Use Current Location</p>
+                  <p className="text-xs opacity-80">Find the nearest predefined landmark</p>
+                </div>
+              </li>
+              
+              {filteredLocations.length > 0 ? (
+                filteredLocations.map(loc => (
                   <li 
                     key={loc.id}
                     onClick={() => handleSelect(loc)}
@@ -103,8 +158,7 @@ export function LocationAutocomplete({
                       <p className="text-xs text-muted-foreground">{loc.distanceToVnr?.toFixed(1)} km from VNR VJIET</p>
                     </div>
                   </li>
-                ))}
-              </ul>
+                ))
             ) : (
               <div className="p-4 text-center text-muted-foreground text-sm flex flex-col items-center">
                 <Search className="w-5 h-5 mb-2 opacity-50" />
@@ -112,6 +166,7 @@ export function LocationAutocomplete({
                 <p className="text-xs opacity-75 mt-1">Try a nearby major area.</p>
               </div>
             )}
+            </ul>
           </motion.div>
         )}
       </AnimatePresence>
