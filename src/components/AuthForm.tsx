@@ -101,7 +101,7 @@ export function AuthForm() {
     <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-slate-50 dark:bg-slate-950">
       <div className="absolute inset-0 z-0">
         <WavyBackground 
-          colors={['#3b82f6', '#8b5cf6', '#6366f1', '#4f46e5', '#22d3ee']} 
+          colors={['#1d4ed8', '#2563eb', '#3b82f6', '#eab308', '#f59e0b']} 
           waveOpacity={0.8} 
           blur={2}
           speed="fast"
@@ -126,7 +126,7 @@ export function AuthForm() {
           <Card className="w-full bg-card/80 backdrop-blur-3xl border-0 shadow-none rounded-[1.8rem] overflow-hidden relative">
             
             <CardHeader className="relative z-10 text-center pb-4 pt-8">
-              <div className="w-16 h-16 mx-auto bg-emerald-500 rounded-2xl flex items-center justify-center shadow-[0_8px_32px_rgba(16,185,129,0.4)] mb-4 hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 mx-auto bg-blue-700 rounded-2xl flex items-center justify-center shadow-[0_8px_32px_rgba(29,78,216,0.4)] mb-4 hover:scale-105 transition-transform duration-300">
                 <Car className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="hero-title text-4xl font-black tracking-tight gradient-text mb-2">
@@ -149,7 +149,7 @@ export function AuthForm() {
                 placeholder="21071A05XX@vnrvjiet.in"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="bg-background/70 border-border focus-visible:ring-emerald-500 h-11"
+                className="bg-background/70 border-border focus-visible:ring-blue-600 h-11"
                 required
               />
             </div>
@@ -163,7 +163,7 @@ export function AuthForm() {
                   placeholder="123456"
                   value={otp}
                   onChange={e => setOtp(e.target.value)}
-                  className="bg-background/70 border-border focus-visible:ring-emerald-500 h-11 tracking-widest text-center"
+                  className="bg-background/70 border-border focus-visible:ring-blue-600 h-11 tracking-widest text-center"
                   required
                 />
               </div>
@@ -179,7 +179,7 @@ export function AuthForm() {
                     <button 
                       type="button" 
                       onClick={() => setMode('forgot_password')}
-                      className="text-xs text-muted-foreground hover:text-emerald-500 font-medium transition-colors"
+                      className="text-xs text-muted-foreground hover:text-blue-600 font-medium transition-colors"
                     >
                       Forgot Password?
                     </button>
@@ -190,7 +190,7 @@ export function AuthForm() {
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="bg-background/70 border-border focus-visible:ring-emerald-500 h-11"
+                  className="bg-background/70 border-border focus-visible:ring-blue-600 h-11"
                   required
                 />
               </div>
@@ -199,7 +199,7 @@ export function AuthForm() {
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-12 shiny-btn bg-emerald-500 hover:bg-emerald-600 text-white transition-all text-base font-bold rounded-xl shadow-lg shadow-emerald-500/20 press-scale mt-2"
+              className="w-full h-12 shiny-btn bg-blue-700 hover:bg-blue-800 text-white transition-all text-base font-bold rounded-xl shadow-lg shadow-blue-700/20 press-scale mt-2"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 
                mode === 'login' ? 'Sign In' : 
@@ -216,7 +216,7 @@ export function AuthForm() {
             <button 
               type="button"
               onClick={() => setMode(mode === 'login' ? 'signup' : 'login')} 
-              className="text-emerald-500 hover:text-emerald-400 font-bold ml-1 transition-colors hover:underline decoration-emerald-500/30 underline-offset-4"
+              className="text-blue-600 hover:text-blue-500 font-bold ml-1 transition-colors hover:underline decoration-blue-600/30 underline-offset-4"
             >
               {mode === 'login' ? 'Create Account' : 'Sign In'}
             </button>
