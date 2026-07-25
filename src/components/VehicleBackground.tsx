@@ -10,14 +10,24 @@ import { useEffect, useState, useRef, useCallback } from 'react'
  */
 
 const vehicles = [
-  { icon: '🚗', y: 8,  speed: 0.5,  dir: 1,  size: 48, wiggle: 12, startX: 5   },
-  { icon: '🛺', y: 25, speed: 0.35, dir: -1, size: 40, wiggle: 8,  startX: 85  },
-  { icon: '🏍️', y: 45, speed: 0.6,  dir: 1,  size: 36, wiggle: 15, startX: 20  },
-  { icon: '🚕', y: 65, speed: 0.25, dir: -1, size: 44, wiggle: 10, startX: 70  },
-  { icon: '🚌', y: 85, speed: 0.2,  dir: 1,  size: 56, wiggle: 6,  startX: 40  },
-  { icon: '🚗', y: 15, speed: 0.4,  dir: -1, size: 32, wiggle: 14, startX: 60  },
-  { icon: '🛺', y: 50, speed: 0.55, dir: 1,  size: 38, wiggle: 9,  startX: 10  },
-  { icon: '🏍️', y: 72, speed: 0.35, dir: -1, size: 30, wiggle: 18, startX: 90  },
+  // Lane 1 (Top)
+  { icon: '🚗', y: 5,  speed: 0.5,  dir: 1,  size: 48, wiggle: 12, startX: 5   },
+  { icon: '🏍️', y: 12, speed: 0.65, dir: 1,  size: 34, wiggle: 15, startX: 65  },
+  // Lane 2
+  { icon: '🛺', y: 20, speed: 0.4,  dir: -1, size: 40, wiggle: 8,  startX: 25  },
+  { icon: '🚕', y: 28, speed: 0.5,  dir: -1, size: 42, wiggle: 10, startX: 80  },
+  // Lane 3
+  { icon: '🚌', y: 35, speed: 0.25, dir: 1,  size: 56, wiggle: 6,  startX: 15  },
+  { icon: '🚗', y: 42, speed: 0.6,  dir: 1,  size: 46, wiggle: 14, startX: 75  },
+  // Lane 4
+  { icon: '🏍️', y: 50, speed: 0.7,  dir: -1, size: 36, wiggle: 16, startX: 35  },
+  { icon: '🛺', y: 58, speed: 0.35, dir: -1, size: 38, wiggle: 9,  startX: 90  },
+  // Lane 5
+  { icon: '🚕', y: 65, speed: 0.45, dir: 1,  size: 44, wiggle: 11, startX: 10  },
+  { icon: '🚗', y: 72, speed: 0.55, dir: 1,  size: 48, wiggle: 13, startX: 60  },
+  // Lane 6 (Bottom)
+  { icon: '🚌', y: 82, speed: 0.2,  dir: -1, size: 54, wiggle: 7,  startX: 45  },
+  { icon: '🏍️', y: 90, speed: 0.8,  dir: -1, size: 32, wiggle: 18, startX: 95  },
 ]
 
 export function VehicleBackground() {
