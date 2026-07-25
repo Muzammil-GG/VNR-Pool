@@ -89,7 +89,8 @@ export const RealisticCar = forwardRef<THREE.Group, React.ComponentProps<"group"
         
         const name = mesh.name.toLowerCase();
         // If it's specifically a tail light, assign the brake material
-        if (name.includes("tail") || name.includes("brake") || name.includes("rear")) {
+        // Avoid "brake" because the Ferrari model has "brake" calipers!
+        if (name.includes("tail") || name.includes("rear")) {
            mesh.material = materials.brakeLight;
         }
       }

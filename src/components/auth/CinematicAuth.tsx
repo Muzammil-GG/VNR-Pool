@@ -75,7 +75,7 @@ export function CinematicAuth() {
 
     // Setup initial states
     gsap.set(cameraRef.current.position, { x: 12, y: 2, z: 4 }); // Forward-right side view
-    gsap.set(carGroupRef.current.position, { y: 0.38 }); // Lift car exactly to tire radius height
+    gsap.set(carGroupRef.current.position, { y: 0 }); // Set car back on the ground
 
     // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
