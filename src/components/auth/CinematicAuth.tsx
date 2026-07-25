@@ -65,11 +65,37 @@ export function CinematicAuth() {
   const authFormRef = useRef<HTMLDivElement>(null);
   const sceneBgRef = useRef<HTMLDivElement>(null);
   const classicBgRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { theme } = useTheme();
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
   const [authInteractive, setAuthInteractive] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
+
+  useEffect(() => {
+    // Initialize audio
+    audioRef.current = new Audio("/sounds/engine.mp3");
+    audioRef.current.loop = true;
+
+    // Browsers block autoplay until interaction. We attempt to unlock on first click/tap.
+    const unlockAudio = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {});
+        window.removeEventListener('pointerdown', unlockAudio);
+        window.removeEventListener('keydown', unlockAudio);
+      }
+    };
+    window.addEventListener('pointerdown', unlockAudio);
+    window.addEventListener('keydown', unlockAudio);
+
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, []);
 
   useGSAP(() => {
     if (!sceneReady || !cameraRef.current || !carGroupRef.current || !roadRef.current) return;
@@ -87,6 +113,21 @@ export function CinematicAuth() {
             setAuthInteractive(true);
           } else if (self.progress <= 0.95 && authInteractive) {
             setAuthInteractive(false);
+          }
+
+          // Handle audio fading as car drives away
+          if (audioRef.current) {
+            // Attempt to play on scroll (will silently fail if browser blocks it)
+            if (audioRef.current.paused && self.progress > 0.01) {
+              audioRef.current.play().catch(() => {});
+            }
+
+            // Phase 3 (50% to 75%) is where car drives away (z goes to 30)
+            let vol = 1;
+            if (self.progress > 0.5) {
+              vol = 1 - ((self.progress - 0.5) / 0.25);
+            }
+            audioRef.current.volume = Math.max(0, Math.min(1, vol));
           }
         },
       },
