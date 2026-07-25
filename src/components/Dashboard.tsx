@@ -242,7 +242,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       return data?.some((b: any) => {
         if (!b.ride) return false
         if (['active', 'in_progress'].includes(b.ride.status)) return true
-        if (b.ride.status === 'completed' && isWithinOneHour(b.ride.completed_at)) return true
         return false
       }) || false
     },
