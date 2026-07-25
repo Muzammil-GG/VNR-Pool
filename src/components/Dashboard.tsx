@@ -591,9 +591,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="glass-card rounded-2xl p-5 flex flex-wrap gap-4 items-end"
+            className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end"
           >
-            <div className="space-y-1.5 flex-1 min-w-[140px]">
+            <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-primary" /> From
               </Label>
@@ -601,10 +601,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. JNTU Metro"
                 value={originFilter}
                 onChange={setOriginFilter}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium"
+                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium w-full"
               />
             </div>
-            <div className="space-y-1.5 flex-1 min-w-[140px]">
+            <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                 <Navigation className="w-3.5 h-3.5 text-muted-foreground" /> To
               </Label>
@@ -612,10 +612,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. VNR VJIET"
                 value={destinationFilter}
                 onChange={setDestinationFilter}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium"
+                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium w-full"
               />
             </div>
-            <div className="space-y-1.5 flex-[0.5] min-w-[120px]">
+            <div className="space-y-1.5 w-full sm:flex-[0.5] min-w-[120px]">
               <div className="flex items-center justify-between">
                 <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-muted-foreground" /> Date
@@ -640,7 +640,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               </div>
             </div>
             {currentUserProfile?.gender === 'female' && (
-              <div className="flex items-center gap-2 pb-2">
+              <div className="flex items-center gap-2 pb-2 w-full sm:w-auto">
                 <Switch
                   id="women-only"
                   checked={womenOnlyFilter}
