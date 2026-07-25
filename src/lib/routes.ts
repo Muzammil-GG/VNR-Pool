@@ -71,7 +71,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "C1",
     name: "Attapur Corridor",
-    waypoints: ["Gandipet X Roads", "CBIT (Gandipet)", "Taramati Baradari", "APPA Junction (Peerancheru)", "Kalimandir", "Kismatpur X Roads", "Bandlaguda Jagir", "Sun City (Bandlaguda)", "Shivrampally", "Rajendra Nagar", "Attapur Ring Road", "Hyderguda (Attapur)", "Attapur (Pillar No 143)", "Rambagh (Attapur)", "Attapur Pillar 80", "Attapur", "Upperpally", "Langar Houz", "Nanal Nagar X Roads", "Mehdipatnam Bus Stop", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Tolichowki Flyover", "Kakatiya Nagar (Tolichowki)", "Shaikpet Nala", "OU Colony", "G Narayanamma College (GNITS)", "Gachibowli", "Hitech City", "Kukatpally", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["Gandipet X Roads", "CBIT (Gandipet)", "Taramati Baradari", "APPA Junction (Peerancheru)", "Kalimandir", "Vaishnavi Triumph Villas", "Kismatpur X Roads", "Bandlaguda Jagir", "Sun City (Bandlaguda)", "Shivrampally", "Rajendra Nagar", "Attapur Ring Road", "Hyderguda (Attapur)", "Attapur (Pillar No 143)", "Rambagh (Attapur)", "Attapur Pillar 80", "Attapur", "Upperpally", "Langar Houz", "Nanal Nagar X Roads", "Mehdipatnam Bus Stop", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Tolichowki Flyover", "Kakatiya Nagar (Tolichowki)", "Shaikpet Nala", "OU Colony", "G Narayanamma College (GNITS)", "Gachibowli", "Hitech City", "Kukatpally", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C2",

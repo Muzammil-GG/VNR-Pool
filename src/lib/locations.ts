@@ -179,6 +179,7 @@ const rawLocations: Omit<Location, 'id' | 'distanceToVnr'>[] = [
   { name: "Mehdipatnam Bus Stop", lat: 17.3921, lng: 78.4323 },
   { name: "Tolichowki Flyover", lat: 17.3992, lng: 78.4116 },
   // ── NEW: South-West / Attapur / Kismatpur Region ──
+  { name: "Vaishnavi Triumph Villas", lat: 17.3370, lng: 78.3950 },
   { name: "Kismatpur X Roads", lat: 17.3385, lng: 78.3970 },
   { name: "Bandlaguda Jagir", lat: 17.3450, lng: 78.3930 },
   { name: "Sun City (Bandlaguda)", lat: 17.3520, lng: 78.3970 },
