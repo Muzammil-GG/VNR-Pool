@@ -9,7 +9,6 @@ import { useGSAP } from "@gsap/react";
 import * as THREE from "three";
 import { RealisticCar } from "../3d/RealisticCar";
 import { AuthForm } from "../AuthForm";
-import { WavyBackground } from '@/components/ui/wavy-background';
 import { VehicleBackground } from '@/components/VehicleBackground';
 import { useTheme } from "next-themes";
 
@@ -157,6 +156,10 @@ export function CinematicAuth() {
       ease: "power2.inOut",
     }, 2.5);
 
+    // Post-transition buffer: add empty duration so the user can scroll more 
+    // after the auth form is fully visible before hitting the footer
+    tl.to({}, { duration: 1.5 });
+
   }, { scope: containerRef, dependencies: [sceneReady] });
 
   // A helper component to notify when the scene is ready
@@ -170,7 +173,7 @@ export function CinematicAuth() {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full" style={{ height: "400vh" }}>
+    <div ref={containerRef} className="relative w-full" style={{ height: "600vh" }}>
       
       {/* Fixed Background for color transitions */}
       <div 
@@ -241,7 +244,6 @@ export function CinematicAuth() {
           ref={classicBgRef} 
           className="absolute inset-0 z-0 pointer-events-none opacity-0"
         >
-          <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22d3ee"]} waveWidth={50} backgroundFill={theme === 'dark' ? 'black' : 'white'} />
           <VehicleBackground />
         </div>
 
