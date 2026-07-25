@@ -190,7 +190,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         const cleanStr = (s: string) => s.toLowerCase().trim()
         const oMatch = effectiveOrigin ? cleanStr(effectiveOrigin) : ''
         const dMatch = effectiveDest ? cleanStr(effectiveDest) : ''
-
+        fetchedRides = fetchedRides.filter(ride => {
           // Common check for both exact and fractional
           const route = ride.route_id ? getRouteById(ride.route_id) : null;
           const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
