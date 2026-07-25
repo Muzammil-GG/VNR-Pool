@@ -774,7 +774,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               {ride.ride_category === 'auto_split' ? 'Auto Split' : 'Student Pool'}
                             </span>
                             <span className="text-[10px] px-2 py-0.5 rounded-full font-bold capitalize border text-foreground/70 bg-secondary/50 border-border flex items-center gap-1">
-                              <img src={`/${ride.vehicle_type}.png`} alt={ride.vehicle_type} className="w-3.5 h-3.5 object-contain" />
+                            <span className="text-sm mr-1">
+                              {ride.vehicle_type === 'bike' ? '🏍️' : 
+                               ride.vehicle_type === 'auto' ? '🛺' : 
+                               (ride.ride_category === 'auto_split' ? '🚕' : '🚗')}
+                            </span>
                               {ride.vehicle_type}
                               {ride.vehicle_number && (
                                 <>
@@ -1103,7 +1107,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2 mb-2">
                         Vehicle Type
                         {offerData.vehicle_type && (
-                          <img src={`/${offerData.vehicle_type}.png`} alt="vehicle" className="w-5 h-5 object-contain" />
+                          <span className="text-lg">
+                            {offerData.vehicle_type === 'bike' ? '🏍️' : 
+                             offerData.vehicle_type === 'auto' ? '🛺' : 
+                             (rideCategory === 'auto_split' ? '🚕' : '🚗')}
+                          </span>
                         )}
                       </Label>
                       <Select onValueChange={(v) => { 
