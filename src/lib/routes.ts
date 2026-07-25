@@ -376,6 +376,38 @@ export const COLLEGE_ROUTES: Route[] = [
     id: "S21",
     name: "Miyapur Extended Route",
     waypoints: ["Miyapur", "Allwyn X Roads", "Nizampet", "Pragathi Nagar", "VNR VJIET"]
+  },
+
+  // --- Leisure & Institutional Corridors ---
+  {
+    id: "L1",
+    name: "Amusement Park Trail",
+    waypoints: ["Wonderla Amusement Park", "Escape Water Park", "Ocean Park (Gandipet)", "Elles World", "Wild Waters", "Jalavihar Water Park", "Snow World", "Thrill City", "Leo Splash", "VNR VJIET"]
+  },
+  {
+    id: "L2",
+    name: "Shopping / Mall Corridor",
+    waypoints: ["LuLu Mall (Kukatpally)", "Shoppers Stop (Nexus Mall)", "Fashion Factory (Kukatpally)", "Shoppers Stop (Sarath City)", "Shoppers Stop (Inorbit Mall)", "Shoppers Stop (GVK One)", "Fashion Factory (Banjara Hills)", "VNR VJIET"]
+  },
+  {
+    id: "L3",
+    name: "Hypermarket Express (D-Mart/Vishal)",
+    waypoints: ["D-Mart Kukatpally", "D-Mart Pragathi Nagar", "D-Mart Nizampet", "D-Mart Miyapur", "D-Mart Chandanagar", "Vishal Mega Mart (Kukatpally)", "Ratnadeep", "Vijetha", "VNR VJIET"]
+  },
+  {
+    id: "I1",
+    name: "South-West Institutional Route",
+    waypoints: ["KL University (KLU)", "VJIT", "JBIET", "Vasavi College", "MGIT", "CBIT", "Lords Institute", "VNR VJIET"]
+  },
+  {
+    id: "I2",
+    name: "North Institutional Route",
+    waypoints: ["Malla Reddy University", "CMR Institute", "MLRIT", "IARE", "GRIET", "BVRIT", "Mahindra University", "Tech Mahindra", "VNR VJIET"]
+  },
+  {
+    id: "I3",
+    name: "East Institutional Route",
+    waypoints: ["Anurag University", "SNIST", "BITS Pilani", "NALSAR University", "Osmania University", "VNR VJIET"]
   }
 ];
 
