@@ -696,7 +696,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     )} />
 
                     {ride.is_women_only && (
-                      <div className="absolute top-1 right-0 bg-foreground text-background text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl flex items-center gap-1 shadow">
+                      <div className="absolute top-1 right-0 bg-pink-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl flex items-center gap-1 shadow-md">
                         <Shield className="w-3 h-3" /> Women Only
                       </div>
                     )}
