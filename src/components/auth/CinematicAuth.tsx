@@ -1,16 +1,17 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
+import { useRef, useState, useEffect, Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, ContactShadows, PerspectiveCamera } from "@react-three/drei";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { Suspense } from "react";
 import * as THREE from "three";
 import { RealisticCar } from "../3d/RealisticCar";
 import { AuthForm } from "../AuthForm";
-import { useFrame } from "@react-three/fiber";
+import { WavyBackground } from '@/components/ui/wavy-background';
+import { VehicleBackground } from '@/components/VehicleBackground';
+import { useTheme } from "next-themes";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,6 +34,8 @@ export function CinematicAuth() {
   const brandTextRef = useRef<HTMLDivElement>(null);
   const authFormRef = useRef<HTMLDivElement>(null);
   const sceneBgRef = useRef<HTMLDivElement>(null);
+  const classicBgRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
   const [authInteractive, setAuthInteractive] = useState(false);
@@ -147,6 +150,13 @@ export function CinematicAuth() {
       ease: "power3.out",
     }, 3);
 
+    // Classic Background fades in
+    tl.to(classicBgRef.current, {
+      opacity: 1,
+      duration: 1.5,
+      ease: "power2.inOut",
+    }, 2.5);
+
   }, { scope: containerRef, dependencies: [sceneReady] });
 
   // A helper component to notify when the scene is ready
@@ -224,6 +234,15 @@ export function CinematicAuth() {
           <p className="text-xl md:text-2xl text-slate-300 mt-4 font-light">
             Verified rideshares for your daily commute.
           </p>
+        </div>
+
+        {/* Phase 5 Classic Backgrounds */}
+        <div 
+          ref={classicBgRef} 
+          className="absolute inset-0 z-0 pointer-events-none opacity-0"
+        >
+          <WavyBackground colors={["#38bdf8", "#818cf8", "#c084fc", "#e879f9", "#22d3ee"]} waveWidth={50} backgroundFill={theme === 'dark' ? 'black' : 'white'} />
+          <VehicleBackground />
         </div>
 
         {/* Phase 5 Auth Form */}
