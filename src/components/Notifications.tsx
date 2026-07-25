@@ -47,6 +47,21 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
 
   const unreadCount = notifications?.filter(n => !n.is_read).length || 0
 
+  const pushNativeNotification = (title: string, body: string) => {
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(reg => {
+          reg.showNotification(title, { body, icon: '/vnr-logo.png' })
+        }).catch(() => {
+          new Notification(title, { body, icon: '/vnr-logo.png' })
+        })
+      } else {
+        new Notification(title, { body, icon: '/vnr-logo.png' })
+      }
+    }
+  }
+
+  // Real-time subscription for instant delivery
   useEffect(() => {
     // Request notification permission gracefully
     if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -55,18 +70,12 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
       }
     }
 
-    const pushNativeNotification = (title: string, body: string) => {
-      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.ready.then(reg => {
-            reg.showNotification(title, { body, icon: '/vnr-logo.png' })
-          }).catch(() => {
-            new Notification(title, { body, icon: '/vnr-logo.png' })
-          })
-        } else {
-          new Notification(title, { body, icon: '/vnr-logo.png' })
-        }
-      }
+    if (!currentUserId) return
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.error('Service Worker registration failed:', err)
+      })
     }
 
     const channel = supabase.channel(`public:notifications:${currentUserId}`)
@@ -81,6 +90,9 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
         // Refresh the list
         queryClient.invalidateQueries({ queryKey: ['notifications', currentUserId] })
         
+        if (notifiedIdsRef.current.has(newNotif.id)) return;
+        notifiedIdsRef.current.add(newNotif.id);
+
         const isChat = newNotif.message.includes('|ride:');
         const displayMessage = isChat ? newNotif.message.split('|ride:')[0].trim() : newNotif.message;
 
@@ -113,9 +125,13 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
   useEffect(() => {
     if (notifications && notifications.length > 0) {
       const prev = prevNotifsRef.current
-      if (prev.length > 0) {
-        const newNotifs = notifications.filter(n => !n.is_read && !prev.find(p => p.id === n.id))
+      if (prev.length === 0) {
+        // Initial load: seed notified IDs to avoid spam
+        notifications.forEach(n => notifiedIdsRef.current.add(n.id))
+      } else {
+        const newNotifs = notifications.filter(n => !n.is_read && !notifiedIdsRef.current.has(n.id))
         newNotifs.forEach(newNotif => {
+          notifiedIdsRef.current.add(newNotif.id)
           const isChat = newNotif.message.includes('|ride:');
           const displayMessage = isChat ? newNotif.message.split('|ride:')[0].trim() : newNotif.message;
 
@@ -125,17 +141,7 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
             duration: 6000,
             style: { background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 'bold' }
           })
-          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-            if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification(newNotif.title, { body: displayMessage, icon: '/vnr-logo.png' })
-              }).catch(() => {
-                new Notification(newNotif.title, { body: displayMessage, icon: '/vnr-logo.png' })
-              })
-            } else {
-              new Notification(newNotif.title, { body: displayMessage, icon: '/vnr-logo.png' })
-            }
-          }
+          pushNativeNotification(newNotif.title, displayMessage)
         })
       }
       prevNotifsRef.current = notifications
