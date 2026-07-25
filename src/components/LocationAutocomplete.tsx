@@ -41,35 +41,23 @@ export function LocationAutocomplete({
     
     setIsLocating(true)
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      (position) => {
         const { latitude, longitude } = position.coords
         
-        let locationName = `Precise Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`
+        let closestLoc = VALID_LOCATIONS[0]
+        let minDistance = Infinity
         
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14`, {
-            headers: { 'Accept-Language': 'en' }
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.address) {
-              const area = data.address.suburb || data.address.neighbourhood || data.address.city_district || data.address.town || data.address.county || "Precise Location";
-              locationName = `${area} (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-            }
+        VALID_LOCATIONS.forEach(loc => {
+          const dist = calculateDistance(latitude, longitude, loc.lat, loc.lng)
+          if (dist < minDistance) {
+            minDistance = dist
+            closestLoc = loc
           }
-        } catch (e) {
-          console.error("Reverse geocoding failed", e);
-        }
+        })
         
-        const exactLoc: Location = {
-          id: `precise-${latitude}-${longitude}`,
-          name: locationName,
-          lat: latitude,
-          lng: longitude,
-          distanceToVnr: calculateDistance(VNR_COORDS.lat, VNR_COORDS.lng, latitude, longitude)
+        if (closestLoc) {
+          handleSelect(closestLoc)
         }
-        
-        handleSelect(exactLoc)
         setIsLocating(false)
       },
       (error) => {
