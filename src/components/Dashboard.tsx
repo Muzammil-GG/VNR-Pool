@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
 import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut, CheckCircle2 } from 'lucide-react'
-import { VehicleBackground } from '@/components/VehicleBackground'
+import { WavyBackground } from '@/components/ui/wavy-background'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
@@ -415,7 +415,15 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-10 text-foreground relative z-10">
-      <VehicleBackground />
+      <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
+        <WavyBackground 
+          colors={['#10b981', '#3b82f6', '#059669', '#6366f1']} 
+          waveOpacity={0.25} 
+          blur={10}
+          speed="slow"
+          waveWidth={40}
+        />
+      </div>
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-5 sm:gap-6 relative pt-1 sm:pt-2">
         <div className="absolute left-0 top-0 flex items-center gap-2 z-50">

@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { Loader2, Car } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { VehicleBackground } from '@/components/VehicleBackground'
+import { WavyBackground } from '@/components/ui/wavy-background'
 
 export function AuthForm() {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
@@ -97,7 +97,15 @@ export function AuthForm() {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-slate-50 dark:bg-slate-950">
-      <VehicleBackground />
+      <div className="absolute inset-0 z-0">
+        <WavyBackground 
+          colors={['#3b82f6', '#8b5cf6', '#6366f1', '#4f46e5']} 
+          waveOpacity={0.25} 
+          blur={8}
+          speed="slow"
+          waveWidth={30}
+        />
+      </div>
       
       <div className="absolute top-6 right-6 z-20">
         <ThemeToggle />
