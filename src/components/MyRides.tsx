@@ -272,7 +272,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
             {offeredRides.map(ride => (
               <Card key={ride.id} className="glass-card overflow-hidden">
                 <CardHeader className="bg-secondary/30 pb-4 border-b border-border/40">
-                  <div className="flex justify-between items-start">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="space-y-2">
                       <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-primary" /> {ride.origin}
@@ -286,7 +286,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         Seats: {ride.available_seats}/{ride.total_seats}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-3">
+                    <div className="flex flex-col sm:items-end items-start gap-3 w-full sm:w-auto mt-2 sm:mt-0 border-t sm:border-0 border-border pt-4 sm:pt-0">
                       <span className={cn(
                         "text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5",
                         ride.status === 'completed'
@@ -299,7 +299,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         {ride.status.replace('_', ' ')}
                       </span>
                       {ride.status === 'active' && (
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
                           <Button 
                             variant="ghost" 
                             size="sm" 
@@ -574,7 +574,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                   </CardContent>
 
                   {ride.status !== 'completed' && (
-                    <CardFooter className="pt-2 pb-4 flex gap-2">
+                    <CardFooter className="pt-2 pb-4 flex flex-wrap gap-2">
                       {ride.status === 'active' && (
                         <Button 
                           onClick={() => {
