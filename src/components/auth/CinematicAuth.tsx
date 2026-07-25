@@ -77,14 +77,7 @@ export function CinematicAuth() {
   const authFormRef = useRef<HTMLDivElement>(null);
   const sceneBgRef = useRef<HTMLDivElement>(null);
   const classicBgRef = useRef<HTMLDivElement>(null);
-  
-  // Audio Refs
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const engineOscRef = useRef<OscillatorNode | null>(null);
-  const engineGainRef = useRef<GainNode | null>(null);
-  const engineStartedRef = useRef(false);
-  const startupEndTimeRef = useRef(0);
-  
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { theme } = useTheme();
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
@@ -92,51 +85,31 @@ export function CinematicAuth() {
   const [sceneReady, setSceneReady] = useState(false);
 
   useEffect(() => {
-    // Procedural Engine Sound using Web Audio API
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-    if (AudioContextClass) {
-      const ctx = new AudioContextClass();
-      audioCtxRef.current = ctx;
+    // Initialize real MP3 audio
+    audioRef.current = new Audio("/sounds/engine.mp3");
+    audioRef.current.loop = true;
 
-      const osc = ctx.createOscillator();
-      osc.type = 'sawtooth'; // Raspy engine sound
-      osc.frequency.value = 40; // Idle RPM rumble
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.value = 300; // Let more growl through for a louder, harsher sound
-
-      const gain = ctx.createGain();
-      gain.gain.value = 0.001; // Start almost silent (must not be exactly 0 for exponential ramps)
-
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-
-      engineOscRef.current = osc;
-      engineGainRef.current = gain;
-
-      const unlockAudio = () => {
-        if (ctx.state === 'suspended') {
-          ctx.resume();
-        }
+    // Browsers block autoplay until interaction
+    const unlockAudio = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {});
         window.removeEventListener('pointerdown', unlockAudio);
         window.removeEventListener('keydown', unlockAudio);
         window.removeEventListener('click', unlockAudio);
-      };
-      window.addEventListener('pointerdown', unlockAudio);
-      window.addEventListener('keydown', unlockAudio);
-      window.addEventListener('click', unlockAudio);
+      }
+    };
+    window.addEventListener('pointerdown', unlockAudio);
+    window.addEventListener('keydown', unlockAudio);
+    window.addEventListener('click', unlockAudio);
 
-      return () => {
-        window.removeEventListener('pointerdown', unlockAudio);
-        window.removeEventListener('keydown', unlockAudio);
-        window.removeEventListener('click', unlockAudio);
-        osc.stop();
-        ctx.close();
-      };
-    }
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+      window.removeEventListener('click', unlockAudio);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
 
   useGSAP(() => {
@@ -157,74 +130,20 @@ export function CinematicAuth() {
             setAuthInteractive(false);
           }
 
-          // Handle procedural audio engine fading, revving, and starting
-          if (audioCtxRef.current && engineOscRef.current && engineGainRef.current) {
-            const now = audioCtxRef.current.currentTime;
-
-            // Engine Shut off when scrolling all the way back up
-            if (self.progress < 0.005) {
-              engineStartedRef.current = false;
-              engineGainRef.current.gain.setTargetAtTime(0.001, now, 0.1);
-              return;
+          // Handle real audio fading
+          if (audioRef.current) {
+            // Attempt to play on scroll
+            if (audioRef.current.paused && self.progress > 0.01) {
+              audioRef.current.play().catch(() => {});
             }
 
-            // Engine Startup Sequence!
-            if (self.progress >= 0.005 && !engineStartedRef.current) {
-              engineStartedRef.current = true;
-              
-              // Clear previous schedules
-              engineOscRef.current.frequency.cancelScheduledValues(now);
-              engineGainRef.current.gain.cancelScheduledValues(now);
-              
-              // Crank 1 (wub)
-              engineOscRef.current.frequency.setValueAtTime(10, now);
-              engineGainRef.current.gain.setValueAtTime(1.5, now);
-              engineOscRef.current.frequency.exponentialRampToValueAtTime(30, now + 0.1);
-              engineGainRef.current.gain.exponentialRampToValueAtTime(0.1, now + 0.1);
-              
-              // Crank 2 (wub)
-              engineOscRef.current.frequency.setValueAtTime(10, now + 0.15);
-              engineGainRef.current.gain.setValueAtTime(1.5, now + 0.15);
-              engineOscRef.current.frequency.exponentialRampToValueAtTime(30, now + 0.25);
-              engineGainRef.current.gain.exponentialRampToValueAtTime(0.1, now + 0.25);
-
-              // Ignition VROOM!
-              engineOscRef.current.frequency.setValueAtTime(20, now + 0.3);
-              engineGainRef.current.gain.setValueAtTime(3.5, now + 0.3); // Massive volume spike
-              engineOscRef.current.frequency.exponentialRampToValueAtTime(160, now + 0.7);
-              
-              // Settle to aggressive Idle
-              engineOscRef.current.frequency.exponentialRampToValueAtTime(45, now + 1.4);
-              engineGainRef.current.gain.linearRampToValueAtTime(2.0, now + 1.4); // Settle to loud base idle
-
-              startupEndTimeRef.current = now + 1.4;
-              return; // Skip normal update during startup
-            }
-
-            // Don't override the startup sequence while it's playing
-            if (now < startupEndTimeRef.current) return;
-
-            let vol = 2.0; // Loud base volume
-            let pitch = 45; // Idle pitch
-
-            if (self.progress < 0.95) {
-              // Phase 3 (50% to 75%) is where car drives away
-              if (self.progress > 0.5) {
-                // Fade out volume
-                vol = 2.0 * (1 - ((self.progress - 0.5) / 0.25));
-                // Rev up engine pitch as it accelerates
-                pitch = 45 + ((self.progress - 0.5) / 0.25) * 120; // revs up heavily
-              }
-              vol = Math.max(0.001, Math.min(2.0, vol));
-            } else {
-               vol = 0.001; // completely silent at the very end
-            }
+            let vol = 1.0; // Max HTML5 Audio volume
             
-            // Smoothly ramp audio parameters
-            engineGainRef.current.gain.cancelScheduledValues(now);
-            engineOscRef.current.frequency.cancelScheduledValues(now);
-            engineGainRef.current.gain.setTargetAtTime(vol, now, 0.1);
-            engineOscRef.current.frequency.setTargetAtTime(pitch, now, 0.1);
+            // Phase 3 (50% to 75%) is where car drives away
+            if (self.progress > 0.5) {
+              vol = 1 - ((self.progress - 0.5) / 0.25);
+            }
+            audioRef.current.volume = Math.max(0, Math.min(1, vol));
           }
         },
       },
