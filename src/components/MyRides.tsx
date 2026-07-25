@@ -490,7 +490,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             </div>
                           )}
                         </div>
-                      )})}
+                      );
+                    })()}
                     </div>
                   )}
 
