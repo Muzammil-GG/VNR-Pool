@@ -416,7 +416,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {(() => {
                         const dynamicPrices = getDynamicPrices(ride);
-                        return ride.bookings.map((booking: any) => {
+                        return ride.bookings.filter((b: any) => b.passenger).map((booking: any) => {
                           const isAutoSplit = ride.ride_category === 'auto_split';
                           const displayPrice = isAutoSplit ? dynamicPrices[booking.passenger.id] : booking.fractional_price;
                           
@@ -517,7 +517,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             ₹{getDynamicPrices(ride)[currentUserId] || ride.price_per_seat}
                           </span>
                         </div>
-                        {ride.bookings?.filter((b: any) => b.status !== 'rejected' && b.status !== 'cancelled').map((b: any) => (
+                        {ride.bookings?.filter((b: any) => b.status !== 'rejected' && b.status !== 'cancelled' && b.passenger).map((b: any) => (
                           <div key={b.id} className="flex justify-between items-center bg-card/50 p-3 rounded-xl border border-border/50 shadow-sm">
                             <span className="font-bold text-muted-foreground text-sm truncate pr-2">
                               {b.passenger.full_name} 
@@ -670,7 +670,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                               ₹{getDynamicPrices(ride)[ride.driver_id] || ride.price_per_seat}
                             </span>
                           </div>
-                          {ride.bookings?.filter((bk: any) => bk.status !== 'rejected' && bk.status !== 'cancelled').map((bk: any) => (
+                          {ride.bookings?.filter((bk: any) => bk.status !== 'rejected' && bk.status !== 'cancelled' && bk.passenger).map((bk: any) => (
                             <div key={bk.id} className="flex justify-between items-center bg-card/50 px-2 py-1.5 rounded-lg border border-border/50 shadow-sm">
                               <span className="font-bold text-muted-foreground text-[11px] truncate pr-2">
                                 {bk.passenger.id === currentUserId ? 'You' : bk.passenger.full_name.split(' ')[0]} 
@@ -688,13 +688,13 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     )}
 
                     {/* Co-passengers section */}
-                    {ride.bookings && ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId).length > 0 && (
+                    {ride.bookings && ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger && bk.passenger.id !== currentUserId).length > 0 && (
                       <div className="pt-3 border-t border-border/40 mt-3">
                         <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
                           <Users className="w-3 h-3" /> Co-Passengers
                         </p>
                         <div className="flex flex-wrap gap-1.5">
-                          {ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId).map((bk: any, idx: number) => (
+                          {ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger && bk.passenger.id !== currentUserId).map((bk: any, idx: number) => (
                             <div 
                               key={`${bk.passenger.id}-${idx}`} 
                               className="flex items-center gap-1.5 bg-secondary/60 hover:bg-secondary border border-border/60 px-2 py-1 rounded-full text-xs font-semibold text-foreground cursor-pointer transition-colors"
@@ -725,7 +725,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                           ridemates={[
                             { id: ride.driver.id, full_name: ride.driver.full_name, role: 'Driver' },
                             ...ride.bookings
-                              .filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId)
+                              .filter((bk: any) => bk.status === 'approved' && bk.passenger && bk.passenger.id !== currentUserId)
                               .map((bk: any) => ({
                                 id: bk.passenger.id,
                                 full_name: bk.passenger.full_name,
