@@ -608,7 +608,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="glass-card retro-noise rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end border-emerald-400/10"
+            className="relative z-50 glass-card retro-noise rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end border-emerald-400/10"
           >
             <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
@@ -709,8 +709,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         : 'oklch(0.58 0.22 160 / 0.15)'
                     }
                     className={cn(
-                      "glass-card rounded-2xl overflow-hidden relative group gradient-border float-hover",
-                      ride.is_women_only ? "border-pink-400/40" : ""
+                      "glass-card rounded-2xl overflow-hidden relative group float-hover border transition-colors duration-300 hover:border-emerald-500/50",
+                      ride.is_women_only ? "border-pink-400/40 hover:border-pink-500/60" : "border-border"
                     )}
                   >
                     {/* Subtle top gradient stripe */}
