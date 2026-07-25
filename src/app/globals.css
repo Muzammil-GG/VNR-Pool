@@ -135,7 +135,7 @@ body::after {
   mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
 }
 .dark body::after {
-  background-image: radial-gradient(circle, oklch(0.6 0.08 200 / 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(circle, oklch(0.6 0.08 255 / 0.12) 1px, transparent 1px);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -147,7 +147,7 @@ body::before {
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(ellipse 90% 65% at 0% 0%,   oklch(0.62 0.22 160 / 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 65% at 0% 0%,   oklch(0.62 0.22 255 / 0.14) 0%, transparent 55%),
     radial-gradient(ellipse 80% 70% at 100% 95%, oklch(0.58 0.20 195 / 0.12) 0%, transparent 55%),
     radial-gradient(ellipse 60% 55% at 55% 50%,  oklch(0.60 0.16 175 / 0.06) 0%, transparent 65%);
   animation: auroraShift 22s infinite alternate ease-in-out;
@@ -155,7 +155,7 @@ body::before {
 }
 .dark body::before {
   background:
-    radial-gradient(ellipse 90% 65% at 0% 0%,   oklch(0.55 0.24 160 / 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 65% at 0% 0%,   oklch(0.55 0.24 255 / 0.22) 0%, transparent 55%),
     radial-gradient(ellipse 80% 70% at 100% 95%, oklch(0.50 0.22 195 / 0.18) 0%, transparent 55%),
     radial-gradient(ellipse 60% 55% at 55% 50%,  oklch(0.12 0.008 245 / 0.70) 0%, transparent 65%);
 }
@@ -213,7 +213,7 @@ body::before {
     0 16px 48px rgba(0,0,0,0.60),
     0 32px 80px rgba(0,0,0,0.40),
     inset 0 1px 0 rgba(255,255,255,0.09),
-    0 0 0 1px oklch(0.58 0.22 160 / 0.12);
+    0 0 0 1px oklch(0.58 0.22 255 / 0.12);
   border-color: rgba(255,255,255,0.13);
 }
 
@@ -234,8 +234,8 @@ body::before {
   background: conic-gradient(
     from var(--angle, 0deg),
     transparent 0deg,
-    oklch(0.58 0.22 160) 60deg,
-    oklch(0.65 0.20 200) 120deg,
+    oklch(0.58 0.22 255) 60deg,
+    oklch(0.65 0.20 255) 120deg,
     oklch(0.60 0.22 280) 180deg,
     transparent 240deg
   );
@@ -293,7 +293,7 @@ body::before {
   position: absolute;
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle, oklch(0.58 0.22 160 / 0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, oklch(0.58 0.22 255 / 0.18) 0%, transparent 70%);
   border-radius: 50%;
   top: -100px;
   left: -100px;
@@ -335,7 +335,7 @@ body::before {
    TAB GLOW
    ═══════════════════════════════════════════════════════════ */
 .tab-active-glow {
-  box-shadow: 0 2px 20px oklch(0.58 0.22 160 / 45%), 0 0 0 1px oklch(0.58 0.22 160 / 20%);
+  box-shadow: 0 2px 20px oklch(0.58 0.22 255 / 45%), 0 0 0 1px oklch(0.58 0.22 255 / 20%);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -351,7 +351,7 @@ body::before {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, oklch(0.58 0.22 160), oklch(0.65 0.20 200));
+  background: linear-gradient(90deg, oklch(0.58 0.22 255), oklch(0.65 0.20 255));
   border-radius: 2px;
   transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
 }
@@ -439,15 +439,15 @@ body::before {
    EMERALD BADGE
    ═══════════════════════════════════════════════════════════ */
 .emerald-chip {
-  background: linear-gradient(135deg, oklch(0.58 0.22 160 / 0.15), oklch(0.65 0.20 200 / 0.10));
-  border: 1px solid oklch(0.58 0.22 160 / 0.30);
-  color: oklch(0.40 0.20 160);
+  background: linear-gradient(135deg, oklch(0.58 0.22 255 / 0.15), oklch(0.65 0.20 255 / 0.10));
+  border: 1px solid oklch(0.58 0.22 255 / 0.30);
+  color: oklch(0.40 0.20 255);
   backdrop-filter: blur(8px);
 }
 .dark .emerald-chip {
-  background: linear-gradient(135deg, oklch(0.58 0.22 160 / 0.20), oklch(0.65 0.20 200 / 0.12));
-  border: 1px solid oklch(0.58 0.22 160 / 0.35);
-  color: oklch(0.72 0.18 160);
+  background: linear-gradient(135deg, oklch(0.58 0.22 255 / 0.20), oklch(0.65 0.20 255 / 0.12));
+  border: 1px solid oklch(0.58 0.22 255 / 0.35);
+  color: oklch(0.72 0.18 255);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -472,7 +472,7 @@ body::before {
    SMOOTH FOCUS RINGS
    ═══════════════════════════════════════════════════════════ */
 :focus-visible {
-  outline: 2px solid oklch(0.58 0.22 160 / 60%);
+  outline: 2px solid oklch(0.58 0.22 255 / 60%);
   outline-offset: 3px;
   border-radius: 4px;
   transition: outline 0.2s ease;
@@ -502,7 +502,7 @@ body::before {
    GRADIENT TEXT
    ═══════════════════════════════════════════════════════════ */
 .gradient-text {
-  background: linear-gradient(135deg, oklch(0.52 0.24 160) 0%, oklch(0.58 0.22 200) 50%, oklch(0.55 0.20 240) 100%);
+  background: linear-gradient(135deg, oklch(0.52 0.24 230) 0%, oklch(0.58 0.22 250) 50%, oklch(0.55 0.20 260) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -512,7 +512,7 @@ body::before {
    INPUT GLOW ON FOCUS
    ═══════════════════════════════════════════════════════════ */
 input:focus, textarea:focus {
-  box-shadow: 0 0 0 3px oklch(0.58 0.22 160 / 0.12);
+  box-shadow: 0 0 0 3px oklch(0.58 0.22 255 / 0.12);
 }
 
 /* ═══════════════════════════════════════════════════════════

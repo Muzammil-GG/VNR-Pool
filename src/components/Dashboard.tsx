@@ -549,7 +549,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <motion.div
                   layoutId="active-tab"
                   className="absolute inset-0 rounded-full -z-10 tab-active-glow"
-                  style={{ background: 'linear-gradient(135deg, oklch(0.58 0.22 160), oklch(0.65 0.2 200))' }}
+                  style={{ background: 'linear-gradient(135deg, oklch(0.58 0.22 250), oklch(0.65 0.2 260))' }}
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.55 }}
                 />
               )}
@@ -572,7 +572,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         ].map(({ key, label, icon: Icon, color }) => (
           <SpotlightCard
             key={key}
-            spotlightColor={color === 'yellow' ? 'oklch(0.70 0.18 80 / 0.18)' : 'oklch(0.58 0.22 160 / 0.18)'}
+            spotlightColor={color === 'yellow' ? 'oklch(0.70 0.18 80 / 0.18)' : 'oklch(0.58 0.22 255 / 0.18)'}
             className={cn(
               "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale select-none",
               rideCategory === key

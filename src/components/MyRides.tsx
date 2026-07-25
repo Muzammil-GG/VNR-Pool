@@ -251,7 +251,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                 <motion.div
                   layoutId="myrides-tab"
                   className="absolute inset-0 rounded-full -z-10 tab-active-glow"
-                  style={{ background: 'linear-gradient(135deg, oklch(0.58 0.22 160), oklch(0.65 0.2 200))' }}
+                  style={{ background: 'linear-gradient(135deg, oklch(0.58 0.22 250), oklch(0.65 0.2 260))' }}
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.55 }}
                 />
               )}
