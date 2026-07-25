@@ -567,7 +567,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             key={key}
             spotlightColor={color === 'yellow' ? 'oklch(0.70 0.18 80 / 0.18)' : 'oklch(0.58 0.22 160 / 0.18)'}
             className={cn(
-              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale gradient-border",
+              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale gradient-border select-none",
               rideCategory === key
                 ? color === 'yellow'
                   ? "border-yellow-400/70 bg-gradient-to-br from-yellow-400/12 to-amber-400/5 shadow-[0_4px_28px_rgba(234,179,8,0.22)] scale-[1.04]"
@@ -575,6 +575,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 : "border-border bg-card/50 hover:bg-card/80 opacity-55 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm glass-card"
             )}
             onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => e.key === 'Enter' && setRideCategory(key as 'auto_split' | 'personal_vehicle')}
           >
             <div className={cn(
               "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110",

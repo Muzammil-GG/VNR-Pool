@@ -3,13 +3,13 @@
 import { useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 
-interface SpotlightCardProps {
+interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
   className?: string
   spotlightColor?: string
 }
 
-export function SpotlightCard({ children, className, spotlightColor = "oklch(0.58 0.22 160 / 0.15)" }: SpotlightCardProps) {
+export function SpotlightCard({ children, className, spotlightColor = "oklch(0.58 0.22 160 / 0.15)", ...props }: SpotlightCardProps) {
   const divRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [opacity, setOpacity] = useState(0)
@@ -27,6 +27,7 @@ export function SpotlightCard({ children, className, spotlightColor = "oklch(0.5
       onMouseEnter={() => setOpacity(1)}
       onMouseLeave={() => setOpacity(0)}
       className={cn("relative overflow-hidden", className)}
+      {...props}
     >
       <div
         className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-500"
