@@ -1041,63 +1041,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             ) : (
               <div className="p-6 md:p-8 space-y-6">
                 
-                {/* Row 1: Vehicle Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2">
-                      Vehicle Type
-                      {offerData.vehicle_type && (
-                        <img src={`/${offerData.vehicle_type}.png`} alt="vehicle" className="w-5 h-5 object-contain" />
-                      )}
-                    </Label>
-                    <Select onValueChange={(v) => { 
-                      if (v) {
-                        const maxSeats = v === 'bike' ? 1 : v === 'auto' ? 2 : 4;
-                        let defaultNum = offerData.vehicle_number;
-                        if (v === 'car' && currentUserProfile?.car_number) defaultNum = currentUserProfile.car_number;
-                        if (v === 'bike' && currentUserProfile?.bike_number) defaultNum = currentUserProfile.bike_number;
-                        
-                        setOfferData({
-                          ...offerData, 
-                          vehicle_type: v as 'bike' | 'auto' | 'car',
-                          vehicle_number: defaultNum,
-                          total_seats: offerData.total_seats > maxSeats ? maxSeats : offerData.total_seats
-                        })
-                      }
-                    }} value={offerData.vehicle_type}>
-                      <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus:ring-blue-500">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700">
-                        {rideCategory === 'personal_vehicle' ? (
-                          <>
-                            <SelectItem value="bike">Bike</SelectItem>
-                            <SelectItem value="car">Car</SelectItem>
-                          </>
-                        ) : (
-                          <>
-                            <SelectItem value="auto">Auto</SelectItem>
-                            <SelectItem value="car">Cab</SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {rideCategory === 'personal_vehicle' && (
-                    <div className="space-y-2">
-                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
-                      <Input 
-                        value={offerData.vehicle_number}
-                        onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
-                        className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase"
-                        placeholder="TS09XX1234"
-                      />
-                    </div>
-                  )}
-                </div>
-                
-                {/* Row 2: Locations */}
+                {/* Row 1: Locations */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Origin</Label>
@@ -1117,39 +1061,96 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   </div>
                 </div>
                 
-                {/* Row 3: Route */}
-                <div className="space-y-2">
-                  <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
-                  <div className="relative">
-                    <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
-                      <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-[72px] rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4">
-                        <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700 shadow-xl max-h-[300px]">
-                        <SelectItem value="none">
-                          <div className="font-bold">Custom Route</div>
-                          <div className="text-xs text-muted-foreground">No intermediate pickups</div>
-                        </SelectItem>
-                        {COLLEGE_ROUTES.filter(route => {
-                          if (!offerData.origin && !offerData.destination) return true;
-                          const clean = (s: string) => s.toLowerCase().trim();
-                          const o = offerData.origin ? clean(offerData.origin) : '';
-                          const d = offerData.destination ? clean(offerData.destination) : '';
-                          
-                          const oIdx = o ? route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w))) : -1;
-                          const dIdx = d ? route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w))) : -1;
-                          
-                          if (o && !d) return oIdx !== -1;
-                          if (!o && d) return dIdx !== -1;
-                          return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
-                        }).map((route, idx) => (
-                          <SelectItem key={route.id} value={route.id}>
-                            <div className="font-bold">Option {idx + 1}</div>
-                            <div className="text-xs text-slate-500">Via {route.waypoints.join(' → ')}</div>
+                {/* Row 2: Route & Vehicle Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
+                    <div className="relative">
+                      <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
+                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-[72px] rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4">
+                          <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700 shadow-xl max-h-[300px]">
+                          <SelectItem value="none">
+                            <div className="font-bold">Custom Route</div>
+                            <div className="text-xs text-muted-foreground">No intermediate pickups</div>
                           </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                          {COLLEGE_ROUTES.filter(route => {
+                            if (!offerData.origin && !offerData.destination) return true;
+                            const clean = (s: string) => s.toLowerCase().trim();
+                            const o = offerData.origin ? clean(offerData.origin) : '';
+                            const d = offerData.destination ? clean(offerData.destination) : '';
+                            
+                            const oIdx = o ? route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w))) : -1;
+                            const dIdx = d ? route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w))) : -1;
+                            
+                            if (o && !d) return oIdx !== -1;
+                            if (!o && d) return dIdx !== -1;
+                            return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
+                          }).map((route, idx) => (
+                            <SelectItem key={route.id} value={route.id}>
+                              <div className="font-bold">Option {idx + 1}</div>
+                              <div className="text-xs text-slate-500">Via {route.waypoints.join(' → ')}</div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className={cn("grid gap-4", rideCategory === 'personal_vehicle' ? "grid-cols-2" : "grid-cols-1")}>
+                    <div className="space-y-2 flex flex-col justify-end">
+                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2 mb-2">
+                        Vehicle Type
+                        {offerData.vehicle_type && (
+                          <img src={`/${offerData.vehicle_type}.png`} alt="vehicle" className="w-5 h-5 object-contain" />
+                        )}
+                      </Label>
+                      <Select onValueChange={(v) => { 
+                        if (v) {
+                          const maxSeats = v === 'bike' ? 1 : v === 'auto' ? 2 : 4;
+                          let defaultNum = offerData.vehicle_number;
+                          if (v === 'car' && currentUserProfile?.car_number) defaultNum = currentUserProfile.car_number;
+                          if (v === 'bike' && currentUserProfile?.bike_number) defaultNum = currentUserProfile.bike_number;
+                          
+                          setOfferData({
+                            ...offerData, 
+                            vehicle_type: v as 'bike' | 'auto' | 'car',
+                            vehicle_number: defaultNum,
+                            total_seats: offerData.total_seats > maxSeats ? maxSeats : offerData.total_seats
+                          })
+                        }
+                      }} value={offerData.vehicle_type}>
+                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus:ring-blue-500">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700">
+                          {rideCategory === 'personal_vehicle' ? (
+                            <>
+                              <SelectItem value="bike">Bike</SelectItem>
+                              <SelectItem value="car">Car</SelectItem>
+                            </>
+                          ) : (
+                            <>
+                              <SelectItem value="auto">Auto</SelectItem>
+                              <SelectItem value="car">Cab</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {rideCategory === 'personal_vehicle' && (
+                      <div className="space-y-2 flex flex-col justify-end">
+                        <Label className="font-semibold text-sm text-foreground dark:text-slate-300 mb-2">Vehicle No.</Label>
+                        <Input 
+                          value={offerData.vehicle_number}
+                          onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
+                          className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase"
+                          placeholder="TS09XX1234"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
