@@ -127,7 +127,7 @@ export function ChatModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-neutral-900 border-white/10 text-white">
         <DialogHeader className="flex flex-row items-center justify-between border-b border-white/10 pb-4">
-          <DialogTitle>Chat with {otherUserName}</DialogTitle>
+          <DialogTitle>Ride Chat</DialogTitle>
         </DialogHeader>
 
         <div 
