@@ -1100,31 +1100,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 {/* Row 2: Locations */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <div className="flex justify-between items-end">
-                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Origin</Label>
-                      <button 
-                        type="button" 
-                        className="text-[10px] sm:text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex items-center gap-1"
-                        onClick={() => {
-                          if (navigator.geolocation) {
-                            toast.loading('Locating...', { id: 'locating' });
-                            navigator.geolocation.getCurrentPosition(
-                              async (pos) => {
-                                const lat = pos.coords.latitude;
-                                const lon = pos.coords.longitude;
-                                const loc = await findBestMatchLocation(lat, lon);
-                                setOfferData({...offerData, origin: loc.name});
-                                toast.success(`Located: ${loc.name}`, { id: 'locating' });
-                              },
-                              () => toast.error('Failed to get location', { id: 'locating' }),
-                              { enableHighAccuracy: true }
-                            );
-                          }
-                        }}
-                      >
-                        <MapPin className="w-3 h-3" /> Use Current Location
-                      </button>
-                    </div>
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Origin</Label>
                     <LocationAutocomplete 
                       value={offerData.origin}
                       onChange={(v) => setOfferData({...offerData, origin: v})}
