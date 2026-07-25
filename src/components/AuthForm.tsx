@@ -16,7 +16,7 @@ import { VehicleBackground } from '@/components/VehicleBackground'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
 import Image from 'next/image'
 
-export function AuthForm() {
+export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -99,23 +99,28 @@ export function AuthForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-slate-50 dark:bg-slate-950">
-      <div className="absolute inset-0 z-0">
-        <WavyBackground 
-          colors={['#1d4ed8', '#2563eb', '#3b82f6', '#eab308', '#f59e0b']} 
-          waveOpacity={0.8} 
-          blur={2}
-          speed="fast"
-          waveWidth={2}
-        />
-      </div>
-      <div className="absolute inset-0 z-[1] pointer-events-none">
-        <VehicleBackground />
-      </div>
+    <div className={`flex items-center justify-center min-h-screen p-4 relative overflow-hidden ${isCinematic ? 'bg-transparent' : 'bg-slate-50 dark:bg-slate-950'}`}>
       
-      <div className="absolute top-6 right-6 z-20">
-        <ThemeToggle />
-      </div>
+      {!isCinematic && (
+        <>
+          <div className="absolute inset-0 z-0">
+            <WavyBackground 
+              colors={['#1d4ed8', '#2563eb', '#3b82f6', '#eab308', '#f59e0b']} 
+              waveOpacity={0.8} 
+              blur={2}
+              speed="fast"
+              waveWidth={2}
+            />
+          </div>
+          <div className="absolute inset-0 z-[1] pointer-events-none">
+            <VehicleBackground />
+          </div>
+          
+          <div className="absolute top-6 right-6 z-20">
+            <ThemeToggle />
+          </div>
+        </>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { AuthForm } from '@/components/AuthForm'
+import { CinematicAuth } from '@/components/auth/CinematicAuth'
 import { OnboardingForm } from '@/components/OnboardingForm'
 import { Dashboard } from '@/components/Dashboard'
 
@@ -9,7 +9,7 @@ export default async function Home() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    return <AuthForm />
+    return <CinematicAuth />
   }
 
   // Check if profile is completed
