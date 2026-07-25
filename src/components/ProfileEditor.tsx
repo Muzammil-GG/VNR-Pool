@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, isValidIndianVehicleNumber } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 
 export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
@@ -326,7 +326,17 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                   <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
                   <Button 
                     className="bg-primary hover:opacity-90 text-primary-foreground"
-                    onClick={() => updateProfile.mutate(formData)}
+                    onClick={() => {
+                      if (formData.car_number && !isValidIndianVehicleNumber(formData.car_number)) {
+                        toast.error("Please enter a valid Indian car number (e.g., TS09XX1234)")
+                        return
+                      }
+                      if (formData.bike_number && !isValidIndianVehicleNumber(formData.bike_number)) {
+                        toast.error("Please enter a valid Indian bike number (e.g., TS09YY5678)")
+                        return
+                      }
+                      updateProfile.mutate(formData)
+                    }}
                     disabled={updateProfile.isPending}
                   >
                     {updateProfile.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}

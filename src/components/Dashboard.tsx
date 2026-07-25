@@ -24,7 +24,7 @@ import { Notifications } from '@/components/Notifications'
 import { ProfileEditor } from '@/components/ProfileEditor'
 import { MyRides } from '@/components/MyRides'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import { cn, isValidIndianVehicleNumber } from '@/lib/utils'
 import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -363,6 +363,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
       if (rideCategory === 'personal_vehicle' && !offerData.vehicle_number) {
         throw new Error('Vehicle number is required for Student Pool rides.')
+      }
+
+      if (rideCategory === 'personal_vehicle' && offerData.vehicle_number && !isValidIndianVehicleNumber(offerData.vehicle_number)) {
+        throw new Error('Please enter a valid Indian vehicle number (e.g., TS09XX1234).')
       }
 
       const originLower = offerData.origin.toLowerCase();

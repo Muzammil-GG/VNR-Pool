@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react'
+import { cn, isValidIndianVehicleNumber } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/input'
@@ -156,6 +157,14 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
   }
 
   const handleSubmit = async () => {
+    if (formData.car_number && !isValidIndianVehicleNumber(formData.car_number)) {
+      toast.error("Please enter a valid Indian car number (e.g., TS09XX1234)")
+      return
+    }
+    if (formData.bike_number && !isValidIndianVehicleNumber(formData.bike_number)) {
+      toast.error("Please enter a valid Indian bike number (e.g., TS09YY5678)")
+      return
+    }
 
     setLoading(true)
     try {
