@@ -7,6 +7,7 @@ import { MapPin, Search, Navigation, Loader2 } from "lucide-react"
 import { VALID_LOCATIONS, Location, calculateDistance, VNR_COORDS } from "@/lib/locations"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 interface LocationAutocompleteProps {
   value: string;
@@ -35,7 +36,7 @@ export function LocationAutocomplete({
     e.stopPropagation();
     
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser")
+      toast.error("Geolocation is not supported by your browser")
       return
     }
     
@@ -62,7 +63,7 @@ export function LocationAutocomplete({
       },
       (error) => {
         console.error("Error getting location:", error)
-        alert("Failed to get current location. Please check your permissions.")
+        toast.error("Failed to get current location. Please check your permissions.")
         setIsLocating(false)
       },
       { enableHighAccuracy: true }
