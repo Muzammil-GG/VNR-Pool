@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 import { Footer } from "@/components/Footer";
+import { SWRegister } from "@/components/SWRegister";
 
 export default async function RootLayout({
   children,
@@ -21,6 +22,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-background text-foreground min-h-screen antialiased flex flex-col`}>
         <Providers>
+          <SWRegister />
           <div className="flex-1">
             {children}
           </div>

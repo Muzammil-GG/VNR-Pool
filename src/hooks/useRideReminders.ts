@@ -82,7 +82,15 @@ export function useRideReminders(userId: string | undefined) {
 
             // Browser Notification
             if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-              new Notification(title, { body })
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(reg => {
+                  reg.showNotification(title, { body, icon: '/vnr-logo.png' })
+                }).catch(() => {
+                  new Notification(title, { body, icon: '/vnr-logo.png' })
+                })
+              } else {
+                new Notification(title, { body, icon: '/vnr-logo.png' })
+              }
             }
 
             notifiedRides.current.add(key)

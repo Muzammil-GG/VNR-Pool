@@ -55,6 +55,20 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
       }
     }
 
+    const pushNativeNotification = (title: string, body: string) => {
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(title, { body, icon: '/vnr-logo.png' })
+          }).catch(() => {
+            new Notification(title, { body, icon: '/vnr-logo.png' })
+          })
+        } else {
+          new Notification(title, { body, icon: '/vnr-logo.png' })
+        }
+      }
+    }
+
     const channel = supabase.channel(`public:notifications:${currentUserId}`)
       .on('postgres_changes', { 
         event: 'INSERT', 
@@ -81,9 +95,7 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
         })
 
         // Push Native Web Notification if permitted
-        if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-          new Notification(newNotif.title, { body: newNotif.message })
-        }
+        pushNativeNotification(newNotif.title, newNotif.message)
       })
       .subscribe()
 
@@ -108,7 +120,15 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
             style: { background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 'bold' }
           })
           if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification(newNotif.title, { body: newNotif.message })
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then(reg => {
+                reg.showNotification(newNotif.title, { body: newNotif.message, icon: '/vnr-logo.png' })
+              }).catch(() => {
+                new Notification(newNotif.title, { body: newNotif.message, icon: '/vnr-logo.png' })
+              })
+            } else {
+              new Notification(newNotif.title, { body: newNotif.message, icon: '/vnr-logo.png' })
+            }
           }
         })
       }
