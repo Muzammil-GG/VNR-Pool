@@ -45,13 +45,15 @@ export function ChatModal({
 
     // Fetch initial messages
     const fetchMessages = async () => {
-      const { data } = await supabase
-        .from('messages')
-        .select('*, sender:users(full_name)')
-        .eq('ride_id', rideId)
-        .order('created_at', { ascending: true })
-
-      if (data) setMessages(data)
+      try {
+        const res = await fetch(`/api/get-messages?rideId=${rideId}`)
+        if (res.ok) {
+          const { data } = await res.json()
+          if (data) setMessages(data)
+        }
+      } catch (err) {
+        console.error("Failed to fetch messages:", err)
+      }
     }
 
     fetchMessages()
