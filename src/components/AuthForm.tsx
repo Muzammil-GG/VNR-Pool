@@ -234,6 +234,7 @@ export function AuthForm() {
           </div>
         </CardContent>
       </Card>
+      </SpotlightCard>
       </motion.div>
     </div>
   )
