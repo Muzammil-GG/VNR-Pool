@@ -80,7 +80,7 @@ export function CinematicAuth() {
       y: 10,
       z: -4, // smoothly orbit towards the back
       duration: 1,
-      ease: "power1.inOut",
+      ease: "none", // Linear ease prevents stopping in the middle of the arc
     }, 0);
 
     // Fade out initial scroll text
@@ -92,7 +92,7 @@ export function CinematicAuth() {
       y: 3,
       z: -12, // Behind the car
       duration: 1,
-      ease: "power1.inOut",
+      ease: "power2.out", // Softly land behind the car
     }, 1);
 
     // 50% Mark: Brake lights flicker on
