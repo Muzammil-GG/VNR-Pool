@@ -1155,12 +1155,16 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           <div className="text-xs text-muted-foreground">No intermediate pickups</div>
                         </SelectItem>
                         {COLLEGE_ROUTES.filter(route => {
-                          if (!offerData.origin || !offerData.destination) return true;
+                          if (!offerData.origin && !offerData.destination) return true;
                           const clean = (s: string) => s.toLowerCase().trim();
-                          const o = clean(offerData.origin);
-                          const d = clean(offerData.destination);
-                          const oIdx = route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w)));
-                          const dIdx = route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w)));
+                          const o = offerData.origin ? clean(offerData.origin) : '';
+                          const d = offerData.destination ? clean(offerData.destination) : '';
+                          
+                          const oIdx = o ? route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w))) : -1;
+                          const dIdx = d ? route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w))) : -1;
+                          
+                          if (o && !d) return oIdx !== -1;
+                          if (!o && d) return dIdx !== -1;
                           return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
                         }).map((route, idx) => (
                           <SelectItem key={route.id} value={route.id}>
