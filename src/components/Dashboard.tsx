@@ -47,8 +47,9 @@ type Ride = {
   available_seats: number
   price_per_seat: number
   is_women_only: boolean
-  status: string
-  driver: { id: string, full_name: string, gender: string, mobile_number: string, total_rating_score: number, rating_count: number, avatar_url?: string }
+  status: 'active' | 'in_progress' | 'completed' | 'cancelled'
+  route_id?: string | null
+  driver?: { id: string, full_name: string, gender: string, mobile_number: string, total_rating_score: number, rating_count: number, avatar_url?: string }
   bookings?: {
     id: string
     status: string
@@ -194,9 +195,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             
             const isFractional = checkFractionalMatch(ride.route_id, checkOrigin, checkDest);
             if (isFractional) {
-              (ride as any).matchType = 'fractional'
+              (ride as any).matchType = 'fractional';
               (ride as any).fractional_price = calculateFractionalPrice(ride.route_id, checkOrigin, checkDest, ride.price_per_seat);
-              return true
+              return true;
             }
           }
           return false
@@ -972,7 +973,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   College Bus Route (Optional)
                   <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded uppercase font-bold">Recommended</span>
                 </Label>
-                <Select value={offerData.route_id} onValueChange={v => setOfferData({...offerData, route_id: v})}>
+                <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
                   <SelectTrigger className="bg-background border-border focus-visible:ring-emerald-500">
                     <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
                   </SelectTrigger>
