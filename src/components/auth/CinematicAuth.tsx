@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, ContactShadows, PerspectiveCamera } from "@react-three/drei";
 import gsap from "gsap";
@@ -24,9 +24,10 @@ export function CinematicAuth() {
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
   const [authInteractive, setAuthInteractive] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
 
   useGSAP(() => {
-    if (!cameraRef.current || !carGroupRef.current || !roadRef.current) return;
+    if (!sceneReady || !cameraRef.current || !carGroupRef.current || !roadRef.current) return;
 
     // We create a master timeline tied to the scroll
     const tl = gsap.timeline({
@@ -136,7 +137,17 @@ export function CinematicAuth() {
       ease: "power3.out",
     }, 3);
 
-  }, { scope: containerRef });
+  }, { scope: containerRef, dependencies: [sceneReady] });
+
+  // A helper component to notify when the scene is ready
+  const SceneNotifier = () => {
+    useEffect(() => {
+      // Just a tiny timeout to ensure refs are populated
+      const timer = setTimeout(() => setSceneReady(true), 100);
+      return () => clearTimeout(timer);
+    }, []);
+    return null;
+  };
 
   return (
     <div ref={containerRef} className="relative w-full" style={{ height: "400vh" }}>
@@ -171,6 +182,8 @@ export function CinematicAuth() {
           </mesh>
 
           <ContactShadows resolution={1024} scale={20} blur={2} opacity={0.5} far={10} color="#000000" />
+          
+          <SceneNotifier />
         </Canvas>
       </div>
 
