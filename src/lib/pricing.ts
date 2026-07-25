@@ -12,7 +12,9 @@ export function calculateFractionalPrice(
   routeId: string, 
   startLoc: string, 
   endLoc: string, 
-  totalSeatPrice: number
+  totalSeatPrice: number,
+  driverOrigin: string,
+  driverDest: string
 ): number {
   const route = getRouteById(routeId);
   if (!route) return totalSeatPrice;
@@ -20,22 +22,34 @@ export function calculateFractionalPrice(
   const clean = (s: string) => s.toLowerCase().trim();
   const start = clean(startLoc);
   const end = clean(endLoc);
+  const dOrig = clean(driverOrigin);
+  const dDest = clean(driverDest);
   
   const startIndex = route.waypoints.findIndex(w => clean(w).includes(start) || start.includes(clean(w)));
   const endIndex = route.waypoints.findIndex(w => clean(w).includes(end) || end.includes(clean(w)));
+  
+  const driverStartIndex = route.waypoints.findIndex(w => clean(w).includes(dOrig) || dOrig.includes(clean(w)));
+  const driverEndIndex = route.waypoints.findIndex(w => clean(w).includes(dDest) || dDest.includes(clean(w)));
 
   if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
     return totalSeatPrice; // Fallback if match fails
   }
+  
+  // Calculate total stops based on driver's actual route, not the predefined master route
+  let driverStops = route.waypoints.length - 1;
+  if (driverStartIndex !== -1 && driverEndIndex !== -1 && driverStartIndex < driverEndIndex) {
+    driverStops = driverEndIndex - driverStartIndex;
+  }
 
   const passengerStops = endIndex - startIndex;
-  const totalStops = route.waypoints.length - 1;
 
-  if (totalStops <= 0) return totalSeatPrice;
+  if (driverStops <= 0) return totalSeatPrice;
 
-  // Simple proportional pricing based on stops. 
-  // We can add a base fare (e.g. 20% flat + 80% distance) if needed, but simple ratio is standard.
-  const rawPrice = (passengerStops / totalStops) * totalSeatPrice;
+  // Simple proportional pricing based on driver's actual route stops
+  let rawPrice = (passengerStops / driverStops) * totalSeatPrice;
+  
+  // Cap the raw price at the total seat price (in case passenger somehow travels more than driver)
+  if (rawPrice > totalSeatPrice) rawPrice = totalSeatPrice;
   
   // Floor to nearest integer, but never less than 10 rs minimum (unless total seat price is somehow less)
   const minimumPrice = Math.min(10, totalSeatPrice);

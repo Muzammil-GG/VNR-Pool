@@ -244,11 +244,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           // Fractional (en-route) match
           // If the ride has a predefined route, try to match the passenger's search against the route waypoints.
           if (ride.route_id && (oMatch || dMatch)) {
-            const isFractional = checkFractionalMatch(ride.route_id, checkOrigin, checkDest);
+            const isFractional = checkFractionalMatch(ride.route_id, checkOrigin, checkDest, ride.origin, ride.destination);
             if (isFractional) {
               (ride as any).matchType = 'fractional';
               if (ride.ride_category !== 'auto_split') {
-                (ride as any).fractional_price = calculateFractionalPrice(ride.route_id, checkOrigin, checkDest, ride.price_per_seat);
+                (ride as any).fractional_price = calculateFractionalPrice(ride.route_id, checkOrigin, checkDest, ride.price_per_seat, ride.origin, ride.destination);
               }
               return true;
             }
