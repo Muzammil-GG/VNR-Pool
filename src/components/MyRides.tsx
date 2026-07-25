@@ -141,6 +141,13 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
 
   const deleteRide = useMutation({
     mutationFn: async (rideId: string) => {
+      // First delete messages
+      await fetch('/api/delete-messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rideId })
+      }).catch(console.error);
+
       const { error } = await supabase.from('rides').update({ status: 'cancelled' }).eq('id', rideId)
       if (error) throw error
     },
@@ -192,6 +199,13 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           }))
         )
       }
+
+      // Delete chats
+      await fetch('/api/delete-messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rideId: ride.id })
+      }).catch(console.error);
     },
     onSuccess: () => {
       toast.success('Ride completed! Passengers notified.');
