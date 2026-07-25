@@ -101,15 +101,13 @@ export function ChatModal({
     const newMsg = inputText
     setInputText('')
 
-    const { error } = await supabase
-      .from('messages')
-      .insert({
-        ride_id: rideId,
-        sender_id: currentUserId,
-        text: newMsg
-      })
+    const res = await fetch('/api/send-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rideId, text: newMsg })
+    })
 
-    if (error) {
+    if (!res.ok) {
       toast.error("Failed to send message")
       setInputText(newMsg)
     } else {
