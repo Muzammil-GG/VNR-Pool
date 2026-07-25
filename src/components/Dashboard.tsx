@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import anime from 'animejs'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
@@ -27,6 +28,10 @@ import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { PublicProfileDialog } from '@/components/PublicProfileDialog'
+import { COLLEGE_ROUTES, getRouteById, checkFractionalMatch } from '@/lib/routes'
+import { calculateFractionalPrice } from '@/lib/pricing'
+
+const RouteMap = dynamic(() => import('@/components/RouteMap'), { ssr: false, loading: () => <div className="h-48 w-full bg-secondary animate-pulse rounded-xl" /> })
 
 
 type Ride = {
@@ -58,6 +63,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   
   const [activeTab, setActiveTab] = useState(TABS[0])
   const [rideCategory, setRideCategory] = useState<'auto_split' | 'personal_vehicle'>('personal_vehicle')
+  const [expandedMaps, setExpandedMaps] = useState<string[]>([])
   
   // Filters
   const [originFilter, setOriginFilter] = useState('')
@@ -133,21 +139,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         .eq('status', 'active')
         .eq('ride_category', rideCategory)
 
-      let effectiveOrigin = originFilter
-      let effectiveDest = destinationFilter
-      
-      if (originFilter) {
-        const match = findBestMatchLocation(originFilter)
-        if (match) effectiveOrigin = match.name
-      }
-      if (destinationFilter) {
-        const match = findBestMatchLocation(destinationFilter)
-        if (match) effectiveDest = match.name
-      }
-
-      if (effectiveOrigin) q = q.ilike('origin', `%${effectiveOrigin}%`)
-      if (effectiveDest) q = q.ilike('destination', `%${effectiveDest}%`)
-      
       // Enforce women-only visibility rules
       if (currentUserProfile?.gender !== 'female') {
         q = q.eq('is_women_only', false)
@@ -165,7 +156,52 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
       const { data, error } = await q.order('created_at', { ascending: false })
       if (error) throw error
-      return data as Ride[]
+
+      let fetchedRides = data as Ride[]
+
+      let effectiveOrigin = originFilter
+      let effectiveDest = destinationFilter
+      
+      if (originFilter) {
+        const match = findBestMatchLocation(originFilter)
+        if (match) effectiveOrigin = match.name
+      }
+      if (destinationFilter) {
+        const match = findBestMatchLocation(destinationFilter)
+        if (match) effectiveDest = match.name
+      }
+
+      if (effectiveOrigin || effectiveDest) {
+        const cleanStr = (s: string) => s.toLowerCase().trim()
+        const oMatch = effectiveOrigin ? cleanStr(effectiveOrigin) : ''
+        const dMatch = effectiveDest ? cleanStr(effectiveDest) : ''
+
+        fetchedRides = fetchedRides.filter(ride => {
+          // Exact match
+          const exactOrigin = !oMatch || cleanStr(ride.origin).includes(oMatch)
+          const exactDest = !dMatch || cleanStr(ride.destination).includes(dMatch)
+          if (exactOrigin && exactDest) {
+            (ride as any).matchType = 'exact'
+            return true
+          }
+
+          // Fractional (en-route) match
+          // If the ride has a predefined route, try to match the passenger's search against the route waypoints.
+          if (ride.route_id && (oMatch || dMatch)) {
+            const checkOrigin = effectiveOrigin || ride.origin;
+            const checkDest = effectiveDest || ride.destination;
+            
+            const isFractional = checkFractionalMatch(ride.route_id, checkOrigin, checkDest);
+            if (isFractional) {
+              (ride as any).matchType = 'fractional'
+              (ride as any).fractional_price = calculateFractionalPrice(ride.route_id, checkOrigin, checkDest, ride.price_per_seat);
+              return true
+            }
+          }
+          return false
+        })
+      }
+      return fetchedRides
     },
     enabled: !!currentUserProfile,
     refetchInterval: 5000
@@ -242,7 +278,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     vehicle_number: '',
     total_seats: 1,
     price_per_seat: 0,
-    is_women_only: false
+    is_women_only: false,
+    route_id: ''
   })
 
   const offerMutation = useMutation({
@@ -273,6 +310,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       
       const { error } = await supabase.from('rides').insert({
         ...offerData,
+        route_id: offerData.route_id === 'none' ? null : offerData.route_id,
         departure_time: isoDepartureTime,
         driver_id: currentUserId,
         ride_category: rideCategory,
@@ -288,16 +326,26 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     onError: (e) => toast.error(e.message)
   })
 
-  const handleBook = async (rideId: string, isWomenOnly: boolean) => {
-    if (isWomenOnly && currentUserProfile?.gender !== 'female') {
+  const handleBook = async (ride: any) => {
+    if (ride.is_women_only && currentUserProfile?.gender !== 'female') {
       toast.error('This is a women-only ride.')
       return
     }
-    const { error } = await supabase.from('bookings').insert({
-      ride_id: rideId,
+    
+    let bookingData: any = {
+      ride_id: ride.id,
       passenger_id: currentUserId,
       status: 'pending'
-    })
+    }
+
+    if (ride.matchType === 'fractional') {
+      bookingData.pickup_location = originFilter || ride.origin
+      bookingData.dropoff_location = destinationFilter || ride.destination
+      bookingData.fractional_price = ride.fractional_price
+    }
+
+    const { error } = await supabase.from('bookings').insert(bookingData)
+    
     if (error) {
       toast.error(error.message)
     } else {
@@ -653,8 +701,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         <div className="text-right flex-shrink-0">
                           {ride.ride_category === 'auto_split' ? (
                             <>
-                              <div className="text-3xl font-black text-muted-foreground price-glow">
-                                ₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}
+                              <div className="text-3xl font-black text-muted-foreground price-glow flex items-end justify-end gap-1">
+                                {(ride as any).matchType === 'fractional' && (
+                                  <span className="text-[10px] text-emerald-500 line-through mb-1">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}</span>
+                                )}
+                                ₹{(ride as any).matchType === 'fractional' 
+                                  ? Math.round((ride as any).fractional_price / (1 + (ride.total_seats - ride.available_seats))) 
+                                  : Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}
                               </div>
                               <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex flex-col items-end gap-1 mt-1">
                                 <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Current Split</span>
@@ -667,8 +720,15 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             </>
                           ) : (
                             <>
-                              <div className="text-3xl font-black text-primary price-glow">₹{ride.price_per_seat}</div>
-                              <div className="text-[10px] text-muted-foreground font-semibold">per seat</div>
+                              <div className="text-3xl font-black text-primary price-glow flex items-end justify-end gap-1">
+                                {(ride as any).matchType === 'fractional' && (
+                                  <span className="text-[10px] text-emerald-500 line-through mb-1">₹{ride.price_per_seat}</span>
+                                )}
+                                ₹{(ride as any).matchType === 'fractional' ? (ride as any).fractional_price : ride.price_per_seat}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground font-semibold">
+                                {(ride as any).matchType === 'fractional' ? 'your fraction' : 'per seat'}
+                              </div>
                             </>
                           )}
                         </div>
@@ -708,6 +768,31 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           ))}
                         </div>
                       </div>
+
+                      {/* Map Toggle & Rendering */}
+                      {(ride.route_id || (ride as any).matchType === 'fractional') && (
+                        <div className="pt-2">
+                          <button 
+                            onClick={() => setExpandedMaps(prev => prev.includes(ride.id) ? prev.filter(id => id !== ride.id) : [...prev, ride.id])}
+                            className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                          >
+                            <MapPin className="w-3 h-3" />
+                            {expandedMaps.includes(ride.id) ? 'Hide Route Map' : 'View Route Map'}
+                          </button>
+                          
+                          {(ride as any).matchType === 'fractional' && (
+                            <div className="mt-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs px-2.5 py-1.5 rounded-md font-medium">
+                              <span className="font-bold">✨ En-Route Match!</span> You are boarding halfway through the route, so you only pay a fraction of the cost.
+                            </div>
+                          )}
+
+                          {expandedMaps.includes(ride.id) && ride.route_id && (
+                            <div className="mt-3">
+                              <RouteMap waypoints={getRouteById(ride.route_id)?.waypoints || []} />
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Co-passengers */}
                       {ride.bookings && ride.bookings.filter(b => b.status === 'approved').length > 0 && (
@@ -780,7 +865,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           return (
                             <motion.div className="flex-1" whileTap={{ scale: 0.97 }}>
                               <Button
-                                onClick={() => handleBook(ride.id, ride.is_women_only)}
+                                onClick={() => handleBook(ride)}
                                 disabled={ride.driver_id === currentUserId || isFull || hasActiveBooking}
                                 className={cn(
                                   "w-full font-bold  transition-all duration-300",
@@ -880,6 +965,33 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   />
                 </div>
               </div>
+              
+              <div className="space-y-2">
+                <Label className="font-semibold text-foreground flex items-center gap-2">
+                  College Bus Route (Optional)
+                  <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded uppercase font-bold">Recommended</span>
+                </Label>
+                <Select value={offerData.route_id} onValueChange={v => setOfferData({...offerData, route_id: v})}>
+                  <SelectTrigger className="bg-background border-border focus-visible:ring-emerald-500">
+                    <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border max-h-[300px]">
+                    <SelectItem value="none">Custom Route (No En-Route Matches)</SelectItem>
+                    {COLLEGE_ROUTES.map(route => (
+                      <SelectItem key={route.id} value={route.id}>{route.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {offerData.route_id && offerData.route_id !== 'none' && (
+                  <div className="mt-2 p-3 bg-secondary/50 rounded-lg border border-border/50">
+                    <p className="text-xs text-muted-foreground font-medium mb-1">Route Waypoints:</p>
+                    <p className="text-xs font-semibold leading-relaxed">
+                      {getRouteById(offerData.route_id)?.waypoints.join(' ➔ ')}
+                    </p>
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <Label className="font-semibold text-foreground">Departure Time</Label>
                 <Input 

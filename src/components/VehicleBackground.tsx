@@ -87,10 +87,10 @@ export function VehicleBackground() {
     }
   }, [updatePositions])
 
-  if (!mounted) return <div className="fixed inset-0 z-0 bg-slate-50 dark:bg-slate-950 pointer-events-none" />
+  if (!mounted) return <div className="fixed inset-0 -z-10 bg-slate-50 dark:bg-slate-950 pointer-events-none" />
 
   return (
-    <div ref={containerRef} className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-slate-50 dark:bg-slate-950">
+    <div ref={containerRef} className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-slate-50 dark:bg-slate-950">
       {/* Subtle dot grid */}
       <div
         className="absolute inset-0 opacity-30 dark:opacity-15"

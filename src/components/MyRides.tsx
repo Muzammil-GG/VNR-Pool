@@ -57,6 +57,9 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           bookings(
             id,
             status,
+            pickup_location,
+            dropoff_location,
+            fractional_price,
             passenger:users!bookings_passenger_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count, avatar_url)
           )
         `)
@@ -365,6 +368,23 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 )} />
                                 {renderStars(booking.passenger.total_rating_score, booking.passenger.rating_count)}
                               </p>
+                              
+                              {booking.pickup_location && booking.dropoff_location && (
+                                <div className="mt-1.5 p-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
+                                  <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1 uppercase tracking-wider mb-0.5">
+                                    <MapPin className="w-3 h-3" /> En-Route Match
+                                  </p>
+                                  <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">
+                                    <span className="font-semibold">{booking.pickup_location}</span> to <span className="font-semibold">{booking.dropoff_location}</span>
+                                  </p>
+                                  {booking.fractional_price && (
+                                    <p className="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold mt-0.5">
+                                      Pays fractional fare: ₹{booking.fractional_price}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+
                               <p className="text-xs text-muted-foreground font-medium mt-1">
                                 Status: <span className={cn(
                                   "font-bold uppercase tracking-wider",
