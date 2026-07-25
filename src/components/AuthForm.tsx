@@ -14,6 +14,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { WavyBackground } from '@/components/ui/wavy-background'
 import { VehicleBackground } from '@/components/VehicleBackground'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
+import Image from 'next/image'
 
 export function AuthForm() {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
@@ -126,8 +127,8 @@ export function AuthForm() {
           <Card className="w-full bg-card/80 backdrop-blur-3xl border-0 shadow-none rounded-[1.8rem] overflow-hidden relative">
             
             <CardHeader className="relative z-10 text-center pb-4 pt-8">
-              <div className="w-16 h-16 mx-auto bg-blue-700 rounded-2xl flex items-center justify-center shadow-[0_8px_32px_rgba(29,78,216,0.4)] mb-4 hover:scale-105 transition-transform duration-300">
-                <Car className="w-8 h-8 text-white" />
+              <div className="w-24 h-24 mx-auto rounded-3xl flex items-center justify-center shadow-[0_8px_32px_rgba(29,78,216,0.3)] mb-4 hover:scale-105 transition-transform duration-300 overflow-hidden relative border-2 border-blue-500/20 bg-[#1e3a8a]">
+                <Image src="/vnr-logo.png" alt="VNR VJIET" fill className="object-contain p-1.5" />
               </div>
               <CardTitle className="hero-title text-4xl font-black tracking-tight gradient-text mb-2">
                 VNR Pool

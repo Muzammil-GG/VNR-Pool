@@ -54,13 +54,11 @@ export const WavyBackground = ({
     ctx = canvas.getContext("2d")
     w = ctx.canvas.width = window.innerWidth
     h = ctx.canvas.height = window.innerHeight
-    ctx.filter = `blur(${blur}px)`
     nt = 0
     
     window.onresize = function () {
       w = ctx.canvas.width = window.innerWidth
       h = ctx.canvas.height = window.innerHeight
-      ctx.filter = `blur(${blur}px)`
     }
     
     render()
@@ -78,7 +76,7 @@ export const WavyBackground = ({
     nt += getSpeed()
     for (i = 0; i < n; i++) {
       ctx.beginPath()
-      ctx.lineWidth = waveWidth || 50
+      ctx.lineWidth = waveWidth || 4
       ctx.strokeStyle = waveColors[i % waveColors.length]
       
       for (x = 0; x < w; x += 5) {
@@ -94,7 +92,7 @@ export const WavyBackground = ({
   let animationId: number
   const render = () => {
     ctx.clearRect(0, 0, w, h)
-    ctx.globalAlpha = waveOpacity || 0.5
+    ctx.globalAlpha = waveOpacity || 0.8
     if (backgroundFill) {
       ctx.fillStyle = backgroundFill
       ctx.fillRect(0, 0, w, h)
@@ -110,17 +108,6 @@ export const WavyBackground = ({
     }
   }, [])
 
-  const [isSafari, setIsSafari] = useState(false)
-  
-  useEffect(() => {
-    // Check for Safari, as it has issues with canvas blur
-    setIsSafari(
-      typeof window !== "undefined" &&
-        navigator.userAgent.includes("Safari") &&
-        !navigator.userAgent.includes("Chrome")
-    )
-  }, [])
-
   return (
     <div
       className={cn(
@@ -132,9 +119,6 @@ export const WavyBackground = ({
         className="absolute inset-0 z-0"
         ref={canvasRef}
         id="canvas"
-        style={{
-          ...(isSafari ? { filter: `blur(${blur}px)` } : {}),
-        }}
       ></canvas>
       <div className={cn("relative z-10", className)} {...props}>
         {children}

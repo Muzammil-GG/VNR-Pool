@@ -422,11 +422,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           <Sheet>
             <SheetTrigger 
               render={
-                <button className="inline-flex items-center justify-center whitespace-nowrap bg-transparent w-12 h-12 rounded-full p-0 overflow-hidden border-2 border-border shadow-sm hover:ring-2 hover:ring-emerald-500 hover:bg-accent hover:text-accent-foreground transition-all cursor-pointer">
+                <button className="inline-flex items-center justify-center whitespace-nowrap bg-transparent w-12 h-12 rounded-full p-0 overflow-hidden border-2 border-border shadow-sm hover:ring-2 hover:ring-blue-500 hover:bg-accent hover:text-accent-foreground transition-all cursor-pointer">
                   {currentUserProfile?.avatar_url ? (
                     <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold text-lg">
+                    <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-lg">
                       {currentUserProfile?.full_name ? currentUserProfile.full_name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   )}
@@ -443,7 +443,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     {currentUserProfile?.avatar_url ? (
                       <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold text-2xl">
+                      <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-2xl">
                         {currentUserProfile?.full_name ? currentUserProfile.full_name.charAt(0).toUpperCase() : 'U'}
                       </div>
                     )}
@@ -462,7 +462,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
-                      <Zap className="w-4 h-4 text-emerald-500" />
+                      <Zap className="w-4 h-4 text-blue-500" />
                     </div>
                     <span className="font-medium">Theme</span>
                   </div>
@@ -472,7 +472,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
-                      <ShieldAlert className="w-4 h-4 text-emerald-500" />
+                      <ShieldAlert className="w-4 h-4 text-blue-500" />
                     </div>
                     <span className="font-medium">Notifications</span>
                   </div>
@@ -506,10 +506,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           {/* Live pulse */}
           <div className="flex items-center justify-center gap-2 mb-3">
             <span className="relative flex h-2 w-2">
-              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-80" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-80" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
             </span>
-            <span className="retro-badge text-emerald-500 border-emerald-500/30 px-2 py-0.5">Live Rides</span>
+            <span className="retro-badge text-blue-500 border-blue-500/30 px-2 py-0.5">Live Rides</span>
           </div>
 
           <h1 className="hero-title gradient-text">
@@ -561,7 +561,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       >
         {[
           { key: 'auto_split',       label: 'Auto / Cab Split', icon: Navigation, color: 'yellow' },
-          { key: 'personal_vehicle', label: 'Student Pool',     icon: Car,        color: 'emerald' },
+          { key: 'personal_vehicle', label: 'Student Pool',     icon: Car,        color: 'blue' },
         ].map(({ key, label, icon: Icon, color }) => (
           <SpotlightCard
             key={key}
@@ -571,7 +571,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               rideCategory === key
                 ? color === 'yellow'
                   ? "border-yellow-500/50 bg-card shadow-md scale-[1.04]"
-                  : "border-emerald-500/50 bg-card shadow-md scale-[1.04]"
+                  : "border-blue-500/50 bg-card shadow-md scale-[1.04]"
                 : "border-border bg-card/40 hover:bg-card/70 opacity-60 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm glass-card"
             )}
             onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
@@ -582,13 +582,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             <div className={cn(
               "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110",
               rideCategory === key
-                ? color === 'yellow' ? 'bg-yellow-400/20' : 'bg-emerald-400/20'
+                ? color === 'yellow' ? 'bg-yellow-400/20' : 'bg-blue-400/20'
                 : 'bg-muted/60'
             )}>
               <Icon className={cn(
                 "w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300",
                 rideCategory === key
-                  ? color === 'yellow' ? 'text-yellow-500' : 'text-emerald-500'
+                  ? color === 'yellow' ? 'text-yellow-500' : 'text-blue-500'
                   : 'text-muted-foreground'
               )} />
             </div>
@@ -608,7 +608,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="relative z-50 glass-card retro-noise rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end border-emerald-400/10"
+            className="relative z-50 glass-card retro-noise rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end border-blue-400/10"
           >
             <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
@@ -618,7 +618,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. JNTU Metro"
                 value={originFilter}
                 onChange={setOriginFilter}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium w-full"
+                className="bg-background/70 border-border text-foreground focus-visible:ring-blue-500 rounded-xl font-medium w-full"
               />
             </div>
             <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
@@ -629,7 +629,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. VNR VJIET"
                 value={destinationFilter}
                 onChange={setDestinationFilter}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium w-full"
+                className="bg-background/70 border-border text-foreground focus-visible:ring-blue-500 rounded-xl font-medium w-full"
               />
             </div>
             <div className="space-y-1.5 w-full sm:flex-[0.5] min-w-[120px]">
@@ -652,7 +652,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   value={dateFilter}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={e => setDateFilter(e.target.value)}
-                  className="h-[42px] bg-background/70 border-border text-foreground focus-visible:ring-emerald-500 rounded-xl font-medium px-3 w-full"
+                  className="h-[42px] bg-background/70 border-border text-foreground focus-visible:ring-blue-500 rounded-xl font-medium px-3 w-full"
                 />
               </div>
             </div>
@@ -709,7 +709,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         : 'oklch(0.58 0.22 160 / 0.15)'
                     }
                     className={cn(
-                      "glass-card rounded-2xl overflow-hidden relative group float-hover border transition-colors duration-300 hover:border-emerald-500/50",
+                      "glass-card rounded-2xl overflow-hidden relative group float-hover border transition-colors duration-300 hover:border-blue-500/50",
                       ride.is_women_only ? "border-pink-400/40 hover:border-pink-500/60" : "border-border"
                     )}
                   >
@@ -720,7 +720,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         ? "bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500"
                         : ride.ride_category === 'auto_split'
                           ? "bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400"
-                          : "bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400"
+                          : "bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400"
                     )} />
 
                     {ride.is_women_only && (
@@ -743,7 +743,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               "w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
                               !ride.driver.avatar_url && (ride.driver.gender === 'female'
                                 ? "bg-gradient-to-br from-pink-400 to-rose-500"
-                                : "bg-gradient-to-br from-emerald-400 to-teal-600")
+                                : "bg-gradient-to-br from-blue-400 to-teal-600")
                             )}>
                               {ride.driver.avatar_url ? (
                                 <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
@@ -762,7 +762,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide border",
                               ride.ride_category === 'auto_split'
                                 ? "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-muted/30 border-amber-200 dark:border-amber-800/40"
-                                : "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800/40"
+                                : "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800/40"
                             )}>
                               {ride.ride_category === 'auto_split' ? 'Auto Split' : 'Student Pool'}
                             </span>
@@ -785,7 +785,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             <>
                               <div className="text-3xl font-black text-muted-foreground price-glow flex items-end justify-end gap-1">
                                 {(ride as any).matchType === 'fractional' && (
-                                  <span className="text-[10px] text-emerald-500 line-through mb-1">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}</span>
+                                  <span className="text-[10px] text-blue-500 line-through mb-1">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}</span>
                                 )}
                                 ₹{(ride as any).matchType === 'fractional' 
                                   ? Math.round((ride as any).fractional_price / (1 + (ride.total_seats - ride.available_seats))) 
@@ -794,8 +794,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex flex-col items-end gap-1 mt-1">
                                 <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Current Split</span>
                                 {ride.available_seats > 0 && (
-                                  <span className="text-emerald-600 dark:text-emerald-400 normal-case tracking-normal">
-                                    Drops to <strong className="text-emerald-700 dark:text-emerald-300">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats) + 1))}</strong> if 1 more joins
+                                  <span className="text-blue-600 dark:text-blue-400 normal-case tracking-normal">
+                                    Drops to <strong className="text-blue-700 dark:text-blue-300">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats) + 1))}</strong> if 1 more joins
                                   </span>
                                 )}
                               </div>
@@ -804,7 +804,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             <>
                               <div className="text-3xl font-black text-primary price-glow flex items-end justify-end gap-1">
                                 {(ride as any).matchType === 'fractional' && (
-                                  <span className="text-[10px] text-emerald-500 line-through mb-1">₹{ride.price_per_seat}</span>
+                                  <span className="text-[10px] text-blue-500 line-through mb-1">₹{ride.price_per_seat}</span>
                                 )}
                                 ₹{(ride as any).matchType === 'fractional' ? (ride as any).fractional_price : ride.price_per_seat}
                               </div>
@@ -863,7 +863,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           </button>
                           
                           {(ride as any).matchType === 'fractional' && (
-                            <div className="mt-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs px-2.5 py-1.5 rounded-md font-medium">
+                            <div className="mt-1 bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1.5 rounded-md font-medium">
                               <span className="font-bold">✨ En-Route Match!</span> You are boarding halfway through the route, so you only pay a fraction of the cost.
                             </div>
                           )}
@@ -961,7 +961,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                       ? "bg-muted text-muted-foreground cursor-not-allowed"
                                       : hasActiveBooking
                                         ? "bg-muted text-muted-foreground cursor-not-allowed border border-border/50 shadow-inner"
-                                        : "shiny-btn bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-none"
+                                        : "shiny-btn bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-none"
                                 )}
                               >
                                 {ride.driver_id === currentUserId 
@@ -979,7 +979,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="bg-transparent border-border hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-300 flex-shrink-0 transition-colors"
+                          className="bg-transparent border-border hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-300 flex-shrink-0 transition-colors"
                           onClick={() => setChatRide(ride)}
                           title="Chat with Rider"
                         >
@@ -1055,10 +1055,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <div className="space-y-2">
                 <Label className="font-semibold text-foreground flex items-center gap-2">
                   College Bus Route (Optional)
-                  <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded uppercase font-bold">Recommended</span>
+                  <span className="text-[10px] bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded uppercase font-bold">Recommended</span>
                 </Label>
                 <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
-                  <SelectTrigger className="bg-background border-border focus-visible:ring-emerald-500">
+                  <SelectTrigger className="bg-background border-border focus-visible:ring-blue-500">
                     <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border-border shadow-xl max-h-[300px]">
@@ -1093,7 +1093,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   value={offerData.departure_time}
                   min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                   onChange={e => setOfferData({...offerData, departure_time: e.target.value})}
-                  className="bg-background border-border focus-visible:ring-emerald-500"
+                  className="bg-background border-border focus-visible:ring-blue-500"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1119,7 +1119,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       })
                     }
                   }} value={offerData.vehicle_type}>
-                    <SelectTrigger className="bg-background border-border focus-visible:ring-emerald-500">
+                    <SelectTrigger className="bg-background border-border focus-visible:ring-blue-500">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-background border-border shadow-xl">
@@ -1143,7 +1143,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     <Input 
                       value={offerData.vehicle_number}
                       onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
-                      className="bg-background border-border focus-visible:ring-emerald-500"
+                      className="bg-background border-border focus-visible:ring-blue-500"
                       placeholder="TS09XX1234"
                     />
                   </div>
@@ -1166,7 +1166,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       if (val > max) val = max;
                       setOfferData({...offerData, total_seats: val});
                     }}
-                    className="bg-background border-border focus-visible:ring-emerald-500"
+                    className="bg-background border-border focus-visible:ring-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
@@ -1177,7 +1177,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     type="number" min="0"
                     value={offerData.price_per_seat || ''}
                     onChange={e => setOfferData({...offerData, price_per_seat: parseInt(e.target.value) || 0})}
-                    className="bg-background border-border focus-visible:ring-emerald-500"
+                    className="bg-background border-border focus-visible:ring-blue-500"
                   />
                 </div>
               </div>
@@ -1201,7 +1201,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <Button
                 onClick={() => offerMutation.mutate()}
                 disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
-                className="w-full h-12 shiny-btn bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all"
+                className="w-full h-12 shiny-btn bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all"
               >
                 {offerMutation.isPending ? 'Publishing…' : '🚀 Publish Ride'}
                 </Button>
