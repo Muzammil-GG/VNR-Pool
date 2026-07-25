@@ -41,6 +41,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    // --- Notification Logic ---
+    // Fetch ride details to know who to notify
+    const { data: rideData } = await adminClient
+      .from('rides')
+      .select('driver_id, bookings(passenger_id, status)')
+      .eq('id', rideId)
+      .single()
+
+    if (rideData) {
+      const isDriver = user.id === rideData.driver_id;
+      const notifications = [];
+
+      if (isDriver) {
+        // Driver sent message -> Notify all approved passengers
+        rideData.bookings?.forEach((b: any) => {
+          if (b.status === 'approved' && b.passenger_id !== user.id) {
+            notifications.push({
+              user_id: b.passenger_id,
+              title: 'New Message from Driver 🚗💬',
+              message: `${text} |ride:${rideId}`
+            });
+          }
+        });
+      } else {
+        // Passenger sent message -> Notify driver only
+        notifications.push({
+          user_id: rideData.driver_id,
+          title: 'New Message from Passenger 💬',
+          message: `${text} |ride:${rideId}`
+        });
+      }
+
+      if (notifications.length > 0) {
+        await adminClient.from('notifications').insert(notifications);
+      }
+    }
+
     return NextResponse.json({ success: true })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Internal server error' }, { status: 500 })

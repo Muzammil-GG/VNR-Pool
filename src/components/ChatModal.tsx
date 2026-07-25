@@ -120,32 +120,6 @@ export function ChatModal({
     if (!res.ok) {
       toast.error("Failed to send message")
       setInputText(newMsg)
-    } else {
-      // Notify other participants
-      const { data: rideData } = await supabase
-        .from('rides')
-        .select('driver_id, bookings(passenger_id, status)')
-        .eq('id', rideId)
-        .single();
-
-      if (rideData) {
-        const participants = new Set<string>();
-        participants.add(rideData.driver_id);
-        rideData.bookings?.forEach((b: any) => {
-          if (b.status === 'approved') participants.add(b.passenger_id);
-        });
-        participants.delete(currentUserId); // Don't notify self
-
-        const notificationsToInsert = Array.from(participants).map(userId => ({
-          user_id: userId,
-          title: 'New Message 💬',
-          message: `${newMsg} |ride:${rideId}`
-        }));
-
-        if (notificationsToInsert.length > 0) {
-          await supabase.from('notifications').insert(notificationsToInsert);
-        }
-      }
     }
   }
 
@@ -162,6 +136,8 @@ export function ChatModal({
         >
           {messages.map((msg) => {
             const isMe = msg.sender_id === currentUserId
+            const isDriver = msg.sender_id === otherUserId
+            
             return (
               <div 
                 key={msg.id}
@@ -169,13 +145,24 @@ export function ChatModal({
                   "px-4 py-2 rounded-2xl max-w-[80%] break-words flex flex-col",
                   isMe 
                     ? "bg-blue-600 self-end rounded-br-sm" 
-                    : "bg-neutral-800 self-start rounded-bl-sm"
+                    : isDriver
+                      ? "bg-indigo-600/40 border border-indigo-500/50 self-start rounded-bl-sm"
+                      : "bg-neutral-800 self-start rounded-bl-sm"
                 )}
               >
                 {!isMe && msg.sender?.full_name && (
-                  <span className="text-[10px] font-bold text-blue-400 mb-0.5">{msg.sender.full_name}</span>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className={cn("text-[10px] font-bold", isDriver ? "text-indigo-300" : "text-blue-400")}>
+                      {msg.sender.full_name}
+                    </span>
+                    {isDriver && (
+                      <span className="text-[8px] bg-indigo-500/30 text-indigo-200 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                        Driver
+                      </span>
+                    )}
+                  </div>
                 )}
-                <span>{msg.text}</span>
+                <span className={isDriver && !isMe ? "text-indigo-50" : ""}>{msg.text}</span>
               </div>
             )
           })}
