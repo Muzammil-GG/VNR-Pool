@@ -194,7 +194,7 @@ export function CinematicAuth() {
     const phase2Pos = isMobile ? { x: 0, y: 5, z: -18 } : { x: 0, y: 3, z: -12 };
 
     gsap.set(cameraRef.current.position, startPos); // Forward-right side view
-    gsap.set(carGroupRef.current.position, { y: 0.18 }); // Precisely sink car so tires touch the asphalt
+    gsap.set(carGroupRef.current.position, { y: 0.0 }); // Set car perfectly to ground level
 
     // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
@@ -296,9 +296,9 @@ export function CinematicAuth() {
         className="fixed inset-0 -z-20 bg-slate-200 dark:bg-slate-900 transition-colors duration-300"
       />
 
-      {/* 3D Canvas Layer */}
+      {/* 3D Canvas Layer - pointer-events-none prevents it from blocking touch scrolling on mobile */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <Canvas shadows dpr={[1, 2]} gl={{ antialias: true }}>
+        <Canvas shadows gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
           <fog attach="fog" args={["#020617", 20, 120]} />
           <PerspectiveCamera ref={cameraRef} makeDefault fov={45} />
           <ambientLight intensity={0.5} />
@@ -311,8 +311,8 @@ export function CinematicAuth() {
             <RealisticCar ref={carGroupRef} />
           </Suspense>
 
-          {/* Ground reflection shadow for realism */}
-          <ContactShadows resolution={2048} scale={30} blur={1.5} opacity={0.8} far={10} color="#000000" />
+          {/* Ground reflection shadow for realism - reduced resolution to 512 to prevent mobile WebGL crashes */}
+          <ContactShadows resolution={512} scale={30} blur={1.5} opacity={0.8} far={10} color="#000000" />
 
           {/* The Road - Extruded very wide to prevent seeing the void edge */}
           <mesh ref={roadRef} position={[0, -0.01, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
