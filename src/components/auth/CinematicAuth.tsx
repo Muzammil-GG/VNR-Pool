@@ -180,14 +180,19 @@ export function CinematicAuth() {
     });
 
     // Setup initial states
-    gsap.set(cameraRef.current.position, { x: 12, y: 2, z: 4 }); // Forward-right side view
-    gsap.set(carGroupRef.current.position, { y: 0 }); // Set car back on the ground
+    const isMobile = window.innerWidth < 768;
+
+    // Responsive Camera Setup: push the camera further back on narrow mobile screens
+    const startPos = isMobile ? { x: 18, y: 4, z: 8 } : { x: 12, y: 2, z: 4 };
+    const phase1Pos = isMobile ? { x: 8, y: 12, z: -6 } : { x: 6, y: 10, z: -4 };
+    const phase2Pos = isMobile ? { x: 0, y: 5, z: -18 } : { x: 0, y: 3, z: -12 };
+
+    gsap.set(cameraRef.current.position, startPos); // Forward-right side view
+    gsap.set(carGroupRef.current.position, { y: 0.38 }); // Lift car exactly 0.38 units so tires sit perfectly on the road
 
     // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
-      x: 6,
-      y: 10,
-      z: -4, // smoothly orbit towards the back
+      ...phase1Pos,
       duration: 1,
       ease: "none", // Linear ease prevents stopping in the middle of the arc
     }, 0);
@@ -197,9 +202,7 @@ export function CinematicAuth() {
 
     // Phase 2 -> 3: Top-Diagonal to Direct Back (25% to 50% of timeline)
     tl.to(cameraRef.current.position, {
-      x: 0,
-      y: 3,
-      z: -12, // Behind the car
+      ...phase2Pos,
       duration: 1,
       ease: "power2.out", // Softly land behind the car
     }, 1);
