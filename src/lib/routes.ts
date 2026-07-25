@@ -24,7 +24,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "S5",
     name: "Attapur to VNRVJIET (via Mehdipatnam)",
-    waypoints: ["Attapur Ring Road", "Attapur (Pillar No 143)", "Attapur", "Mehdipatnam (Reti Bowli)", "Retibowli", "Mehdipatnam Bus Stop", "Mehdipatnam", "Masab Tank", "Banjara Hills", "Panjagutta Metro Station", "Punjagutta", "Ameerpet X Roads", "Ameerpet", "SR Nagar Metro Station", "SR Nagar", "ESI Hospital Metro", "Erragadda Metro Station", "Erragadda (Gokul Theatre)", "Erragadda", "Bharat Nagar Metro", "VNR VJIET"]
+    waypoints: ["Attapur Ring Road", "Hyderguda (Attapur)", "Attapur (Pillar No 143)", "Rambagh (Attapur)", "Attapur Pillar 80", "Attapur", "Langar Houz", "Mehdipatnam (Reti Bowli)", "Retibowli", "Mehdipatnam Bus Stop", "Mehdipatnam", "Masab Tank", "Banjara Hills", "Panjagutta Metro Station", "Punjagutta", "Ameerpet X Roads", "Ameerpet", "SR Nagar Metro Station", "SR Nagar", "ESI Hospital Metro", "Erragadda Metro Station", "Erragadda (Gokul Theatre)", "Erragadda", "Bharat Nagar Metro", "VNR VJIET"]
   },
   {
     id: "S6",
@@ -71,7 +71,7 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "C1",
     name: "Attapur Corridor",
-    waypoints: ["Attapur Ring Road", "Attapur (Pillar No 143)", "Attapur", "Upperpally", "Mehdipatnam Bus Stop", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Tolichowki Flyover", "Gachibowli", "Hitech City", "Kukatpally", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["APPA Junction (Peerancheru)", "Kalimandir", "Kismatpur X Roads", "Bandlaguda Jagir", "Sun City (Bandlaguda)", "Shivrampally", "Rajendra Nagar", "Attapur Ring Road", "Hyderguda (Attapur)", "Attapur (Pillar No 143)", "Rambagh (Attapur)", "Attapur Pillar 80", "Attapur", "Upperpally", "Langar Houz", "Mehdipatnam Bus Stop", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Tolichowki Flyover", "Gachibowli", "Hitech City", "Kukatpally", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C2",

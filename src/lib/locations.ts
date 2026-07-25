@@ -178,6 +178,19 @@ const rawLocations: Omit<Location, 'id' | 'distanceToVnr'>[] = [
   { name: "Attapur Ring Road", lat: 17.3560, lng: 78.4230 },
   { name: "Mehdipatnam Bus Stop", lat: 17.3921, lng: 78.4323 },
   { name: "Tolichowki Flyover", lat: 17.3992, lng: 78.4116 },
+  // ── NEW: South-West / Attapur / Kismatpur Region ──
+  { name: "Kismatpur X Roads", lat: 17.3385, lng: 78.3970 },
+  { name: "Bandlaguda Jagir", lat: 17.3450, lng: 78.3930 },
+  { name: "Sun City (Bandlaguda)", lat: 17.3520, lng: 78.3970 },
+  { name: "Rajendra Nagar", lat: 17.3400, lng: 78.3680 },
+  { name: "APPA Junction (Peerancheru)", lat: 17.3554, lng: 78.3601 },
+  { name: "Kalimandir", lat: 17.3582, lng: 78.3756 },
+  { name: "Langar Houz", lat: 17.3820, lng: 78.4110 },
+  { name: "Hyderguda (Attapur)", lat: 17.3685, lng: 78.4355 },
+  { name: "Upperpally", lat: 17.3458, lng: 78.4180 },
+  { name: "Shivrampally", lat: 17.3235, lng: 78.4320 },
+  { name: "Rambagh (Attapur)", lat: 17.3695, lng: 78.4310 },
+  { name: "Attapur Pillar 80", lat: 17.3750, lng: 78.4370 },
 ];
 
 export const VALID_LOCATIONS: Location[] = rawLocations
