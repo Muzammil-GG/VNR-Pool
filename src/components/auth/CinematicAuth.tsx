@@ -128,7 +128,7 @@ export function CinematicAuth() {
         trigger: containerRef.current,
         start: "top top",
         end: "bottom bottom",
-        scrub: 1, // Smooth scrubbing
+        scrub: 0.2, // Drastically reduced from 1 to make mobile touch-scrolling instantly responsive
         onUpdate: (self) => {
           // Enable pointer events on auth form only when near the end
           if (self.progress > 0.95 && !authInteractive) {
@@ -194,7 +194,7 @@ export function CinematicAuth() {
     const phase2Pos = isMobile ? { x: 0, y: 5, z: -18 } : { x: 0, y: 3, z: -12 };
 
     gsap.set(cameraRef.current.position, startPos); // Forward-right side view
-    gsap.set(carGroupRef.current.position, { y: 0.0 }); // Set car perfectly to ground level
+    gsap.set(carGroupRef.current.position, { y: -0.15 }); // Negatively offset car to fix model origin gap and ground the tires
 
     // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
@@ -306,13 +306,16 @@ export function CinematicAuth() {
           {/* Beautiful Blurred Environment Reflections (Removed background prop to fix weird skybox cutoff) */}
           <Environment preset="city" />
 
-          {/* The Car - wrapped in Suspense to load smoothly */}
-          <Suspense fallback={null}>
-            <RealisticCar ref={carGroupRef} />
-          </Suspense>
+          {/* Group the car and its shadow together so the shadow moves with the car */}
+          <group ref={carGroupRef}>
+            {/* The Car - wrapped in Suspense to load smoothly */}
+            <Suspense fallback={null}>
+              <RealisticCar />
+            </Suspense>
 
-          {/* Ground reflection shadow for realism - reduced resolution to 512 to prevent mobile WebGL crashes */}
-          <ContactShadows resolution={512} scale={30} blur={1.5} opacity={0.8} far={10} color="#000000" />
+            {/* Baked shadow attached to the car, rendering exactly ONCE to fix mobile lag */}
+            <ContactShadows position={[0, 0, 0]} resolution={512} frames={1} scale={30} blur={1.5} opacity={0.8} far={10} color="#000000" />
+          </group>
 
           {/* The Road - Extruded very wide to prevent seeing the void edge */}
           <mesh ref={roadRef} position={[0, -0.01, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
