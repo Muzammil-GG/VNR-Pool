@@ -184,7 +184,8 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
       } else {
         toast.success("Profile completed!")
         setLoading(false)
-        setStep(5)
+        router.push('/')
+        router.refresh()
       }
     } catch (err) {
       console.error("Unexpected error during profile complete:", err)
@@ -394,46 +395,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                 </motion.div>
               )}
 
-              {step === 5 && (
-                <motion.div
-                  key="step5"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex flex-col items-center justify-center text-center space-y-6 py-6"
-                >
-                  <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center">
-                    <ShieldCheck className="w-10 h-10 text-blue-600" />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-black text-slate-800">Verify Driving License</h2>
-                    <p className="text-slate-500 text-sm max-w-[280px] mx-auto">
-                      Do you want to offer rides and earn money? You must verify your Driving License via DigiLocker first.
-                    </p>
-                  </div>
 
-                  <div className="w-full space-y-3 pt-4">
-                    <Button 
-                      onClick={() => window.location.href = '/api/digilocker/login'} 
-                      className="w-full h-12 text-lg font-bold bg-[#2653a1] hover:bg-[#1a3b75] text-white shadow-xl hover:shadow-2xl transition-all"
-                    >
-                      Verify with DigiLocker
-                    </Button>
-                    
-                    <Button 
-                      onClick={() => {
-                        router.push('/')
-                        router.refresh()
-                      }} 
-                      variant="ghost" 
-                      className="w-full h-12 text-slate-500 hover:text-slate-700 hover:bg-slate-100 font-semibold"
-                    >
-                      Skip for now (I only want to ride)
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
             </AnimatePresence>
           </div>
         </CardContent>

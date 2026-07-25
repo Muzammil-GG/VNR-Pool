@@ -262,32 +262,6 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
-                <Label className="text-right text-muted-foreground font-semibold">Driver Verification</Label>
-                <div className="font-medium text-sm flex items-center">
-                  {profile.is_verified_driver ? (
-                    <span className="text-blue-600 flex items-center gap-1.5 font-bold">
-                      <CheckCircle2 className="w-4 h-4" /> Verified (DigiLocker)
-                    </span>
-                  ) : (
-                    <div className="flex items-center gap-2 w-full justify-between sm:justify-start">
-                      <span className="text-amber-600 flex items-center gap-1.5 font-bold">
-                        <ShieldAlert className="w-4 h-4" /> Not Verified
-                      </span>
-                      {!isEditing && (
-                        <Button 
-                          onClick={() => window.location.href = '/api/digilocker/login'}
-                          size="sm" 
-                          className="bg-[#2653a1] hover:bg-[#1a3b75] text-white h-8 text-xs font-semibold px-3 ml-2"
-                        >
-                          <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Verify Now
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-4 items-center">
                 <Label className="text-right text-muted-foreground font-semibold">Car Number</Label>
                 {isEditing ? (
                   <Input 

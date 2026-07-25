@@ -357,10 +357,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         throw new Error('Departure time cannot be in the past.')
       }
 
-      if (rideCategory === 'personal_vehicle' && !currentUserProfile?.is_verified_driver) {
-        throw new Error('You must verify your Driving License to offer Student Pool rides.')
-      }
-
       if (rideCategory === 'personal_vehicle' && !offerData.vehicle_number) {
         throw new Error('Vehicle number is required for Student Pool rides.')
       }
@@ -1078,23 +1074,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <p className="text-muted-foreground dark:text-slate-400 text-sm">Fill in the details to share your journey with campus peers.</p>
             </div>
             
-            {!currentUserProfile?.is_verified_driver && rideCategory === 'personal_vehicle' ? (
-              <div className="p-10 flex flex-col items-center justify-center text-center space-y-4">
-                <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-2">
-                  <Shield className="w-10 h-10 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h3 className="text-xl font-bold">Driver Verification Required</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm">
-                  To ensure the safety of our student pool, you must verify your Driving License via DigiLocker before you can offer rides in your personal vehicle.
-                </p>
-                <Button 
-                  onClick={() => window.location.href = '/api/digilocker/login'}
-                  className="w-full max-w-sm mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold h-12 rounded-xl"
-                >
-                  <Shield className="w-4 h-4 mr-2" /> Verify with DigiLocker
-                </Button>
-              </div>
-            ) : (
               <div className="p-6 md:p-8 space-y-6">
                 
                 {/* Row 1: Locations */}
@@ -1293,7 +1272,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   {offerMutation.isPending ? 'Publishing…' : 'Post Ride'}
                 </Button>
               </div>
-            )}
+
           </div>
         </motion.div>
       ) : activeTab === 'My Rides' ? (
