@@ -406,6 +406,9 @@ export const VALID_LOCATIONS: Location[] = rawLocations
       distanceToVnr: distance
     };
   })
+  .filter((loc, index, self) => 
+    index === self.findIndex((t) => t.id === loc.id)
+  )
   .filter(loc => loc.distanceToVnr <= 50) // Strictly 50km radius
   .sort((a, b) => a.name.localeCompare(b.name)); // Alphabetical order for dropdown
 
