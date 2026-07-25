@@ -121,9 +121,28 @@ export const VALID_LOCATIONS: Location[] = rawLocations
   .sort((a, b) => a.name.localeCompare(b.name)); // Alphabetical order for dropdown
 
 // Helper for smart search fallback
-// Finds the nearest location to the given text based on simple string matching
+// Finds the nearest location to the given text based on simple string matching,
+// OR extracts exact coordinates if the name is a serialized custom location.
 export function findBestMatchLocation(query: string): Location | null {
   if (!query) return null;
+  
+  // 1. Check for exact precision coordinates in the string
+  // Format: "Current Location (17.1234, 78.1234)" or "Custom Location (..."
+  const coordMatch = query.match(/\(([^,]+),\s*([^)]+)\)/);
+  if (coordMatch) {
+    const lat = parseFloat(coordMatch[1]);
+    const lng = parseFloat(coordMatch[2]);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      return {
+        id: `precise-${lat}-${lng}`,
+        name: query,
+        lat,
+        lng,
+        distanceToVnr: calculateDistance(VNR_COORDS.lat, VNR_COORDS.lng, lat, lng)
+      };
+    }
+  }
+
   const q = query.toLowerCase().trim();
   
   // Try exact match first
@@ -134,6 +153,7 @@ export function findBestMatchLocation(query: string): Location | null {
   const subMatch = VALID_LOCATIONS.find(loc => loc.name.toLowerCase().includes(q) || q.includes(loc.name.toLowerCase()));
   if (subMatch) return subMatch;
 
-  // If no match, return null
+  // Fallback to nearest by distance if no string match (very loose fallback)
+  // Or just return null
   return null;
 }

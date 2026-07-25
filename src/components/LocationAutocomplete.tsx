@@ -4,7 +4,7 @@ import * as React from "react"
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { MapPin, Search, Navigation, Loader2 } from "lucide-react"
-import { VALID_LOCATIONS, Location, calculateDistance } from "@/lib/locations"
+import { VALID_LOCATIONS, Location, calculateDistance, VNR_COORDS } from "@/lib/locations"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
@@ -41,23 +41,35 @@ export function LocationAutocomplete({
     
     setIsLocating(true)
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords
         
-        let closestLoc = VALID_LOCATIONS[0]
-        let minDistance = Infinity
+        let locationName = `Precise Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`
         
-        VALID_LOCATIONS.forEach(loc => {
-          const dist = calculateDistance(latitude, longitude, loc.lat, loc.lng)
-          if (dist < minDistance) {
-            minDistance = dist
-            closestLoc = loc
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14`, {
+            headers: { 'Accept-Language': 'en' }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.address) {
+              const area = data.address.suburb || data.address.neighbourhood || data.address.city_district || data.address.town || data.address.county || "Precise Location";
+              locationName = `${area} (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+            }
           }
-        })
-        
-        if (closestLoc) {
-          handleSelect(closestLoc)
+        } catch (e) {
+          console.error("Reverse geocoding failed", e);
         }
+        
+        const exactLoc: Location = {
+          id: `precise-${latitude}-${longitude}`,
+          name: locationName,
+          lat: latitude,
+          lng: longitude,
+          distanceToVnr: calculateDistance(VNR_COORDS.lat, VNR_COORDS.lng, latitude, longitude)
+        }
+        
+        handleSelect(exactLoc)
         setIsLocating(false)
       },
       (error) => {
