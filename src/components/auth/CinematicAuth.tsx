@@ -132,9 +132,10 @@ export function CinematicAuth() {
 
           // Handle real audio sync with car flow
           if (audioRef.current) {
-            // Phase 3 (0.5 to 0.75) is where the car aggressively drives away!
-            // We want the sound effect to trigger EXACTLY when it drives away.
-            if (self.progress > 0.48 && self.progress < 0.85) {
+            // Trigger audio much earlier (at 10% scroll instead of 48%). 
+            // This gives the MP3 time to play its initial build-up or revving 
+            // while the camera orbits, so it peaks right when the car launches at 50%.
+            if (self.progress > 0.10 && self.progress < 0.85) {
               
               // Play if scrolling down (forward in time)
               if (self.direction === 1) {
@@ -161,7 +162,7 @@ export function CinematicAuth() {
                 audioRef.current.pause();
               }
               // Reset the audio track when they scroll back up to the start
-              if (self.progress <= 0.48) {
+              if (self.progress <= 0.10) {
                 audioRef.current.currentTime = 0;
                 audioRef.current.volume = 1.0;
               }
