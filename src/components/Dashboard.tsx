@@ -28,7 +28,7 @@ import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { PublicProfileDialog } from '@/components/PublicProfileDialog'
-import { COLLEGE_ROUTES, getRouteById, checkFractionalMatch } from '@/lib/routes'
+import { COLLEGE_ROUTES, getRouteById, checkFractionalMatch, getSlicedWaypoints } from '@/lib/routes'
 import { calculateFractionalPrice } from '@/lib/pricing'
 
 const RouteMap = dynamic(() => import('@/components/RouteMap'), { ssr: false, loading: () => <div className="h-48 w-full bg-secondary animate-pulse rounded-xl" /> })
@@ -829,7 +829,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
                           {expandedMaps.includes(ride.id) && ride.route_id && (
                             <div className="mt-3">
-                              <RouteMap waypoints={getRouteById(ride.route_id)?.waypoints || []} />
+                              <RouteMap waypoints={
+                                (ride as any).matchType === 'fractional'
+                                  ? getSlicedWaypoints(ride.route_id, originFilter || ride.origin, destinationFilter || ride.destination)
+                                  : getRouteById(ride.route_id)?.waypoints || []
+                              } />
                             </div>
                           )}
                         </div>
@@ -1018,7 +1022,15 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   </SelectTrigger>
                   <SelectContent className="bg-background border-border shadow-xl max-h-[300px]">
                     <SelectItem value="none">Custom Route (No En-Route Matches)</SelectItem>
-                    {COLLEGE_ROUTES.map(route => (
+                    {COLLEGE_ROUTES.filter(route => {
+                      if (!offerData.origin || !offerData.destination) return true;
+                      const clean = (s: string) => s.toLowerCase().trim();
+                      const o = clean(offerData.origin);
+                      const d = clean(offerData.destination);
+                      const oIdx = route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w)));
+                      const dIdx = route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w)));
+                      return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
+                    }).map(route => (
                       <SelectItem key={route.id} value={route.id}>{route.name}</SelectItem>
                     ))}
                   </SelectContent>

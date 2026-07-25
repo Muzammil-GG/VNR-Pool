@@ -398,3 +398,32 @@ export function checkFractionalMatch(routeId: string, startLoc: string, endLoc: 
   
   return startIndex !== -1 && endIndex !== -1 && startIndex < endIndex;
 }
+
+function findWaypointIndex(waypoints: string[], location: string): number {
+  const clean = (s: string) => s.toLowerCase().trim();
+  const target = clean(location);
+  let bestIndex = -1;
+  
+  for (let i = 0; i < waypoints.length; i++) {
+    const w = clean(waypoints[i]);
+    if (w.includes(target) || target.includes(w)) {
+      return i;
+    }
+  }
+  
+  return bestIndex;
+}
+
+export function getSlicedWaypoints(routeId: string, origin: string, destination: string): string[] {
+  const route = getRouteById(routeId);
+  if (!route) return [origin, destination];
+
+  const startIndex = findWaypointIndex(route.waypoints, origin);
+  const endIndex = findWaypointIndex(route.waypoints, destination);
+
+  if (startIndex !== -1 && endIndex !== -1 && startIndex <= endIndex) {
+    return route.waypoints.slice(startIndex, endIndex + 1);
+  }
+
+  return route.waypoints;
+}
