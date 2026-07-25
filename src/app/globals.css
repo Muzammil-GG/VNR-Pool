@@ -432,7 +432,8 @@ body::before {
 .hero-title {
   font-size: clamp(3rem, 13vw, 5.5rem);
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.02em;
+  font-weight: 900;
 }
 
 /* ═══════════════════════════════════════════════════════════
