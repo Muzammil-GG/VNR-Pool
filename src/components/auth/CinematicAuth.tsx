@@ -29,30 +29,36 @@ const EnvironmentScenery = () => {
   return (
     <group>
       {/* Abstract Dark Monoliths framing the road with random neon glows */}
-      {Array.from({ length: 30 }).map((_, i) => (
-        <mesh key={`building-l-${i}`} position={[-15 - Math.random() * 10, 5 + Math.random() * 10, -100 + i * 8]}>
-          <boxGeometry args={[4, 20 + Math.random() * 20, 4]} />
-          <meshStandardMaterial 
-            color="#050505" 
-            roughness={0.2} 
-            metalness={0.8} 
-            emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
-            emissiveIntensity={1.5}
-          />
-        </mesh>
-      ))}
-      {Array.from({ length: 30 }).map((_, i) => (
-        <mesh key={`building-r-${i}`} position={[15 + Math.random() * 10, 5 + Math.random() * 10, -100 + i * 8]}>
-          <boxGeometry args={[4, 20 + Math.random() * 20, 4]} />
-          <meshStandardMaterial 
-            color="#050505" 
-            roughness={0.2} 
-            metalness={0.8} 
-            emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
-            emissiveIntensity={1.5}
-          />
-        </mesh>
-      ))}
+      {Array.from({ length: 30 }).map((_, i) => {
+        const height = 20 + Math.random() * 40;
+        return (
+          <mesh key={`building-l-${i}`} position={[-15 - Math.random() * 10, height / 2 - 1, -100 + i * 8]}>
+            <boxGeometry args={[4, height, 4]} />
+            <meshStandardMaterial 
+              color="#050505" 
+              roughness={0.2} 
+              metalness={0.8} 
+              emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
+              emissiveIntensity={1.5}
+            />
+          </mesh>
+        );
+      })}
+      {Array.from({ length: 30 }).map((_, i) => {
+        const height = 20 + Math.random() * 40;
+        return (
+          <mesh key={`building-r-${i}`} position={[15 + Math.random() * 10, height / 2 - 1, -100 + i * 8]}>
+            <boxGeometry args={[4, height, 4]} />
+            <meshStandardMaterial 
+              color="#050505" 
+              roughness={0.2} 
+              metalness={0.8} 
+              emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
+              emissiveIntensity={1.5}
+            />
+          </mesh>
+        );
+      })}
 
       {/* Glowing Neon Rails bounding the road (VNR Blue) */}
       <mesh position={[-4.5, 0.05, 0]}>
@@ -188,7 +194,7 @@ export function CinematicAuth() {
     const phase2Pos = isMobile ? { x: 0, y: 5, z: -18 } : { x: 0, y: 3, z: -12 };
 
     gsap.set(cameraRef.current.position, startPos); // Forward-right side view
-    gsap.set(carGroupRef.current.position, { y: 0.38 }); // Lift car exactly 0.38 units so tires sit perfectly on the road
+    gsap.set(carGroupRef.current.position, { y: 0.18 }); // Precisely sink car so tires touch the asphalt
 
     // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
