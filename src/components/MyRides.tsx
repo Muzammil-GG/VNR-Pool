@@ -115,6 +115,9 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
             bookings(
               id,
               status,
+              pickup_location,
+              dropoff_location,
+              fractional_price,
               passenger:users!bookings_passenger_id_fkey(id, full_name, gender, total_rating_score, rating_count, avatar_url)
             )
           )
@@ -572,8 +575,29 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                           </span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-black text-primary">₹{ride.price_per_seat}</div>
+                      <div className="text-right flex flex-col items-end gap-1">
+                        {ride.ride_category === 'auto_split' ? (
+                          <>
+                            <div className="text-[10px] text-muted-foreground font-semibold opacity-70">
+                              Total Trip: ₹{ride.price_per_seat}
+                            </div>
+                            <div className="text-2xl font-black text-amber-600 dark:text-amber-500 leading-none">
+                              ₹{getDynamicPrices(ride)[currentUserId] || ride.price_per_seat}
+                            </div>
+                            <div className="text-[9px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">
+                              Your Share
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-2xl font-black text-primary leading-none">
+                              ₹{b.fractional_price || ride.price_per_seat}
+                            </div>
+                            <div className="text-[9px] text-muted-foreground font-semibold uppercase">
+                              {b.fractional_price ? 'Your Fraction' : 'Per Seat'}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </CardHeader>
