@@ -78,6 +78,7 @@ export function CinematicAuth() {
   const sceneBgRef = useRef<HTMLDivElement>(null);
   const classicBgRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasPlayedRef = useRef(false);
   const { theme } = useTheme();
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
@@ -87,7 +88,7 @@ export function CinematicAuth() {
   useEffect(() => {
     // Initialize real MP3 audio
     audioRef.current = new Audio("/sounds/engine.mp3");
-    audioRef.current.loop = true;
+    audioRef.current.loop = false; // Never loop the cinematic sequence
 
     // Browsers block autoplay until interaction
     const unlockAudio = () => {
@@ -132,40 +133,34 @@ export function CinematicAuth() {
 
           // Handle real audio sync with car flow
           if (audioRef.current) {
-            // Trigger audio much earlier (at 10% scroll instead of 48%). 
-            // This gives the MP3 time to play its initial build-up or revving 
-            // while the camera orbits, so it peaks right when the car launches at 50%.
+            // Trigger audio much earlier (at 10% scroll).
+            // It will fire exactly ONCE per scroll-down to prevent jittering 
+            // if the user scrubs back and forth in the middle of the transition.
             if (self.progress > 0.10 && self.progress < 0.85) {
               
-              // Play if scrolling down (forward in time)
-              if (self.direction === 1) {
-                if (audioRef.current.paused) {
-                  audioRef.current.play().catch(() => {});
-                }
-              } else {
-                // Pause if they scroll backwards to stop the driving sound
-                if (!audioRef.current.paused) {
-                  audioRef.current.pause();
-                }
+              // Play it only once
+              if (!hasPlayedRef.current) {
+                hasPlayedRef.current = true;
+                audioRef.current.currentTime = 0;
+                audioRef.current.volume = 1.0;
+                audioRef.current.play().catch(() => {});
               }
 
-              // Dynamically fade out the volume as the car visually vanishes in the distance
+              // Dynamically fade out the volume as the car visually vanishes
               let vol = 1.0;
               if (self.progress > 0.7) {
-                vol = 1 - ((self.progress - 0.7) / 0.15); // Fade from 1.0 to 0.0 between 0.7 and 0.85
+                vol = 1 - ((self.progress - 0.7) / 0.15); // Fade from 1.0 to 0.0
               }
               audioRef.current.volume = Math.max(0, Math.min(1, vol));
               
-            } else {
-              // Outside the driving zone, silence the car
-              if (!audioRef.current.paused) {
-                audioRef.current.pause();
-              }
-              // Reset the audio track when they scroll back up to the start
-              if (self.progress <= 0.10) {
-                audioRef.current.currentTime = 0;
-                audioRef.current.volume = 1.0;
-              }
+            } else if (self.progress <= 0.10) {
+              // Reset the audio sequence ONLY when they scroll back up to the very top
+              hasPlayedRef.current = false;
+              audioRef.current.pause();
+              audioRef.current.currentTime = 0;
+            } else if (self.progress >= 0.85) {
+               // Silence completely at the very end
+               audioRef.current.pause();
             }
           }
         },
