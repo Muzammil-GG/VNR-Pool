@@ -112,6 +112,32 @@ export function ChatModal({
     if (error) {
       toast.error("Failed to send message")
       setInputText(newMsg)
+    } else {
+      // Notify other participants
+      const { data: rideData } = await supabase
+        .from('rides')
+        .select('driver_id, bookings(passenger_id, status)')
+        .eq('id', rideId)
+        .single();
+
+      if (rideData) {
+        const participants = new Set<string>();
+        participants.add(rideData.driver_id);
+        rideData.bookings?.forEach((b: any) => {
+          if (b.status === 'approved') participants.add(b.passenger_id);
+        });
+        participants.delete(currentUserId); // Don't notify self
+
+        const notificationsToInsert = Array.from(participants).map(userId => ({
+          user_id: userId,
+          title: 'New Message 💬',
+          message: `${newMsg} |ride:${rideId}`
+        }));
+
+        if (notificationsToInsert.length > 0) {
+          await supabase.from('notifications').insert(notificationsToInsert);
+        }
+      }
     }
   }
 

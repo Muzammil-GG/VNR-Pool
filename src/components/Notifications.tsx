@@ -81,9 +81,12 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
         // Refresh the list
         queryClient.invalidateQueries({ queryKey: ['notifications', currentUserId] })
         
+        const isChat = newNotif.message.includes('|ride:');
+        const displayMessage = isChat ? newNotif.message.split('|ride:')[0].trim() : newNotif.message;
+
         // Show Toast
         toast(newNotif.title, { 
-          description: newNotif.message,
+          description: displayMessage,
           icon: '🔔',
           duration: 6000,
           style: {
@@ -95,7 +98,7 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
         })
 
         // Push Native Web Notification if permitted
-        pushNativeNotification(newNotif.title, newNotif.message)
+        pushNativeNotification(newNotif.title, displayMessage)
       })
       .subscribe()
 
@@ -113,8 +116,11 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
       if (prev.length > 0) {
         const newNotifs = notifications.filter(n => !n.is_read && !prev.find(p => p.id === n.id))
         newNotifs.forEach(newNotif => {
+          const isChat = newNotif.message.includes('|ride:');
+          const displayMessage = isChat ? newNotif.message.split('|ride:')[0].trim() : newNotif.message;
+
           toast(newNotif.title, { 
-            description: newNotif.message,
+            description: displayMessage,
             icon: '🔔',
             duration: 6000,
             style: { background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 'bold' }
@@ -122,12 +128,12 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
           if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
             if ('serviceWorker' in navigator) {
               navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification(newNotif.title, { body: newNotif.message, icon: '/vnr-logo.png' })
+                reg.showNotification(newNotif.title, { body: displayMessage, icon: '/vnr-logo.png' })
               }).catch(() => {
-                new Notification(newNotif.title, { body: newNotif.message, icon: '/vnr-logo.png' })
+                new Notification(newNotif.title, { body: displayMessage, icon: '/vnr-logo.png' })
               })
             } else {
-              new Notification(newNotif.title, { body: newNotif.message, icon: '/vnr-logo.png' })
+              new Notification(newNotif.title, { body: displayMessage, icon: '/vnr-logo.png' })
             }
           }
         })
@@ -162,28 +168,43 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
               <p>No notifications yet.</p>
             </div>
           ) : (
-            notifications.map((notif) => (
-              <div 
-                key={notif.id} 
-                className={cn(
-                  "p-4 rounded-xl border transition-all",
-                  notif.is_read 
-                    ? "bg-background/50 border-border opacity-70" 
-                    : "bg-blue-500/10 border-blue-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
-                )}
-              >
-                <h4 className="text-sm font-bold text-foreground mb-1 flex items-center justify-between">
-                  {notif.title}
-                  {!notif.is_read && <span className="w-2 h-2 rounded-full bg-blue-500" />}
-                </h4>
-                <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                  {notif.message}
-                </p>
-                <p className="text-[10px] text-muted-foreground/70 mt-2">
-                  {new Date(notif.created_at).toLocaleString()}
-                </p>
-              </div>
-            ))
+            notifications.map((notif) => {
+              const isChat = notif.message.includes('|ride:');
+              const displayMessage = isChat ? notif.message.split('|ride:')[0].trim() : notif.message;
+              const rideId = isChat ? notif.message.split('|ride:')[1].trim() : null;
+
+              const handleClick = () => {
+                if (isChat && rideId) {
+                  window.dispatchEvent(new CustomEvent('openChat', { detail: { rideId } }));
+                  setOpen(false);
+                }
+              };
+
+              return (
+                <div 
+                  key={notif.id} 
+                  onClick={handleClick}
+                  className={cn(
+                    "p-4 rounded-xl border transition-all",
+                    isChat && "cursor-pointer hover:scale-[1.02]",
+                    notif.is_read 
+                      ? "bg-background/50 border-border opacity-70" 
+                      : "bg-blue-500/10 border-blue-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+                  )}
+                >
+                  <h4 className="text-sm font-bold text-foreground mb-1 flex items-center justify-between">
+                    {notif.title}
+                    {!notif.is_read && <span className="w-2 h-2 rounded-full bg-blue-500" />}
+                  </h4>
+                  <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+                    {displayMessage}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/70 mt-2">
+                    {new Date(notif.created_at).toLocaleString()}
+                  </p>
+                </div>
+              )
+            })
           )}
         </div>
       </DialogContent>

@@ -98,14 +98,27 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
     const bookingsChannel = supabase.channel('public:bookings')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['my_rides'] })
         queryClient.invalidateQueries({ queryKey: ['rides'] })
         queryClient.invalidateQueries({ queryKey: ['has_active_booking'] })
       })
       .subscribe()
 
+    // Listen for custom openChat event from notifications
+    const handleOpenChat = async (e: any) => {
+      const rideId = e.detail?.rideId;
+      if (!rideId) return;
+      const { data } = await supabase.from('rides').select('*, driver:profiles!driver_id(*)').eq('id', rideId).single();
+      if (data) {
+        setChatRide(data as any);
+      }
+    }
+    window.addEventListener('openChat', handleOpenChat);
+
     return () => {
       supabase.removeChannel(ridesChannel)
       supabase.removeChannel(bookingsChannel)
+      window.removeEventListener('openChat', handleOpenChat)
     }
   }, [queryClient, supabase])
 
