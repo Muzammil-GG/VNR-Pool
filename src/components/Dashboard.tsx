@@ -1041,20 +1041,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             ) : (
               <div className="p-6 md:p-8 space-y-6">
                 
-                {/* Row 1: Category & Vehicle */}
+                {/* Row 1: Vehicle Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Ride Category</Label>
-                    <Select value={rideCategory} onValueChange={(v) => setRideCategory(v as 'auto_split' | 'personal_vehicle')}>
-                      <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus:ring-blue-500">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700">
-                        <SelectItem value="auto_split">Auto/Cab Fare Split</SelectItem>
-                        <SelectItem value="personal_vehicle">Student Pool</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                   <div className="space-y-2">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2">
                       Vehicle Type
@@ -1095,19 +1083,19 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  {rideCategory === 'personal_vehicle' && (
+                    <div className="space-y-2">
+                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
+                      <Input 
+                        value={offerData.vehicle_number}
+                        onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
+                        className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase"
+                        placeholder="TS09XX1234"
+                      />
+                    </div>
+                  )}
                 </div>
-
-                {rideCategory === 'personal_vehicle' && (
-                  <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
-                    <Input 
-                      value={offerData.vehicle_number}
-                      onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
-                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase"
-                      placeholder="TS09XX1234"
-                    />
-                  </div>
-                )}
                 
                 {/* Row 2: Locations */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
