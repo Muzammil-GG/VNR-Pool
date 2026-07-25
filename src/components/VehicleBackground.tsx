@@ -27,13 +27,33 @@ export function VehicleBackground() {
   const scrollRef = useRef(0)
 
   const updatePositions = useCallback(() => {
-    if (!containerRef.current) return
+    if (!containerRef.current || typeof window === 'undefined') return
 
-    const docHeight = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
-    const progress = window.scrollY / docHeight // 0 → 1
+    const scrollY = window.scrollY
+    const width = window.innerWidth
+    const buffer = 150 // pixels to wait before wrapping so they fully exit screen
+    const totalWidth = width + buffer * 2
 
-    containerRef.current.style.setProperty('--scroll', String(progress))
-    scrollRef.current = progress
+    const vehicleElements = containerRef.current.querySelectorAll<HTMLElement>('.vehicle-wrapper')
+    
+    vehicleElements.forEach((el, i) => {
+      const v = vehicles[i]
+      
+      // Map startX percentage to pixels
+      const startPx = (v.startX / 100) * totalWidth
+      
+      // Absolute scroll movement (1px scroll = v.speed px vehicle movement)
+      const movePx = scrollY * v.speed * v.dir
+      
+      // Wrap around infinitely
+      let currentPx = (startPx + movePx) % totalWidth
+      if (currentPx < 0) currentPx += totalWidth
+      
+      // Offset by buffer so 0 is actually off-screen left
+      currentPx -= buffer
+      
+      el.style.transform = `translateX(${currentPx}px)`
+    })
   }, [])
 
   useEffect(() => {
@@ -45,11 +65,14 @@ export function VehicleBackground() {
     }
 
     // Set initial position
-    updatePositions()
+    // Delay slightly to ensure window.innerWidth is correct
+    setTimeout(updatePositions, 10)
 
     window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', updatePositions, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', updatePositions)
       cancelAnimationFrame(rafRef.current)
     }
   }, [updatePositions])
@@ -57,7 +80,7 @@ export function VehicleBackground() {
   if (!mounted) return <div className="fixed inset-0 z-0 bg-slate-50 dark:bg-slate-950 pointer-events-none" />
 
   return (
-    <div ref={containerRef} className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-slate-50 dark:bg-slate-950" style={{ ['--scroll' as any]: '0' }}>
+    <div ref={containerRef} className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-slate-50 dark:bg-slate-950">
       {/* Subtle dot grid */}
       <div
         className="absolute inset-0 opacity-30 dark:opacity-15"
@@ -70,21 +93,16 @@ export function VehicleBackground() {
       {/* Vehicles */}
       {vehicles.map((v, i) => {
         const wiggleDur = 2.5 + (i % 3) * 0.7
-        // Each vehicle travels (speed * 100)vw over the full scroll range.
-        // dir controls forward/backward direction.
-        // startX offsets them so they aren't all bunched together.
-        const travelVw = v.speed * 100
         
         return (
           <div
             key={i}
-            className="absolute will-change-transform"
+            className="vehicle-wrapper absolute will-change-transform"
             style={{
               top: `${v.y}%`,
-              left: `${v.startX}%`,
-              // Smooth CSS transition so small scroll jumps don't look jerky
-              transition: 'transform 0.15s linear',
-              transform: `translateX(calc(var(--scroll) * ${v.dir * travelVw}vw))`,
+              left: 0, // Pos is fully controlled by translateX
+              // Very subtle transition so rapid scroll events are smoothed, but short enough to avoid lag
+              transition: 'transform 0.05s linear',
             }}
           >
             <span
