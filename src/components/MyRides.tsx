@@ -304,6 +304,12 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => {
+                              const timeToDeparture = new Date(ride.departure_time).getTime() - Date.now();
+                              const thirtyMins = 30 * 60 * 1000;
+                              if (timeToDeparture > thirtyMins) {
+                                toast.error('You can only start the ride 30 minutes before the departure time.');
+                                return;
+                              }
                               if (window.confirm('Start this ride and notify passengers?')) {
                                 startRideMutation.mutate(ride)
                               }
