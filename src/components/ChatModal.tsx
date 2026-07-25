@@ -149,34 +149,11 @@ export function ChatModal({
     }
   }
 
-  const handleBlockUser = async () => {
-    const confirmBlock = window.confirm(`Are you sure you want to block ${otherUserName}? They will not be able to interact with you again.`)
-    if (!confirmBlock) return
-
-    const { error } = await supabase
-      .from('blocked_users')
-      .insert({
-        blocker_id: currentUserId,
-        blocked_id: otherUserId
-      })
-
-    if (error) {
-      toast.error("Failed to block user.")
-    } else {
-      toast.success(`${otherUserName} has been blocked.`)
-      onClose()
-      // Note: Ideally, this triggers a re-fetch of the dashboard to exclude blocked users.
-    }
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-neutral-900 border-white/10 text-white">
         <DialogHeader className="flex flex-row items-center justify-between border-b border-white/10 pb-4">
           <DialogTitle>Chat with {otherUserName}</DialogTitle>
-          <Button variant="ghost" size="icon" onClick={handleBlockUser} title="Block User" className="text-red-400 hover:text-red-300 hover:bg-red-950/30">
-            <ShieldAlert className="w-5 h-5" />
-          </Button>
         </DialogHeader>
 
         <div 

@@ -133,15 +133,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   const { data: rides, isLoading } = useQuery({
     queryKey: ['rides', rideCategory, originFilter, destinationFilter, dateFilter, womenOnlyFilter, currentUserProfile?.gender],
     queryFn: async () => {
-      // Fetch blocked relations
-      const { data: blockedByMe } = await supabase.from('blocked_users').select('blocked_id').eq('blocker_id', currentUserId)
-      const { data: blockedMe } = await supabase.from('blocked_users').select('blocker_id').eq('blocked_id', currentUserId)
-      
-      const blockedIds = [
-        ...(blockedByMe?.map(b => b.blocked_id) || []),
-        ...(blockedMe?.map(b => b.blocker_id) || [])
-      ]
-
       let q = supabase
         .from('rides')
         .select(`
@@ -163,10 +154,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         q = q.eq('is_women_only', true)
       }
 
-      // Exclude blocked users
-      if (blockedIds.length > 0) {
-        q = q.not('driver_id', 'in', `(${blockedIds.join(',')})`)
-      }
 
       // Filter by Date or just show upcoming rides
       if (dateFilter) {
