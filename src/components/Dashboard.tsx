@@ -469,15 +469,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   <ThemeToggle />
                 </div>
 
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
-                      <ShieldAlert className="w-4 h-4 text-blue-500" />
-                    </div>
-                    <span className="font-medium">Notifications</span>
-                  </div>
-                  <Notifications currentUserId={currentUserId} />
-                </div>
+
 
                 <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                   <ProfileEditor currentUserId={currentUserId} />
@@ -495,6 +487,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               </div>
             </SheetContent>
           </Sheet>
+        </div>
+        <div className="absolute right-0 top-0 flex items-center gap-2 z-50">
+          <Notifications currentUserId={currentUserId} />
         </div>
         {/* Logo + tagline */}
         <motion.div

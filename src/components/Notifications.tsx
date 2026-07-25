@@ -26,7 +26,9 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
 
       if (error) throw error
       return data || []
-    }
+    },
+    // Fallback polling every 5 seconds just in case Realtime isn't enabled on the DB table
+    refetchInterval: 5000
   })
   // No more polling, using real-time subscription instead
 
@@ -89,6 +91,30 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
       supabase.removeChannel(channel)
     }
   }, [currentUserId, queryClient, supabase])
+
+  // Fallback Polling Checker: If realtime didn't fire (e.g. not enabled on DB), 
+  // this will catch new notifications fetched via useQuery's refetchInterval
+  const prevNotifsRef = useRef<any[]>([])
+  useEffect(() => {
+    if (notifications && notifications.length > 0) {
+      const prev = prevNotifsRef.current
+      if (prev.length > 0) {
+        const newNotifs = notifications.filter(n => !n.is_read && !prev.find(p => p.id === n.id))
+        newNotifs.forEach(newNotif => {
+          toast(newNotif.title, { 
+            description: newNotif.message,
+            icon: '🔔',
+            duration: 6000,
+            style: { background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 'bold' }
+          })
+          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+            new Notification(newNotif.title, { body: newNotif.message })
+          }
+        })
+      }
+      prevNotifsRef.current = notifications
+    }
+  }, [notifications])
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
