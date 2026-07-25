@@ -186,46 +186,53 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         if (match) effectiveDest = match.name
       }
 
+      // Pre-calculate prices for all rides assuming full route by default,
+      // or fractional route if the user searched.
+      fetchedRides = fetchedRides.map(ride => {
+        const route = ride.route_id ? getRouteById(ride.route_id) : null;
+        const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
+        const checkDest = effectiveDest || (route ? route.waypoints[route.waypoints.length - 1] : ride.destination);
+
+        if (ride.ride_category === 'auto_split') {
+          const passengers: PassengerTrip[] = [];
+          passengers.push({ id: ride.driver_id, startLoc: ride.origin, endLoc: ride.destination });
+          
+          ride.bookings?.forEach((b: any) => {
+            if (b.status === 'approved' && b.passenger) {
+              passengers.push({ 
+                id: b.passenger.id, 
+                startLoc: b.pickup_location || ride.origin, 
+                endLoc: b.dropoff_location || ride.destination 
+              });
+            }
+          });
+          
+          passengers.push({ id: currentUserId, startLoc: checkOrigin, endLoc: checkDest });
+          const dynamicPrices = calculateDynamicSplitPricing(ride.route_id, ride.price_per_seat, passengers);
+          (ride as any).dynamic_price = dynamicPrices[currentUserId];
+        } else {
+          // Default to full price. If they searched and it's a fractional match, the filter below will overwrite this.
+          (ride as any).fractional_price = ride.price_per_seat;
+        }
+
+        return ride;
+      });
+
       if (effectiveOrigin || effectiveDest) {
         const cleanStr = (s: string) => s.toLowerCase().trim()
         const oMatch = effectiveOrigin ? cleanStr(effectiveOrigin) : ''
         const dMatch = effectiveDest ? cleanStr(effectiveDest) : ''
+        
         fetchedRides = fetchedRides.filter(ride => {
-          // Common check for both exact and fractional
           const route = ride.route_id ? getRouteById(ride.route_id) : null;
           const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
           const checkDest = effectiveDest || (route ? route.waypoints[route.waypoints.length - 1] : ride.destination);
-
-          // Calculate Dynamic Price if Auto Split
-          if (ride.ride_category === 'auto_split') {
-            const passengers: PassengerTrip[] = [];
-            passengers.push({ id: ride.driver_id, startLoc: ride.origin, endLoc: ride.destination });
-            
-            ride.bookings?.forEach((b: any) => {
-              if (b.status === 'approved' && b.passenger) {
-                passengers.push({ 
-                  id: b.passenger.id, 
-                  startLoc: b.pickup_location || ride.origin, 
-                  endLoc: b.dropoff_location || ride.destination 
-                });
-              }
-            });
-            
-            // Add the current searching user
-            passengers.push({ id: currentUserId, startLoc: checkOrigin, endLoc: checkDest });
-            
-            const dynamicPrices = calculateDynamicSplitPricing(ride.route_id, ride.price_per_seat, passengers);
-            (ride as any).dynamic_price = dynamicPrices[currentUserId];
-          }
 
           // Exact match
           const exactOrigin = !oMatch || cleanStr(ride.origin).includes(oMatch)
           const exactDest = !dMatch || cleanStr(ride.destination).includes(dMatch)
           if (exactOrigin && exactDest) {
             (ride as any).matchType = 'exact'
-            if (ride.ride_category !== 'auto_split') {
-              (ride as any).fractional_price = ride.price_per_seat;
-            }
             return true
           }
 
