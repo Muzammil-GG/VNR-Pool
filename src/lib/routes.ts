@@ -9,94 +9,94 @@ export const COLLEGE_ROUTES: Route[] = [
   {
     id: "S1",
     name: "Patancheru to VNRVJIET (via BHEL)",
-    waypoints: ["Patancheru", "Beeramguda Kaman", "BHEL", "Chandanagar", "Miyapur", "VNR VJIET"]
+    waypoints: ["Muthangi ORR", "Patancheru Bus Stand", "Patancheru", "Beeramguda Kaman", "BHEL Circle", "BHEL", "Chandanagar Circle", "Chandanagar", "Miyapur Allwyn X Roads", "Miyapur", "VNR VJIET"]
   },
   {
     id: "S2",
     name: "LB Nagar to VNRVJIET (via Koti)",
-    waypoints: ["LB Nagar", "Dilsukhnagar", "Malakpet", "Koti", "Abids", "Lakdi ka pool", "Khairatabad", "VNR VJIET"]
+    waypoints: ["LB Nagar X Roads", "LB Nagar", "Chaitanyapuri", "Dilsukhnagar Bus Station", "Dilsukhnagar", "Malakpet TV Tower", "Malakpet", "Koti (Women's College)", "Koti", "Abids GPO", "Abids", "Lakdikapul X Roads", "Lakdi ka pool", "Khairatabad Metro Station", "Khairatabad RTA", "Khairatabad", "VNR VJIET"]
   },
   {
     id: "S3",
     name: "Yusufguda to VNRVJIET (via Jubilee Check Post)",
-    waypoints: ["Yusufguda Temple", "Yusufguda Check post", "Jubilee check post", "Madapur", "Hi-Tech City", "Kothaguda", "Kondapur", "Hafeezpet", "Miyapur X Roads", "VNR VJIET"]
+    waypoints: ["Yusufguda Temple", "Yusufguda Check post", "Jubilee check post", "Peddamma Temple", "Madhapur Metro Station", "Madapur", "Durgam Cheruvu Metro Station", "Hi-Tech City", "Kothaguda", "Botanical Garden, Kondapur", "Kondapur X Roads", "Kondapur", "Hafeezpet X Roads", "Hafeezpet", "Miyapur X Roads", "VNR VJIET"]
   },
   {
     id: "S5",
     name: "Attapur to VNRVJIET (via Mehdipatnam)",
-    waypoints: ["Attapur", "Retibowli", "Mehdipatnam", "Masab Tank", "Banjara Hills", "Punjagutta", "Ameerpet", "SR Nagar", "Erragadda", "VNR VJIET"]
+    waypoints: ["Attapur Ring Road", "Attapur (Pillar No 143)", "Attapur", "Mehdipatnam (Reti Bowli)", "Retibowli", "Mehdipatnam Bus Stop", "Mehdipatnam", "Masab Tank", "Banjara Hills", "Panjagutta Metro Station", "Punjagutta", "Ameerpet X Roads", "Ameerpet", "SR Nagar Metro Station", "SR Nagar", "ESI Hospital Metro", "Erragadda Metro Station", "Erragadda (Gokul Theatre)", "Erragadda", "Bharat Nagar Metro", "VNR VJIET"]
   },
   {
     id: "S6",
     name: "Anandbagh to VNRVJIET (via Musheerabad)",
-    waypoints: ["Anandbagh", "Malkajgiri", "Mettuguda", "Chilkalguda X Rds", "Musheerabad", "RTC X Rds", "Narayanguda fly over", "Himayat Nagar", "Liberty", "Khairatabad", "VNR VJIET"]
+    waypoints: ["Anandbagh", "Malkajgiri", "Mettuguda", "Chilkalguda X Rds", "Musheerabad", "RTC X Roads", "RTC X Rds", "Narayanguda X Roads", "Narayanguda fly over", "Himayatnagar", "Himayat Nagar", "Liberty", "Khairatabad", "VNR VJIET"]
   },
   {
     id: "S7",
     name: "Mothinagar to VNRVJIET (via Moosapet)",
-    waypoints: ["Mothinagar Signal", "PR Nagar", "Bharathnagar Fly Over", "Moosapet", "Rainbow Vista", "Lodha Bellezza", "Brand Factory", "Road No 1", "KPHB", "JNTU", "Addagutta", "Pragathi Nagar", "VNR VJIET"]
+    waypoints: ["Mothinagar Signal", "PR Nagar", "Bharat Nagar Metro", "Bharathnagar Fly Over", "Moosapet Metro Station", "Moosapet", "Rainbow Vista", "Lodha Bellezza", "Brand Factory", "Road No 1", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Addagutta", "Pragati Nagar Lake", "Pragathi Nagar", "VNR VJIET"]
   },
   {
     id: "S9",
     name: "Kukatpally to VNRVJIET (via Nizampet)",
-    waypoints: ["Kukatpally", "Ramdev Hosp", "Vasanth Nagar Kaman", "Miyapur Metro", "Nizampet X Roads", "Sanghamithra", "Hanuman Temple", "Hill County", "Bachupally", "VNR VJIET"]
+    waypoints: ["Kukatpally", "Ramdev Hosp", "Vasanth Nagar Kaman", "Hydernagar", "Miyapur Metro", "Nizampet X Roads", "Nizampet Village", "Sanghamithra", "Hanuman Temple", "Hill County", "Bachupally", "VNR VJIET"]
   },
   {
     id: "S10",
     name: "Manikonda to VNRVJIET (via Hi-Tech City)",
-    waypoints: ["Manikonda Marri Chettu", "Lanco Hills", "Khazaguda", "Gachibowli", "Bio Diversity Park", "IKEA", "Hi-Tech City Rly Stn Fly over", "Nexus Mall", "Manjeera Mall", "VNR VJIET"]
+    waypoints: ["Manikonda (Marichettu)", "Manikonda Marri Chettu", "Lanco Hills", "Khazaguda", "Shaikpet (D-Mart)", "Gachibowli Stadium", "Gachibowli", "Bio Diversity Park", "IKEA", "Hi-Tech City Rly Stn Fly over", "Nexus Mall", "Manjeera Mall", "VNR VJIET"]
   },
   {
     id: "S11",
     name: "Masjidbanda to VNRVJIET (via Nallagandla)",
-    waypoints: ["Masjidbanda", "HCU", "Nallagandla Fly Over", "BHEL", "Miyapur X Roads", "Bachupally", "VNR VJIET"]
+    waypoints: ["Masjidbanda", "HCU (University of Hyderabad)", "HCU", "Lingampally Railway Station", "Lingampally X Roads", "Nallagandla Fly Over", "BHEL", "Miyapur X Roads", "Bachupally", "VNR VJIET"]
   },
   {
     id: "S12",
     name: "Nagole to VNRVJIET (via Balanagar)",
-    waypoints: ["Nagole", "Uppal", "Tarnaka", "Secunderabad", "Himalaya Book Store", "JBS", "Tadbund", "Bowenpally", "Balanagar", "VNR VJIET"]
+    waypoints: ["Nagole", "Uppal X Roads", "Uppal", "Tarnaka X Roads", "Tarnaka", "Secunderabad East Metro", "Secunderabad", "Secunderabad (Paradise Circle)", "Himalaya Book Store", "JBS", "Tadbund X Roads", "Tadbund", "Bowenpally Check Post", "Bowenpally", "Balanagar X Roads", "Balanagar", "VNR VJIET"]
   },
   {
     id: "41",
     name: "ECIL to VNRVJIET (via Suchithra)",
-    waypoints: ["ECIL", "Radhika", "Sainikpuri", "Neredmet X Roads", "Thirumalgiri", "Bowenpally", "Bapuji Nagar", "Suchitra", "Kompally", "VNR VJIET"]
+    waypoints: ["ECIL X Roads", "ECIL", "AS Rao Nagar", "Radhika X Roads", "Radhika", "Sainikpuri", "Neredmet X Roads", "Trimulgherry X Roads", "Thirumalgiri", "Bowenpally", "Bapuji Nagar", "Suchitra Circle", "Suchitra", "Kompally X Roads", "Kompally", "Dullapally X Roads", "Gundlapochampally", "Kandlakoya (ORR Exit 6)", "VNR VJIET"]
   },
   {
     id: "42",
     name: "Old Alwal to VNRVJIET (via Gajularamaram)",
-    waypoints: ["Old Alwal IG Statue", "Father Balaiah Ngr", "Suchitra", "Qutbullapur", "Chintal", "Shapur Signal", "Gajularamaram", "VNR VJIET"]
+    waypoints: ["Temple Alwal", "Old Alwal IG Statue", "Alwal (Lothkunta)", "Father Balaiah Ngr", "Suchitra", "Jeedimetla (Subash Nagar)", "Qutbullapur", "Suraram X Roads", "Chintal", "Shapurnagar X Roads", "Shapur Signal", "IDPL X Roads", "Gajularamaram", "VNR VJIET"]
   },
 
   // --- Major City Corridors (from Maps & AI suggestions) ---
   {
     id: "C1",
     name: "Attapur Corridor",
-    waypoints: ["Attapur", "Upperpally", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Gachibowli", "Hitech City", "Kukatpally", "KPHB", "JNTU", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["Attapur Ring Road", "Attapur (Pillar No 143)", "Attapur", "Upperpally", "Mehdipatnam Bus Stop", "Mehdipatnam", "Rethibowli", "Toli Chowki", "Tolichowki Flyover", "Gachibowli", "Hitech City", "Kukatpally", "KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C2",
     name: "Secunderabad Corridor",
-    waypoints: ["Secunderabad", "Paradise", "Bowenpally", "Balanagar", "Moosapet", "Kukatpally", "KPHB", "JNTU", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["Secunderabad East Metro", "Secunderabad", "Secunderabad (Paradise Circle)", "Paradise", "Bowenpally Check Post", "Bowenpally", "Balanagar X Roads", "Balanagar", "Moosapet Metro Station", "Moosapet", "Kukatpally", "KPHB", "JNTU", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C3",
     name: "Ameerpet Corridor",
-    waypoints: ["Panjagutta", "Ameerpet", "ESI", "SR Nagar", "Kukatpally", "KPHB", "JNTU", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["Panjagutta Metro Station", "Panjagutta", "Ameerpet X Roads", "Ameerpet", "ESI Hospital Metro", "ESI", "SR Nagar Metro Station", "SR Nagar", "Kukatpally", "KPHB", "JNTU", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C4",
     name: "Gachibowli / Financial Dist Corridor",
-    waypoints: ["Financial District", "Nanakramguda", "Gachibowli", "Kondapur", "Hafeezpet", "Miyapur", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["Financial District", "Nanakramguda", "Gachibowli Stadium", "Gachibowli", "Botanical Garden, Kondapur", "Kondapur X Roads", "Kondapur", "Hafeezpet X Roads", "Hafeezpet", "Miyapur Allwyn X Roads", "Miyapur", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C5",
     name: "Miyapur Direct Route",
-    waypoints: ["Miyapur", "Hafeezpet", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["Miyapur Allwyn X Roads", "Miyapur", "Hafeezpet X Roads", "Hafeezpet", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C6",
     name: "KPHB Direct Route",
-    waypoints: ["KPHB", "JNTU", "Nizampet", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
+    waypoints: ["KPHB Phase 1", "KPHB", "KPHB Phase 3", "JNTU", "Nizampet Village", "Nizampet", "Pragati Nagar Lake", "Pragathi Nagar", "Bachupally", "VNR VJIET"]
   },
   {
     id: "C7",
