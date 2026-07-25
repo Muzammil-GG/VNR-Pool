@@ -190,8 +190,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       // or fractional route if the user searched.
       fetchedRides = fetchedRides.map(ride => {
         const route = ride.route_id ? getRouteById(ride.route_id) : null;
-        const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
-        const checkDest = effectiveDest || (route ? route.waypoints[route.waypoints.length - 1] : ride.destination);
+        const checkOrigin = effectiveOrigin || ride.origin;
+        const checkDest = effectiveDest || ride.destination;
 
         if (ride.ride_category === 'auto_split') {
           const passengers: PassengerTrip[] = [];
@@ -230,8 +230,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         
         fetchedRides = fetchedRides.filter(ride => {
           const route = ride.route_id ? getRouteById(ride.route_id) : null;
-          const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
-          const checkDest = effectiveDest || (route ? route.waypoints[route.waypoints.length - 1] : ride.destination);
+          const checkOrigin = effectiveOrigin || ride.origin;
+          const checkDest = effectiveDest || ride.destination;
 
           // Exact match
           const exactOrigin = !oMatch || cleanStr(ride.origin).includes(oMatch)

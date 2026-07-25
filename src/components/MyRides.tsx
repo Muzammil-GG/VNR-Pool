@@ -499,6 +499,41 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     </div>
                   )}
 
+                  {/* Dynamic Split Breakdown for Auto Split Rides */}
+                  {ride.ride_category === 'auto_split' && (
+                    <div className="mt-6 p-5 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
+                      <h5 className="text-xs font-black text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+                        <Zap className="w-4 h-4 fill-current" /> Live Split Math Breakdown
+                      </h5>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center bg-card/50 p-3 rounded-xl border border-border/50 shadow-sm">
+                          <span className="font-bold text-foreground text-sm truncate pr-2">
+                            You (Owner) 
+                            <span className="text-[10px] text-muted-foreground ml-2 font-medium bg-muted px-1.5 py-0.5 rounded">
+                              {ride.origin} → {ride.destination}
+                            </span>
+                          </span>
+                          <span className="font-black text-amber-600 dark:text-amber-500 text-lg">
+                            ₹{getDynamicPrices(ride)[currentUserId] || ride.price_per_seat}
+                          </span>
+                        </div>
+                        {ride.bookings?.filter((b: any) => b.status !== 'rejected' && b.status !== 'cancelled').map((b: any) => (
+                          <div key={b.id} className="flex justify-between items-center bg-card/50 p-3 rounded-xl border border-border/50 shadow-sm">
+                            <span className="font-bold text-muted-foreground text-sm truncate pr-2">
+                              {b.passenger.full_name} 
+                              <span className="text-[10px] ml-2 font-medium bg-muted px-1.5 py-0.5 rounded">
+                                {b.pickup_location || ride.origin} → {b.dropoff_location || ride.destination}
+                              </span>
+                            </span>
+                            <span className="font-black text-amber-600 dark:text-amber-500 text-lg">
+                              ₹{getDynamicPrices(ride)[b.passenger.id] || 0}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {ride.status === 'completed' && (
                     <div className="mt-6 pt-4 border-t border-border">
                       <RateRidematesDialog 
@@ -616,6 +651,41 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
                       </div>
                     </div>
+
+                    {/* Auto Split Breakdown for Joined Rides */}
+                    {ride.ride_category === 'auto_split' && (
+                      <div className="pt-3 border-t border-border/40 mt-3">
+                        <h5 className="text-[10px] font-black text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                          <Zap className="w-3 h-3 fill-current" /> Live Split Math Breakdown
+                        </h5>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center bg-card/50 px-2 py-1.5 rounded-lg border border-border/50 shadow-sm">
+                            <span className="font-bold text-foreground text-[11px] truncate pr-2">
+                              Driver 
+                              <span className="text-[9px] text-muted-foreground ml-1.5 font-medium bg-muted px-1 py-0.5 rounded">
+                                {ride.origin} → {ride.destination}
+                              </span>
+                            </span>
+                            <span className="font-black text-amber-600 dark:text-amber-500 text-xs">
+                              ₹{getDynamicPrices(ride)[ride.driver_id] || ride.price_per_seat}
+                            </span>
+                          </div>
+                          {ride.bookings?.filter((bk: any) => bk.status !== 'rejected' && bk.status !== 'cancelled').map((bk: any) => (
+                            <div key={bk.id} className="flex justify-between items-center bg-card/50 px-2 py-1.5 rounded-lg border border-border/50 shadow-sm">
+                              <span className="font-bold text-muted-foreground text-[11px] truncate pr-2">
+                                {bk.passenger.id === currentUserId ? 'You' : bk.passenger.full_name.split(' ')[0]} 
+                                <span className="text-[9px] ml-1.5 font-medium bg-muted px-1 py-0.5 rounded">
+                                  {bk.pickup_location || ride.origin} → {bk.dropoff_location || ride.destination}
+                                </span>
+                              </span>
+                              <span className="font-black text-amber-600 dark:text-amber-500 text-xs">
+                                ₹{getDynamicPrices(ride)[bk.passenger.id] || 0}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Co-passengers section */}
                     {ride.bookings && ride.bookings.filter((bk: any) => bk.status === 'approved' && bk.passenger.id !== currentUserId).length > 0 && (
