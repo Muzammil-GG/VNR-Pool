@@ -65,7 +65,7 @@ export function CinematicAuth() {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.Material;
-        if (mat && mat.name === "brakeLightMaterial") {
+        if (mat && (mat.name === "brakeLightMaterial" || mat.name === "brakeLight")) {
           brakeMaterial = mat as THREE.MeshStandardMaterial;
         }
       }
@@ -73,6 +73,7 @@ export function CinematicAuth() {
 
     // Setup initial states
     gsap.set(cameraRef.current.position, { x: 12, y: 2, z: 4 }); // Forward-right side view
+    gsap.set(carGroupRef.current.position, { y: 0.38 }); // Lift car exactly to tire radius height
 
     // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
@@ -173,8 +174,8 @@ export function CinematicAuth() {
           <PerspectiveCamera ref={cameraRef} makeDefault fov={45} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
-          {/* Beautiful Blurred Environment */}
-          <Environment preset="city" background blur={0.8} />
+          {/* Beautiful Blurred Environment Reflections (Removed background prop to fix weird skybox cutoff) */}
+          <Environment preset="city" />
 
           {/* The Car - wrapped in Suspense to load smoothly */}
           <Suspense fallback={null}>

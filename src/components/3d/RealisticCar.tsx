@@ -58,37 +58,49 @@ export const RealisticCar = forwardRef<THREE.Group, React.ComponentProps<"group"
   useEffect(() => {
     if (!scene) return;
     
-    // Traverse the model to assign materials and enable shadows
+    // The official Three.js Ferrari GLB uses specific mesh names:
+    // 'body', 'glass', 'tires', 'rim_fl', 'trim', 'interior_dark', 'interior_light', 'steering_wheel'
+    const body = scene.getObjectByName('body') as THREE.Mesh;
+    if (body) {
+      body.material = materials.body;
+      body.castShadow = true;
+      body.receiveShadow = true;
+    }
+
+    const glass = scene.getObjectByName('glass') as THREE.Mesh;
+    if (glass) glass.material = materials.glass;
+
+    // Apply tire materials
+    const tires = scene.getObjectByName('tires') as THREE.Mesh;
+    if (tires) tires.material = materials.wheels;
+
+    // Apply rim materials
+    ['rim_fl', 'rim_fr', 'rim_rl', 'rim_rr', 'trim'].forEach((name) => {
+      const part = scene.getObjectByName(name) as THREE.Mesh;
+      if (part) part.material = materials.chrome;
+    });
+
+    // Traverse to assign generic shadows and find brake lights
     scene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
-
-        const name = mesh.name.toLowerCase();
         
-        // The three.js ferrari model has specific mesh names. We use includes to guess.
-        if (name.includes("body") || name.includes("paint") || name.includes("hood") || name.includes("door")) {
-          mesh.material = materials.body;
-        } else if (name.includes("glass") || name.includes("window")) {
-          mesh.material = materials.glass;
-        } else if (name.includes("wheel") || name.includes("tire") || name.includes("alloy")) {
-          mesh.material = materials.wheels;
-        } else if (name.includes("chrome") || name.includes("metal") || name.includes("rim")) {
-          mesh.material = materials.chrome;
-        } else if (name.includes("tail") || name.includes("brake") || name.includes("red")) {
-          mesh.material = materials.brakeLight;
-        } else if (name.includes("head") || name.includes("light") || name.includes("white")) {
-          mesh.material = materials.headLight;
+        const name = mesh.name.toLowerCase();
+        // If it's specifically a tail light, assign the brake material
+        if (name.includes("tail") || name.includes("brake") || name.includes("rear")) {
+           mesh.material = materials.brakeLight;
         }
       }
     });
+
   }, [scene, materials]);
 
   return (
     <group ref={ref} {...props} dispose={null}>
-      {/* We scale and position it to match the previous stylized car size roughly */}
-      <primitive object={scene} scale={[1.2, 1.2, 1.2]} position={[0, -0.3, 0]} rotation={[0, Math.PI, 0]} />
+      {/* Lift it by 0 to let the wheel origin sit exactly on the floor */}
+      <primitive object={scene} scale={[1.2, 1.2, 1.2]} position={[0, 0, 0]} rotation={[0, Math.PI, 0]} />
     </group>
   );
 });
