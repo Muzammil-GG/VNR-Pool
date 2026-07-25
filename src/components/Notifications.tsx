@@ -26,10 +26,9 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
 
       if (error) throw error
       return data || []
-    },
-    // Poll every 10 seconds for new notifications
-    refetchInterval: 10000 
+    }
   })
+  // No more polling, using real-time subscription instead
 
   const markAsRead = useMutation({
     mutationFn: async () => {
@@ -40,37 +39,56 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
         .eq('is_read', false)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] })
+      queryClient.invalidateQueries({ queryKey: ['notifications', currentUserId] })
     }
   })
 
   const unreadCount = notifications?.filter(n => !n.is_read).length || 0
 
-  const prevNotifsRef = useRef<any[]>([])
-
   useEffect(() => {
-    if (notifications && notifications.length > 0) {
-      const prev = prevNotifsRef.current
-      if (prev.length > 0) {
-        // Find new unread notifications that were not in the previous list
-        const newNotifs = notifications.filter(n => !n.is_read && !prev.find(p => p.id === n.id))
-        newNotifs.forEach(n => {
-          toast(n.title, { 
-            description: n.message,
-            icon: '🔔',
-            duration: 6000,
-            style: {
-              background: '#10b981',
-              color: '#fff',
-              border: 'none',
-              fontWeight: 'bold'
-            }
-          })
-        })
+    // Request notification permission gracefully
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission()
       }
-      prevNotifsRef.current = notifications
     }
-  }, [notifications])
+
+    const channel = supabase.channel(`public:notifications:${currentUserId}`)
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'notifications',
+        filter: `user_id=eq.${currentUserId}`
+      }, (payload) => {
+        const newNotif = payload.new as any;
+        
+        // Refresh the list
+        queryClient.invalidateQueries({ queryKey: ['notifications', currentUserId] })
+        
+        // Show Toast
+        toast(newNotif.title, { 
+          description: newNotif.message,
+          icon: '🔔',
+          duration: 6000,
+          style: {
+            background: '#3b82f6',
+            color: '#fff',
+            border: 'none',
+            fontWeight: 'bold'
+          }
+        })
+
+        // Push Native Web Notification if permitted
+        if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+          new Notification(newNotif.title, { body: newNotif.message })
+        }
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [currentUserId, queryClient, supabase])
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
