@@ -381,6 +381,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       toast.error(error.message)
     } else {
       toast.success('Booking requested! Wait for approval.')
+      await supabase.from('notifications').insert({
+        user_id: ride.driver_id,
+        title: 'New Ride Request! 👤',
+        message: `${currentUserProfile?.full_name || 'Someone'} requested a seat on your ride from ${ride.origin} to ${ride.destination}.`
+      })
       queryClient.invalidateQueries({ queryKey: ['rides'] })
       queryClient.invalidateQueries({ queryKey: ['has_active_booking'] })
     }
