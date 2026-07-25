@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+import { findBestMatchLocation, VNR_COORDS } from '@/lib/locations'
 
 // Fix Leaflet's default icon path issues in Next.js
 const iconUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png'
@@ -20,27 +21,52 @@ const customIcon = new L.Icon({
   shadowSize: [41, 41]
 })
 
+// Helper component to auto-fit the map to bounds
+function FitBounds({ coords }: { coords: [number, number][] }) {
+  const map = useMap()
+  
+  useEffect(() => {
+    if (coords.length > 0) {
+      const bounds = L.latLngBounds(coords)
+      map.fitBounds(bounds, { padding: [30, 30] })
+    }
+  }, [coords, map])
+  
+  return null
+}
+
 interface RouteMapProps {
   waypoints: string[];
   className?: string;
 }
 
 export default function RouteMap({ waypoints, className = "h-48 w-full rounded-xl" }: RouteMapProps) {
-  // Since we don't have exact lat/lngs for every waypoint yet, we can mock 
-  // the coordinates for the map display, or use a generic representation.
-  // For a robust implementation, we would geocode these or use predefined coordinates.
-  // We'll use a placeholder map centered on Hyderabad for now, with markers for Start/End.
-  
   const [mounted, setMounted] = useState(false)
+  const [routeCoords, setRouteCoords] = useState<[number, number][]>([])
+  const [validWaypoints, setValidWaypoints] = useState<{name: string, lat: number, lng: number}[]>([])
   
   useEffect(() => {
     setMounted(true)
-  }, [])
+    
+    // Map waypoints to coordinates
+    const mapped = waypoints.map(wp => {
+      // Hardcode fallback for VNR to ensure exact routing
+      if (wp.toLowerCase().includes('vnr') && wp.toLowerCase().includes('vjiet')) {
+        return { name: "VNR VJIET", lat: VNR_COORDS.lat, lng: VNR_COORDS.lng }
+      }
+      const match = findBestMatchLocation(wp)
+      if (match) return { name: wp, lat: match.lat, lng: match.lng }
+      return null
+    }).filter(Boolean) as {name: string, lat: number, lng: number}[]
+    
+    setValidWaypoints(mapped)
+    setRouteCoords(mapped.map(m => [m.lat, m.lng]))
+  }, [waypoints])
 
   if (!mounted) return <div className={`bg-secondary animate-pulse ${className}`} />
 
-  // Hyderabad center
-  const center: [number, number] = [17.3850, 78.4867]
+  // Hyderabad center as fallback
+  const center: [number, number] = routeCoords.length > 0 ? routeCoords[0] : [17.3850, 78.4867]
 
   return (
     <div className={`overflow-hidden border border-border/50 z-0 ${className}`}>
@@ -54,7 +80,20 @@ export default function RouteMap({ waypoints, className = "h-48 w-full rounded-x
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {/* We would render markers/polylines here based on geocoded waypoints */}
+        
+        {routeCoords.length > 0 && (
+          <>
+            <Polyline positions={routeCoords} color="#10b981" weight={4} opacity={0.8} />
+            <FitBounds coords={routeCoords} />
+          </>
+        )}
+        
+        {validWaypoints.map((wp, i) => (
+          <Marker key={`${wp.name}-${i}`} position={[wp.lat, wp.lng]} icon={customIcon}>
+            <Popup className="font-semibold">{wp.name} {i === 0 ? '(Start)' : i === validWaypoints.length - 1 ? '(End)' : ''}</Popup>
+          </Marker>
+        ))}
+
         <div className="absolute top-2 right-2 bg-background/90 px-3 py-1.5 rounded-lg border border-border shadow-sm z-[1000] text-xs font-bold pointer-events-none">
           Route Map
         </div>

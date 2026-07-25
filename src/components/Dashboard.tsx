@@ -188,8 +188,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           // Fractional (en-route) match
           // If the ride has a predefined route, try to match the passenger's search against the route waypoints.
           if (ride.route_id && (oMatch || dMatch)) {
-            const checkOrigin = effectiveOrigin || ride.origin;
-            const checkDest = effectiveDest || ride.destination;
+            const route = getRouteById(ride.route_id);
+            const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
+            const checkDest = effectiveDest || (route ? route.waypoints[route.waypoints.length - 1] : ride.destination);
             
             const isFractional = checkFractionalMatch(ride.route_id, checkOrigin, checkDest);
             if (isFractional) {
