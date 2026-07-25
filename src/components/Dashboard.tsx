@@ -567,12 +567,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             key={key}
             spotlightColor={color === 'yellow' ? 'oklch(0.70 0.18 80 / 0.18)' : 'oklch(0.58 0.22 160 / 0.18)'}
             className={cn(
-              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale gradient-border select-none",
+              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale select-none",
               rideCategory === key
                 ? color === 'yellow'
-                  ? "border-yellow-400/70 bg-gradient-to-br from-yellow-400/12 to-amber-400/5 shadow-[0_4px_28px_rgba(234,179,8,0.22)] scale-[1.04]"
-                  : "border-emerald-400/70 bg-gradient-to-br from-emerald-400/12 to-teal-400/5 shadow-[0_4px_28px_rgba(16,185,129,0.22)] scale-[1.04]"
-                : "border-border bg-card/50 hover:bg-card/80 opacity-55 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm glass-card"
+                  ? "border-yellow-500/50 bg-card shadow-md scale-[1.04]"
+                  : "border-emerald-500/50 bg-card shadow-md scale-[1.04]"
+                : "border-border bg-card/40 hover:bg-card/70 opacity-60 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm glass-card"
             )}
             onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
             role="button"
