@@ -72,6 +72,17 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
 
     if (!currentUserId) return
 
+    // Clean up notifications older than 24 hours
+    const cleanupOldNotifications = async () => {
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', currentUserId)
+        .lt('created_at', oneDayAgo)
+    }
+    cleanupOldNotifications()
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(err => {
         console.error('Service Worker registration failed:', err)

@@ -18,11 +18,11 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
   const [activeTab, setActiveTab] = useState<'offered' | 'joined'>('offered')
   const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null)
 
-  // Helper for 1-hour window check
-  const isWithinOneHour = (dateString?: string) => {
+  // Helper for 1-day window check
+  const isWithinOneDay = (dateString?: string) => {
     if (!dateString) return false
-    const oneHour = 60 * 60 * 1000
-    return (new Date().getTime() - new Date(dateString).getTime()) < oneHour
+    const oneDay = 24 * 60 * 60 * 1000
+    return (new Date().getTime() - new Date(dateString).getTime()) < oneDay
   }
 
   useEffect(() => {
@@ -68,8 +68,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      // Filter out completed rides older than 1 hour
-      return data?.filter((r: any) => r.status !== 'completed' || isWithinOneHour(r.completed_at)) || []
+      // Filter out completed rides older than 1 day
+      return data?.filter((r: any) => r.status !== 'completed' || isWithinOneDay(r.completed_at)) || []
     },
     refetchInterval: 5000
   })
@@ -99,13 +99,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      // Filter out cancelled rides, and completed rides older than 1 hour
-      return data?.filter((b: any) => {
+      // Filter out cancelled rides, and completed rides older than 1 day
+      const validBookings = data?.filter((b: any) => {
         if (!b.ride) return false
         if (b.ride.status === 'cancelled') return false
-        if (b.ride.status === 'completed' && !isWithinOneHour(b.ride.completed_at)) return false
+        if (b.ride.status === 'completed' && !isWithinOneDay(b.ride.completed_at)) return false
         return true
       }) || []
+      return validBookings
     },
     refetchInterval: 5000
   })
