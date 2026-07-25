@@ -116,9 +116,8 @@
     transition: background-color 0.45s ease, color 0.3s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
   }
-  html { @apply font-sans; scroll-behavior: smooth; }
+  html { @apply font-sans; }
 }
 
 /* ═══════════════════════════════════════════════════════════

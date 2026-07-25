@@ -4,13 +4,24 @@ import { useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, ContactShadows, PerspectiveCamera } from "@react-three/drei";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import * as THREE from "three";
 import { StylizedCar } from "../3d/StylizedCar";
 import { AuthForm } from "../AuthForm";
+import { useFrame } from "@react-three/fiber";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// A helper component to ensure the camera ALWAYS looks at the center
+const CameraRig = ({ cameraRef }: { cameraRef: React.RefObject<THREE.PerspectiveCamera> }) => {
+  useFrame(() => {
+    if (cameraRef.current) {
+      cameraRef.current.lookAt(0, 0, 0);
+    }
+  });
+  return null;
+};
 
 export function CinematicAuth() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -70,7 +81,6 @@ export function CinematicAuth() {
       z: 0.1, // Slight offset to prevent gimbal lock
       duration: 1,
       ease: "power1.inOut",
-      onUpdate: () => cameraRef.current?.lookAt(0, 0, 0),
     }, 0);
 
     // Fade out initial scroll text
@@ -83,7 +93,6 @@ export function CinematicAuth() {
       z: -12, // Behind the car
       duration: 1,
       ease: "power1.inOut",
-      onUpdate: () => cameraRef.current?.lookAt(0, 0, 0),
     }, 1);
 
     // 50% Mark: Brake lights flicker on
@@ -184,6 +193,7 @@ export function CinematicAuth() {
           <ContactShadows resolution={1024} scale={20} blur={2} opacity={0.5} far={10} color="#000000" />
           
           <SceneNotifier />
+          <CameraRig cameraRef={cameraRef} />
         </Canvas>
       </div>
 
