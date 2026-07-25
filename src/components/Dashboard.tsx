@@ -294,6 +294,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     route_id: ''
   })
 
+  // Pre-fill vehicle number from profile on load
+  useEffect(() => {
+    if (currentUserProfile && !offerData.vehicle_number) {
+      setOfferData(prev => ({
+        ...prev,
+        vehicle_number: prev.vehicle_type === 'bike' 
+          ? currentUserProfile.bike_number || '' 
+          : currentUserProfile.car_number || ''
+      }))
+    }
+  }, [currentUserProfile])
+
   const offerMutation = useMutation({
     mutationFn: async () => {
       const now = new Date();
@@ -1151,15 +1163,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       <div className="space-y-2 flex flex-col justify-end">
                         <div className="flex items-center justify-between mb-2">
                           <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
-                          <button 
-                            type="button"
-                            onClick={() => setOfferData({...offerData, vehicle_number: "TBD"})} 
-                            className="text-[10px] font-bold text-blue-500 hover:text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded-full transition-colors"
-                          >
-                            Skip for now
-                          </button>
                         </div>
                         <Input 
+                          required
                           value={offerData.vehicle_number}
                           onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
                           className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase"
