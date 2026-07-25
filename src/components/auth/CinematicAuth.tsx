@@ -130,20 +130,42 @@ export function CinematicAuth() {
             setAuthInteractive(false);
           }
 
-          // Handle real audio fading
+          // Handle real audio sync with car flow
           if (audioRef.current) {
-            // Attempt to play on scroll
-            if (audioRef.current.paused && self.progress > 0.01) {
-              audioRef.current.play().catch(() => {});
-            }
+            // Phase 3 (0.5 to 0.75) is where the car aggressively drives away!
+            // We want the sound effect to trigger EXACTLY when it drives away.
+            if (self.progress > 0.48 && self.progress < 0.85) {
+              
+              // Play if scrolling down (forward in time)
+              if (self.direction === 1) {
+                if (audioRef.current.paused) {
+                  audioRef.current.play().catch(() => {});
+                }
+              } else {
+                // Pause if they scroll backwards to stop the driving sound
+                if (!audioRef.current.paused) {
+                  audioRef.current.pause();
+                }
+              }
 
-            let vol = 1.0; // Max HTML5 Audio volume
-            
-            // Phase 3 (50% to 75%) is where car drives away
-            if (self.progress > 0.5) {
-              vol = 1 - ((self.progress - 0.5) / 0.25);
+              // Dynamically fade out the volume as the car visually vanishes in the distance
+              let vol = 1.0;
+              if (self.progress > 0.7) {
+                vol = 1 - ((self.progress - 0.7) / 0.15); // Fade from 1.0 to 0.0 between 0.7 and 0.85
+              }
+              audioRef.current.volume = Math.max(0, Math.min(1, vol));
+              
+            } else {
+              // Outside the driving zone, silence the car
+              if (!audioRef.current.paused) {
+                audioRef.current.pause();
+              }
+              // Reset the audio track when they scroll back up to the start
+              if (self.progress <= 0.48) {
+                audioRef.current.currentTime = 0;
+                audioRef.current.volume = 1.0;
+              }
             }
-            audioRef.current.volume = Math.max(0, Math.min(1, vol));
           }
         },
       },
