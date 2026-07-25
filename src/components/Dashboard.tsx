@@ -197,8 +197,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           const passengers: PassengerTrip[] = [];
           passengers.push({ id: ride.driver_id, startLoc: ride.origin, endLoc: ride.destination });
           
+          let isAlreadyInRide = ride.driver_id === currentUserId;
+
           ride.bookings?.forEach((b: any) => {
             if (b.status === 'approved' && b.passenger) {
+              if (b.passenger.id === currentUserId) isAlreadyInRide = true;
               passengers.push({ 
                 id: b.passenger.id, 
                 startLoc: b.pickup_location || ride.origin, 
@@ -207,9 +210,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             }
           });
           
-          passengers.push({ id: currentUserId, startLoc: checkOrigin, endLoc: checkDest });
+          const searcherId = isAlreadyInRide ? 'simulated-new-passenger' : currentUserId;
+          passengers.push({ id: searcherId, startLoc: checkOrigin, endLoc: checkDest });
+          
           const dynamicPrices = calculateDynamicSplitPricing(ride.route_id, ride.price_per_seat, passengers);
-          (ride as any).dynamic_price = dynamicPrices[currentUserId];
+          (ride as any).dynamic_price = dynamicPrices[searcherId];
         } else {
           // Default to full price. If they searched and it's a fractional match, the filter below will overwrite this.
           (ride as any).fractional_price = ride.price_per_seat;
