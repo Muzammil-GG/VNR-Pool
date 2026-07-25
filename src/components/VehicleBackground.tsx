@@ -128,7 +128,7 @@ export function VehicleBackground() {
             <span
               style={{
                 fontSize: `${v.size}px`,
-                opacity: 0.30,
+                opacity: 0.55,
                 display: 'inline-block',
                 animation: `vehicle-wiggle ${wiggleDur}s ease-in-out infinite`,
                 transform: v.dir === -1 ? 'scaleX(-1)' : undefined,
