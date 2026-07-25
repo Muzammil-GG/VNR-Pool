@@ -101,11 +101,11 @@ export function AuthForm() {
     <div className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-slate-50 dark:bg-slate-950">
       <div className="absolute inset-0 z-0">
         <WavyBackground 
-          colors={['#3b82f6', '#8b5cf6', '#6366f1', '#4f46e5']} 
-          waveOpacity={0.25} 
-          blur={8}
-          speed="slow"
-          waveWidth={30}
+          colors={['#3b82f6', '#8b5cf6', '#6366f1', '#4f46e5', '#22d3ee']} 
+          waveOpacity={0.8} 
+          blur={2}
+          speed="fast"
+          waveWidth={2}
         />
       </div>
       <div className="absolute inset-0 z-[1] pointer-events-none">
