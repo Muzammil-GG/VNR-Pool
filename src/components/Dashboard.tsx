@@ -30,8 +30,8 @@ import { findBestMatchLocation } from '@/lib/locations'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
 import { PublicProfileDialog } from '@/components/PublicProfileDialog'
-import { COLLEGE_ROUTES, getRouteById, checkFractionalMatch, getSlicedWaypoints } from '@/lib/routes'
-import { calculateFractionalPrice } from '@/lib/pricing'
+import { COLLEGE_ROUTES, getRouteById, getSlicedWaypoints } from '@/lib/routes'
+import { calculateFractionalPrice, checkFractionalMatch, calculateDynamicSplitPricing, PassengerTrip } from '@/lib/pricing'
 
 const RouteMap = dynamic(() => import('@/components/RouteMap'), { ssr: false, loading: () => <div className="h-48 w-full bg-secondary animate-pulse rounded-xl" /> })
 
@@ -141,6 +141,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           bookings(
             id,
             status,
+            passenger_id,
+            pickup_location,
+            dropoff_location,
             passenger:users!bookings_passenger_id_fkey(id, full_name, gender, avatar_url)
           )
         `)
@@ -188,26 +191,53 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         const oMatch = effectiveOrigin ? cleanStr(effectiveOrigin) : ''
         const dMatch = effectiveDest ? cleanStr(effectiveDest) : ''
 
-        fetchedRides = fetchedRides.filter(ride => {
+          // Common check for both exact and fractional
+          const route = ride.route_id ? getRouteById(ride.route_id) : null;
+          const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
+          const checkDest = effectiveDest || (route ? route.waypoints[route.waypoints.length - 1] : ride.destination);
+
+          // Calculate Dynamic Price if Auto Split
+          if (ride.ride_category === 'auto_split') {
+            const passengers: PassengerTrip[] = [];
+            passengers.push({ id: ride.driver_id, startLoc: ride.origin, endLoc: ride.destination });
+            
+            ride.bookings?.forEach((b: any) => {
+              if (b.status === 'approved' && b.passenger) {
+                passengers.push({ 
+                  id: b.passenger.id, 
+                  startLoc: b.pickup_location || ride.origin, 
+                  endLoc: b.dropoff_location || ride.destination 
+                });
+              }
+            });
+            
+            // Add the current searching user
+            passengers.push({ id: currentUserId, startLoc: checkOrigin, endLoc: checkDest });
+            
+            const dynamicPrices = calculateDynamicSplitPricing(ride.route_id, ride.price_per_seat, passengers);
+            (ride as any).dynamic_price = dynamicPrices[currentUserId];
+          }
+
           // Exact match
           const exactOrigin = !oMatch || cleanStr(ride.origin).includes(oMatch)
           const exactDest = !dMatch || cleanStr(ride.destination).includes(dMatch)
           if (exactOrigin && exactDest) {
             (ride as any).matchType = 'exact'
+            if (ride.ride_category !== 'auto_split') {
+              (ride as any).fractional_price = ride.price_per_seat;
+            }
             return true
           }
 
           // Fractional (en-route) match
           // If the ride has a predefined route, try to match the passenger's search against the route waypoints.
           if (ride.route_id && (oMatch || dMatch)) {
-            const route = getRouteById(ride.route_id);
-            const checkOrigin = effectiveOrigin || (route ? route.waypoints[0] : ride.origin);
-            const checkDest = effectiveDest || (route ? route.waypoints[route.waypoints.length - 1] : ride.destination);
-            
             const isFractional = checkFractionalMatch(ride.route_id, checkOrigin, checkDest);
             if (isFractional) {
               (ride as any).matchType = 'fractional';
-              (ride as any).fractional_price = calculateFractionalPrice(ride.route_id, checkOrigin, checkDest, ride.price_per_seat);
+              if (ride.ride_category !== 'auto_split') {
+                (ride as any).fractional_price = calculateFractionalPrice(ride.route_id, checkOrigin, checkDest, ride.price_per_seat);
+              }
               return true;
             }
           }
@@ -381,11 +411,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       status: 'pending'
     }
 
-    if (ride.matchType === 'fractional') {
-      bookingData.pickup_location = originFilter || ride.origin
-      bookingData.dropoff_location = destinationFilter || ride.destination
-      bookingData.fractional_price = ride.fractional_price
-    }
+    // Save locations and price for every booking request so the driver has full context
+    bookingData.pickup_location = originFilter || ride.origin
+    bookingData.dropoff_location = destinationFilter || ride.destination
+    bookingData.fractional_price = ride.matchType === 'fractional' 
+      ? ride.fractional_price 
+      : ride.price_per_seat;
 
     const { error } = await supabase.from('bookings').insert(bookingData)
     
@@ -806,20 +837,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           {ride.ride_category === 'auto_split' ? (
                             <>
                               <div className="text-3xl font-black text-muted-foreground price-glow flex items-end justify-end gap-1">
-                                {(ride as any).matchType === 'fractional' && (
-                                  <span className="text-[10px] text-blue-500 line-through mb-1">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}</span>
-                                )}
-                                ₹{(ride as any).matchType === 'fractional' 
-                                  ? Math.round((ride as any).fractional_price / (1 + (ride.total_seats - ride.available_seats))) 
-                                  : Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats)))}
+                                ₹{(ride as any).dynamic_price}
                               </div>
                               <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex flex-col items-end gap-1 mt-1">
-                                <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Current Split</span>
-                                {ride.available_seats > 0 && (
-                                  <span className="text-blue-600 dark:text-blue-400 normal-case tracking-normal">
-                                    Drops to <strong className="text-blue-700 dark:text-blue-300">₹{Math.round(ride.price_per_seat / (1 + (ride.total_seats - ride.available_seats) + 1))}</strong> if 1 more joins
-                                  </span>
-                                )}
+                                <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Live Share</span>
                               </div>
                             </>
                           ) : (
@@ -828,7 +849,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                 {(ride as any).matchType === 'fractional' && (
                                   <span className="text-[10px] text-blue-500 line-through mb-1">₹{ride.price_per_seat}</span>
                                 )}
-                                ₹{(ride as any).matchType === 'fractional' ? (ride as any).fractional_price : ride.price_per_seat}
+                                ₹{(ride as any).fractional_price}
                               </div>
                               <div className="text-[10px] text-muted-foreground font-semibold">
                                 {(ride as any).matchType === 'fractional' ? 'your fraction' : 'per seat'}

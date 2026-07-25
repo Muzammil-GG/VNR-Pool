@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, Play, Flag, Star, MessageCircle } from 'lucide-react'
+import { calculateDynamicSplitPricing } from '@/lib/pricing'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { RateRidematesDialog } from './RateRidematesDialog'
@@ -23,6 +24,27 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     if (!dateString) return false
     const oneDay = 24 * 60 * 60 * 1000
     return (new Date().getTime() - new Date(dateString).getTime()) < oneDay
+  }
+
+  const getDynamicPrices = (ride: any) => {
+    if (ride.ride_category !== 'auto_split') return {}
+    
+    const passengers: any[] = []
+    passengers.push({ id: ride.driver_id, startLoc: ride.origin, endLoc: ride.destination })
+    
+    if (ride.bookings) {
+      ride.bookings.forEach((b: any) => {
+        if (b.status !== 'rejected' && b.status !== 'cancelled' && b.passenger) {
+          passengers.push({
+            id: b.passenger.id,
+            startLoc: b.pickup_location || ride.origin,
+            endLoc: b.dropoff_location || ride.destination
+          })
+        }
+      })
+    }
+    
+    return calculateDynamicSplitPricing(ride.route_id, ride.price_per_seat, passengers)
   }
 
   useEffect(() => {
@@ -84,6 +106,9 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
           id,
           status,
           created_at,
+          pickup_location,
+          dropoff_location,
+          fractional_price,
           ride:rides (
             *,
             driver:users!rides_driver_id_fkey(id, full_name, mobile_number, gender, total_rating_score, rating_count, avatar_url),
@@ -177,8 +202,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     },
     onSuccess: () => {
       toast.success('Ride started! Passengers notified.');
-      queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] });
-      queryClient.invalidateQueries({ queryKey: ['rides'] });
+      queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] })
+      queryClient.invalidateQueries({ queryKey: ['rides'] })
     },
     onError: (err) => toast.error(`Error: ${err.message}`)
   })
@@ -210,8 +235,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
     },
     onSuccess: () => {
       toast.success('Ride completed! Passengers notified.');
-      queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] });
-      queryClient.invalidateQueries({ queryKey: ['rides'] });
+      queryClient.invalidateQueries({ queryKey: ['my_offered_rides'] })
+      queryClient.invalidateQueries({ queryKey: ['rides'] })
     },
     onError: (err) => toast.error(`Error: ${err.message}`)
   })
@@ -228,9 +253,8 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
       return data
     },
     onSuccess: () => {
-      toast.success('Seat request cancelled!')
       queryClient.invalidateQueries({ queryKey: ['my_joined_rides'] })
-      queryClient.invalidateQueries({ queryKey: ['rides'] })
+      toast.success('Ride request cancelled.')
     },
     onError: (e) => toast.error(e.message)
   })
@@ -387,9 +411,15 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                     <p className="text-sm text-muted-foreground bg-muted/30 p-4 rounded-xl border border-border/50 text-center">No seat requests yet.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {ride.bookings.map((booking: any) => (
-                        <div key={booking.id} className="flex flex-col gap-3 bg-card border border-border p-4 rounded-xl shadow-sm">
-                          <div className="flex justify-between items-start">
+                      {(() => {
+                        const dynamicPrices = getDynamicPrices(ride);
+                        return ride.bookings.map((booking: any) => {
+                          const isAutoSplit = ride.ride_category === 'auto_split';
+                          const displayPrice = isAutoSplit ? dynamicPrices[booking.passenger.id] : booking.fractional_price;
+                          
+                          return (
+                            <div key={booking.id} className="flex flex-col gap-3 bg-card border border-border p-4 rounded-xl shadow-sm">
+                              <div className="flex justify-between items-start">
                             <div>
                               <p className="font-bold text-foreground flex items-center">
                                 {booking.passenger.full_name} 
@@ -401,16 +431,23 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                               </p>
                               
                               {booking.pickup_location && booking.dropoff_location && (
-                                <div className="mt-1.5 p-1.5 bg-blue-500/10 border border-blue-500/20 rounded-md">
-                                  <p className="text-[10px] text-blue-700 dark:text-blue-400 font-bold flex items-center gap-1 uppercase tracking-wider mb-0.5">
-                                    <MapPin className="w-3 h-3" /> En-Route Match
+                                <div className="mt-1.5 p-2 bg-blue-500/10 border border-blue-500/20 rounded-md">
+                                  <p className="text-[10px] text-blue-700 dark:text-blue-400 font-bold flex items-center gap-1 uppercase tracking-wider mb-1">
+                                    <MapPin className="w-3 h-3" /> 
+                                    {isAutoSplit 
+                                      ? 'Auto/Cab Split Request' 
+                                      : (booking.pickup_location !== ride.origin || booking.dropoff_location !== ride.destination) 
+                                        ? 'En-Route Match' 
+                                        : 'Full Route Request'}
                                   </p>
-                                  <p className="text-xs text-blue-700 dark:text-blue-400 font-medium">
-                                    <span className="font-semibold">{booking.pickup_location}</span> to <span className="font-semibold">{booking.dropoff_location}</span>
+                                  <p className="text-xs text-blue-700 dark:text-blue-400 font-medium leading-relaxed">
+                                    <span className="font-semibold">{booking.pickup_location}</span> 
+                                    <span className="mx-1 text-blue-500/50">→</span> 
+                                    <span className="font-semibold">{booking.dropoff_location}</span>
                                   </p>
-                                  {booking.fractional_price && (
-                                    <p className="text-[10px] text-blue-600 dark:text-blue-500 font-bold mt-0.5">
-                                      Pays fractional fare: ₹{booking.fractional_price}
+                                  {displayPrice !== undefined && displayPrice !== null && (
+                                    <p className="text-[11px] text-blue-600 dark:text-blue-500 font-bold mt-1.5 bg-blue-500/10 inline-block px-2 py-0.5 rounded-full">
+                                      {isAutoSplit ? 'Live Split Share:' : 'Fare:'} ₹{displayPrice}
                                     </p>
                                   )}
                                 </div>
@@ -453,7 +490,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             </div>
                           )}
                         </div>
-                      ))}
+                      )})}
                     </div>
                   )}
 
