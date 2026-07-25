@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils'
 import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { SpotlightCard } from '@/components/ui/spotlight-card'
 import { PublicProfileDialog } from '@/components/PublicProfileDialog'
 import { COLLEGE_ROUTES, getRouteById, checkFractionalMatch, getSlicedWaypoints } from '@/lib/routes'
 import { calculateFractionalPrice } from '@/lib/pricing'
@@ -503,19 +504,19 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           className="text-center space-y-2 mt-3 sm:mt-4"
         >
           {/* Live pulse */}
-          <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="flex items-center justify-center gap-2 mb-3">
             <span className="relative flex h-2 w-2">
-              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-80" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em]">Live Rides</span>
+            <span className="retro-badge text-emerald-500 border-emerald-500/30 px-2 py-0.5">Live Rides</span>
           </div>
 
-          <h1 className="hero-title text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none bg-clip-text">
+          <h1 className="hero-title gradient-text">
             VNR Pool
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
-            Share rides · Split costs · Commute smarter 🚗
+          <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-xs sm:max-w-md mx-auto leading-relaxed mt-3">
+            Share rides &middot; Split costs &middot; Commute smarter 🚗
           </p>
         </motion.div>
 
@@ -562,17 +563,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           { key: 'auto_split',       label: 'Auto / Cab Split', icon: Navigation, color: 'yellow' },
           { key: 'personal_vehicle', label: 'Student Pool',     icon: Car,        color: 'emerald' },
         ].map(({ key, label, icon: Icon, color }) => (
-          <button
+          <SpotlightCard
             key={key}
-            onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
+            spotlightColor={color === 'yellow' ? 'oklch(0.70 0.18 80 / 0.18)' : 'oklch(0.58 0.22 160 / 0.18)'}
             className={cn(
-              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group relative overflow-hidden",
+              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale gradient-border",
               rideCategory === key
                 ? color === 'yellow'
-                  ? "border-yellow-400/70 bg-gradient-to-br from-yellow-400/15 to-amber-400/5 shadow-[0_4px_24px_rgba(234,179,8,0.25)] scale-[1.04]"
-                  : "border-emerald-400/70 bg-gradient-to-br from-emerald-400/15 to-teal-400/5 shadow-[0_4px_24px_rgba(16,185,129,0.25)] scale-[1.04]"
-                : "border-border bg-card/40 hover:bg-card/70 opacity-55 hover:opacity-95 hover:scale-[1.02] backdrop-blur-sm"
+                  ? "border-yellow-400/70 bg-gradient-to-br from-yellow-400/12 to-amber-400/5 shadow-[0_4px_28px_rgba(234,179,8,0.22)] scale-[1.04]"
+                  : "border-emerald-400/70 bg-gradient-to-br from-emerald-400/12 to-teal-400/5 shadow-[0_4px_28px_rgba(16,185,129,0.22)] scale-[1.04]"
+                : "border-border bg-card/50 hover:bg-card/80 opacity-55 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm glass-card"
             )}
+            onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
           >
             <div className={cn(
               "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110",
@@ -591,7 +593,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               "text-xs sm:text-sm font-bold transition-colors duration-300",
               rideCategory === key ? 'text-foreground' : 'text-muted-foreground'
             )}>{label}</span>
-          </button>
+          </SpotlightCard>
         ))}
       </motion.div>
 
@@ -603,7 +605,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end"
+            className="glass-card retro-noise rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end border-emerald-400/10"
           >
             <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
@@ -691,15 +693,23 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               rides?.map((ride, i) => (
                 <motion.div
                   key={ride.id}
-                  initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                  initial={{ opacity: 0, y: 22, scale: 0.975 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: i * 0.05, duration: 0.4, ease: [0.22,1,0.36,1] }}
-                  whileHover={{ y: -5, transition: { duration: 0.22 } }}
+                  transition={{ delay: i * 0.05, duration: 0.42, ease: [0.22,1,0.36,1] }}
                 >
-                  <div className={cn(
-                    "glass-card rounded-2xl overflow-hidden relative group",
-                    ride.is_women_only ? "border-pink-400/50" : ""
-                  )}>
+                  <SpotlightCard
+                    spotlightColor={
+                      ride.is_women_only
+                        ? 'oklch(0.65 0.20 340 / 0.15)'
+                        : ride.ride_category === 'auto_split'
+                        ? 'oklch(0.70 0.18 80 / 0.15)'
+                        : 'oklch(0.58 0.22 160 / 0.15)'
+                    }
+                    className={cn(
+                      "glass-card rounded-2xl overflow-hidden relative group gradient-border float-hover",
+                      ride.is_women_only ? "border-pink-400/40" : ""
+                    )}
+                  >
                     {/* Subtle top gradient stripe */}
                     <div className={cn(
                       "absolute top-0 inset-x-0 h-1 rounded-t-2xl",
@@ -984,7 +994,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         </a>
                       </div>
                     </div>
-                  </div>
+                  </SpotlightCard>
                 </motion.div>
               ))
             )}
