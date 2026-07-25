@@ -1014,203 +1014,251 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md mx-auto"
+          className="max-w-3xl mx-auto"
         >
-          <div className="glass-card rounded-2xl">
-            <div className="p-6 border-b border-border/40">
-              <h2 className="text-2xl font-black ">Offer a Ride 🚗</h2>
-              <p className="text-muted-foreground text-sm mt-1">Share your journey and split costs with fellow VNRians.</p>
+          <div className="bg-white dark:bg-[#1f2937] text-slate-900 dark:text-slate-100 rounded-3xl border border-border/50 shadow-xl overflow-hidden">
+            <div className="p-6 md:p-8 border-b border-border/10">
+              <h2 className="text-3xl font-black text-foreground dark:text-white mb-1">Offer a Ride</h2>
+              <p className="text-muted-foreground dark:text-slate-400 text-sm">Fill in the details to share your journey with campus peers.</p>
             </div>
             
             {!currentUserProfile?.is_verified_driver && rideCategory === 'personal_vehicle' ? (
-              <div className="p-8 flex flex-col items-center justify-center text-center space-y-4">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-2">
-                  <Shield className="w-8 h-8 text-blue-600" />
+              <div className="p-10 flex flex-col items-center justify-center text-center space-y-4">
+                <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-2">
+                  <Shield className="w-10 h-10 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">Driver Verification Required</h3>
-                <p className="text-muted-foreground text-sm">
+                <h3 className="text-xl font-bold">Driver Verification Required</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm">
                   To ensure the safety of our student pool, you must verify your Driving License via DigiLocker before you can offer rides in your personal vehicle.
                 </p>
                 <Button 
                   onClick={() => window.location.href = '/api/digilocker/login'}
-                  className="w-full mt-4 bg-[#2653a1] hover:bg-[#1a3b75] text-white font-semibold h-11"
+                  className="w-full max-w-sm mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold h-12 rounded-xl"
                 >
                   <Shield className="w-4 h-4 mr-2" /> Verify with DigiLocker
                 </Button>
               </div>
             ) : (
-              <div className="p-6 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="font-semibold text-foreground">Pick-up Location</Label>
-                  <LocationAutocomplete 
-                    value={offerData.origin}
-                    onChange={(v) => setOfferData({...offerData, origin: v})}
-                    placeholder="e.g. Miyapur Metro"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="font-semibold text-foreground">Drop-off Location</Label>
-                  <LocationAutocomplete 
-                    value={offerData.destination}
-                    onChange={(v) => setOfferData({...offerData, destination: v})}
-                    placeholder="e.g. VNR VJIET"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="font-semibold text-foreground flex items-center gap-2">
-                  College Bus Route (Optional)
-                  <span className="text-[10px] bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded uppercase font-bold">Recommended</span>
-                </Label>
-                <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
-                  <SelectTrigger className="bg-background border-border focus-visible:ring-blue-500">
-                    <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border-border shadow-xl max-h-[300px]">
-                    <SelectItem value="none">Custom Route (No En-Route Matches)</SelectItem>
-                    {COLLEGE_ROUTES.filter(route => {
-                      if (!offerData.origin || !offerData.destination) return true;
-                      const clean = (s: string) => s.toLowerCase().trim();
-                      const o = clean(offerData.origin);
-                      const d = clean(offerData.destination);
-                      const oIdx = route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w)));
-                      const dIdx = route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w)));
-                      return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
-                    }).map(route => (
-                      <SelectItem key={route.id} value={route.id}>{route.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {offerData.route_id && offerData.route_id !== 'none' && (
-                  <div className="mt-2 p-3 bg-secondary/50 rounded-lg border border-border/50">
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Route Waypoints:</p>
-                    <p className="text-xs font-semibold leading-relaxed">
-                      {getRouteById(offerData.route_id)?.waypoints.join(' ➔ ')}
-                    </p>
+              <div className="p-6 md:p-8 space-y-6">
+                
+                {/* Row 1: Category & Vehicle */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Ride Category</Label>
+                    <Select value={rideCategory} onValueChange={(v) => setRideCategory(v as 'auto_split' | 'personal_vehicle')}>
+                      <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus:ring-blue-500">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700">
+                        <SelectItem value="auto_split">Auto/Cab Fare Split</SelectItem>
+                        <SelectItem value="personal_vehicle">Student Pool</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label className="font-semibold text-foreground">Departure Time</Label>
-                <Input 
-                  type="datetime-local"
-                  value={offerData.departure_time}
-                  min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
-                  onChange={e => setOfferData({...offerData, departure_time: e.target.value})}
-                  className="bg-background border-border focus-visible:ring-blue-500"
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="font-semibold text-foreground flex items-center gap-2">
-                    Vehicle Type
-                    {offerData.vehicle_type && (
-                      <img src={`/${offerData.vehicle_type}.png`} alt="vehicle" className="w-6 h-6 object-contain drop-shadow-sm" />
-                    )}
-                  </Label>
-                  <Select onValueChange={(v) => { 
-                    if (v) {
-                      const maxSeats = v === 'bike' ? 1 : v === 'auto' ? 2 : 4;
-                      let defaultNum = offerData.vehicle_number;
-                      if (v === 'car' && currentUserProfile?.car_number) defaultNum = currentUserProfile.car_number;
-                      if (v === 'bike' && currentUserProfile?.bike_number) defaultNum = currentUserProfile.bike_number;
-                      
-                      setOfferData({
-                        ...offerData, 
-                        vehicle_type: v as 'bike' | 'auto' | 'car',
-                        vehicle_number: defaultNum,
-                        total_seats: offerData.total_seats > maxSeats ? maxSeats : offerData.total_seats
-                      })
-                    }
-                  }} value={offerData.vehicle_type}>
-                    <SelectTrigger className="bg-background border-border focus-visible:ring-blue-500">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border-border shadow-xl">
-                      {rideCategory === 'personal_vehicle' ? (
-                        <>
-                          <SelectItem value="bike">Bike</SelectItem>
-                          <SelectItem value="car">Car</SelectItem>
-                        </>
-                      ) : (
-                        <>
-                          <SelectItem value="auto">Auto</SelectItem>
-                          <SelectItem value="car">Cab</SelectItem>
-                        </>
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2">
+                      Vehicle Type
+                      {offerData.vehicle_type && (
+                        <img src={`/${offerData.vehicle_type}.png`} alt="vehicle" className="w-5 h-5 object-contain" />
                       )}
-                    </SelectContent>
-                  </Select>
+                    </Label>
+                    <Select onValueChange={(v) => { 
+                      if (v) {
+                        const maxSeats = v === 'bike' ? 1 : v === 'auto' ? 2 : 4;
+                        let defaultNum = offerData.vehicle_number;
+                        if (v === 'car' && currentUserProfile?.car_number) defaultNum = currentUserProfile.car_number;
+                        if (v === 'bike' && currentUserProfile?.bike_number) defaultNum = currentUserProfile.bike_number;
+                        
+                        setOfferData({
+                          ...offerData, 
+                          vehicle_type: v as 'bike' | 'auto' | 'car',
+                          vehicle_number: defaultNum,
+                          total_seats: offerData.total_seats > maxSeats ? maxSeats : offerData.total_seats
+                        })
+                      }
+                    }} value={offerData.vehicle_type}>
+                      <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus:ring-blue-500">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700">
+                        {rideCategory === 'personal_vehicle' ? (
+                          <>
+                            <SelectItem value="bike">Bike</SelectItem>
+                            <SelectItem value="car">Car</SelectItem>
+                          </>
+                        ) : (
+                          <>
+                            <SelectItem value="auto">Auto</SelectItem>
+                            <SelectItem value="car">Cab</SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+
                 {rideCategory === 'personal_vehicle' && (
                   <div className="space-y-2">
-                    <Label className="font-semibold text-foreground">Vehicle No. <span className="text-red-500">*</span></Label>
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
                     <Input 
                       value={offerData.vehicle_number}
                       onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
-                      className="bg-background border-border focus-visible:ring-blue-500"
+                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase"
                       placeholder="TS09XX1234"
                     />
                   </div>
                 )}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="font-semibold text-foreground flex items-center gap-2">
-                    Total Seats
-                    <span className="text-[10px] bg-secondary text-muted-foreground px-1.5 py-0.5 rounded uppercase">
-                      Max {offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4}
-                    </span>
-                  </Label>
-                  <Input 
-                    type="number" min="1" max={offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4}
-                    value={offerData.total_seats || ''}
-                    onChange={e => {
-                      const max = offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4;
-                      let val = parseInt(e.target.value) || 0;
-                      if (val > max) val = max;
-                      setOfferData({...offerData, total_seats: val});
-                    }}
-                    className="bg-background border-border focus-visible:ring-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="font-semibold text-foreground">
-                    {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
-                  </Label>
-                  <Input 
-                    type="number" min="0"
-                    value={offerData.price_per_seat || ''}
-                    onChange={e => setOfferData({...offerData, price_per_seat: parseInt(e.target.value) || 0})}
-                    className="bg-background border-border focus-visible:ring-blue-500"
-                  />
-                </div>
-              </div>
-              
-              {currentUserProfile?.gender === 'female' && (
-                <div className="flex items-center justify-between p-4 bg-pink-100/50 dark:bg-pink-950/30 rounded-xl border border-pink-200 dark:border-pink-900/50 mt-4">
-                  <div className="space-y-1">
-                    <Label className="text-pink-600 dark:text-pink-400 flex items-center gap-2 font-bold">
-                      <Shield className="w-5 h-5" /> Women Only Ride
-                    </Label>
-                    <p className="text-xs text-pink-700/70 dark:text-pink-500/70 font-medium">Only female users can request seats.</p>
+                
+                {/* Row 2: Locations */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-end">
+                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Origin</Label>
+                      <button 
+                        type="button" 
+                        className="text-[10px] sm:text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex items-center gap-1"
+                        onClick={() => {
+                          if (navigator.geolocation) {
+                            toast.loading('Locating...', { id: 'locating' });
+                            navigator.geolocation.getCurrentPosition(
+                              async (pos) => {
+                                const lat = pos.coords.latitude;
+                                const lon = pos.coords.longitude;
+                                const loc = await findBestMatchLocation(lat, lon);
+                                setOfferData({...offerData, origin: loc.name});
+                                toast.success(`Located: ${loc.name}`, { id: 'locating' });
+                              },
+                              () => toast.error('Failed to get location', { id: 'locating' }),
+                              { enableHighAccuracy: true }
+                            );
+                          }
+                        }}
+                      >
+                        <MapPin className="w-3 h-3" /> Use Current Location
+                      </button>
+                    </div>
+                    <LocationAutocomplete 
+                      value={offerData.origin}
+                      onChange={(v) => setOfferData({...offerData, origin: v})}
+                      placeholder="Enter pickup point"
+                    />
                   </div>
-                  <Switch 
-                    checked={offerData.is_women_only}
-                    onCheckedChange={v => setOfferData({...offerData, is_women_only: v})}
-                    className="data-[state=checked]:bg-foreground"
-                  />
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Destination</Label>
+                    <LocationAutocomplete 
+                      value={offerData.destination}
+                      onChange={(v) => setOfferData({...offerData, destination: v})}
+                      placeholder="e.g. VNR VJIET Campus"
+                    />
+                  </div>
                 </div>
-              )}
+                
+                {/* Row 3: Route */}
+                <div className="space-y-2">
+                  <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
+                  <div className="relative">
+                    <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
+                      <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-[72px] rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4">
+                        <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700 shadow-xl max-h-[300px]">
+                        <SelectItem value="none">
+                          <div className="font-bold">Custom Route</div>
+                          <div className="text-xs text-muted-foreground">No intermediate pickups</div>
+                        </SelectItem>
+                        {COLLEGE_ROUTES.filter(route => {
+                          if (!offerData.origin || !offerData.destination) return true;
+                          const clean = (s: string) => s.toLowerCase().trim();
+                          const o = clean(offerData.origin);
+                          const d = clean(offerData.destination);
+                          const oIdx = route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w)));
+                          const dIdx = route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w)));
+                          return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
+                        }).map((route, idx) => (
+                          <SelectItem key={route.id} value={route.id}>
+                            <div className="font-bold">Option {idx + 1}</div>
+                            <div className="text-xs text-slate-500">Via {route.waypoints.join(' → ')}</div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-              <Button
-                onClick={() => offerMutation.mutate()}
-                disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
-                className="w-full h-12 shiny-btn bg-gradient-to-r from-blue-500 to-blue-500 hover:from-blue-600 hover:to-blue-600 mt-6 text-white font-black text-base rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all"
-              >
-                {offerMutation.isPending ? 'Publishing…' : '🚀 Publish Ride'}
+                {/* Row 4: Date, Time, Seats */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Departure Date & Time</Label>
+                    <Input 
+                      type="datetime-local"
+                      value={offerData.departure_time}
+                      min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                      onChange={e => setOfferData({...offerData, departure_time: e.target.value})}
+                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">
+                      Total Seats (Max: {offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4})
+                    </Label>
+                    <Input 
+                      type="number" min="1" max={offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4}
+                      value={offerData.total_seats || ''}
+                      onChange={e => {
+                        const max = offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4;
+                        let val = parseInt(e.target.value) || 0;
+                        if (val > max) val = max;
+                        setOfferData({...offerData, total_seats: val});
+                      }}
+                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                
+                {/* Row 5: Pricing */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">
+                      {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
+                    </Label>
+                    <Input 
+                      type="number" min="0"
+                      value={offerData.price_per_seat || ''}
+                      onChange={e => setOfferData({...offerData, price_per_seat: parseInt(e.target.value) || 0})}
+                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-2 flex flex-col">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Pricing Method</Label>
+                    <div className="flex-1 bg-[#0f3d32] dark:bg-[#064e3b]/30 border border-[#059669]/30 rounded-xl flex items-center px-4 h-12">
+                      <span className="text-[#10b981] dark:text-[#34d399] font-bold text-sm tracking-wide">
+                        {rideCategory === 'auto_split' ? 'Dynamic split based on active passengers' : 'Fixed price per passenger'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {currentUserProfile?.gender === 'female' && (
+                  <div className="flex items-center justify-between p-4 bg-pink-50 dark:bg-pink-900/20 rounded-xl border border-pink-100 dark:border-pink-900/40">
+                    <div className="space-y-1">
+                      <Label className="text-pink-600 dark:text-pink-400 flex items-center gap-2 font-bold">
+                        <Shield className="w-5 h-5" /> Women Only Ride
+                      </Label>
+                      <p className="text-xs text-pink-700/80 dark:text-pink-500/80 font-medium">Only female users can request seats.</p>
+                    </div>
+                    <Switch 
+                      checked={offerData.is_women_only}
+                      onCheckedChange={v => setOfferData({...offerData, is_women_only: v})}
+                    />
+                  </div>
+                )}
+
+                <Button
+                  onClick={() => offerMutation.mutate()}
+                  disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
+                  className="w-full h-14 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-bold text-lg rounded-xl shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] transition-all disabled:opacity-50 disabled:shadow-none"
+                >
+                  {offerMutation.isPending ? 'Publishing…' : 'Post Ride'}
                 </Button>
               </div>
             )}
