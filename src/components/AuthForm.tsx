@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { WavyBackground } from '@/components/ui/wavy-background'
 import { VehicleBackground } from '@/components/VehicleBackground'
+import { SpotlightCard } from '@/components/ui/spotlight-card'
 
 export function AuthForm() {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
@@ -121,23 +122,24 @@ export function AuthForm() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="w-full max-w-[420px] relative z-10"
       >
-        <Card className="w-full bg-[#f8fafc] dark:bg-[#0f172a]/80 backdrop-blur-3xl border-slate-200 dark:border-slate-800 shadow-2xl rounded-3xl overflow-hidden relative">
-          
-          <CardHeader className="relative z-10 text-center pb-4 pt-8">
-            <div className="w-16 h-16 mx-auto bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center shadow-lg mb-4 hover:scale-105 transition-transform">
-              <Car className="w-8 h-8 text-white dark:text-slate-900" />
-            </div>
-            <CardTitle className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              VNR Pool
-            </CardTitle>
-            <CardDescription className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
-              {mode === 'login' ? "Sign in to continue" :
-             mode === 'signup' ? "Create a new student account" :
-             mode === 'forgot_password' ? "Reset your password" :
-             "Enter OTP and New Password"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="relative z-10">
+        <SpotlightCard className="w-full glass-card p-1 shadow-2xl rounded-[2rem] overflow-hidden relative">
+          <Card className="w-full bg-card/80 backdrop-blur-3xl border-0 shadow-none rounded-[1.8rem] overflow-hidden relative">
+            
+            <CardHeader className="relative z-10 text-center pb-4 pt-8">
+              <div className="w-16 h-16 mx-auto bg-emerald-500 rounded-2xl flex items-center justify-center shadow-[0_8px_32px_rgba(16,185,129,0.4)] mb-4 hover:scale-105 transition-transform duration-300">
+                <Car className="w-8 h-8 text-white" />
+              </div>
+              <CardTitle className="hero-title text-4xl font-black tracking-tight gradient-text mb-2">
+                VNR Pool
+              </CardTitle>
+              <CardDescription className="text-muted-foreground mt-2 font-medium">
+                {mode === 'login' ? "Sign in to continue" :
+               mode === 'signup' ? "Create a new student account" :
+               mode === 'forgot_password' ? "Reset your password" :
+               "Enter OTP and New Password"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="relative z-10 pb-8 px-6">
           <form onSubmit={handleAuth} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-foreground font-semibold">College Email ID</Label>
@@ -147,7 +149,7 @@ export function AuthForm() {
                 placeholder="21071A05XX@vnrvjiet.in"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus-visible:ring-slate-900 dark:focus-visible:ring-slate-400 h-11"
+                className="bg-background/70 border-border focus-visible:ring-emerald-500 h-11"
                 required
               />
             </div>
@@ -161,7 +163,7 @@ export function AuthForm() {
                   placeholder="123456"
                   value={otp}
                   onChange={e => setOtp(e.target.value)}
-                  className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus-visible:ring-slate-900 dark:focus-visible:ring-slate-400 h-11 tracking-widest text-center"
+                  className="bg-background/70 border-border focus-visible:ring-emerald-500 h-11 tracking-widest text-center"
                   required
                 />
               </div>
@@ -177,7 +179,7 @@ export function AuthForm() {
                     <button 
                       type="button" 
                       onClick={() => setMode('forgot_password')}
-                      className="text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 font-medium"
+                      className="text-xs text-muted-foreground hover:text-emerald-500 font-medium transition-colors"
                     >
                       Forgot Password?
                     </button>
@@ -188,7 +190,7 @@ export function AuthForm() {
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus-visible:ring-slate-900 dark:focus-visible:ring-slate-400 h-11"
+                  className="bg-background/70 border-border focus-visible:ring-emerald-500 h-11"
                   required
                 />
               </div>
@@ -197,29 +199,29 @@ export function AuthForm() {
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-12 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 text-white dark:text-slate-900 transition-all text-base font-bold rounded-lg shadow-md"
+              className="w-full h-12 shiny-btn bg-emerald-500 hover:bg-emerald-600 text-white transition-all text-base font-bold rounded-xl shadow-lg shadow-emerald-500/20 press-scale mt-2"
             >
-              {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
-              {mode === 'login' ? "Sign In" : 
-               mode === 'signup' ? "Sign Up" : 
-               mode === 'signup_verify' ? "Verify & Create Account" :
-               mode === 'forgot_password' ? "Send OTP" : 
-               "Reset & Sign In"}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 
+               mode === 'login' ? 'Sign In' : 
+               mode === 'signup' ? 'Send OTP' : 
+               mode === 'signup_verify' ? 'Verify & Complete' :
+               mode === 'forgot_password' ? 'Send Reset OTP' : 
+               'Reset & Sign In'}
             </Button>
           </form>
-          <div className="mt-6 text-center text-sm text-muted-foreground flex flex-col gap-2">
-            <div>
+          <div className="mt-8 text-center text-sm font-medium">
+            <span className="text-muted-foreground">
               {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
-              <button 
-                type="button"
-                onClick={() => setMode(mode === 'login' ? 'signup' : 'login')} 
-                className="text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-slate-300 font-bold transition-colors"
-              >
-                {mode === 'login' ? "Sign up now" : "Sign in instead"}
-              </button>
-            </div>
+            </span>
+            <button 
+              type="button"
+              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')} 
+              className="text-emerald-500 hover:text-emerald-400 font-bold ml-1 transition-colors hover:underline decoration-emerald-500/30 underline-offset-4"
+            >
+              {mode === 'login' ? 'Create Account' : 'Sign In'}
+            </button>
             {(mode === 'forgot_password' || mode === 'reset_password' || mode === 'signup_verify') && (
-              <div>
+              <div className="mt-4">
                 <button 
                   type="button"
                   onClick={() => setMode('login')} 
