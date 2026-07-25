@@ -1150,7 +1150,16 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     
                     {rideCategory === 'personal_vehicle' && (
                       <div className="space-y-2 flex flex-col justify-end">
-                        <Label className="font-semibold text-sm text-foreground dark:text-slate-300 mb-2">Vehicle No.</Label>
+                        <div className="flex items-center justify-between mb-2">
+                          <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
+                          <button 
+                            type="button"
+                            onClick={() => setOfferData({...offerData, vehicle_number: "TBD"})} 
+                            className="text-[10px] font-bold text-blue-500 hover:text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded-full transition-colors"
+                          >
+                            Skip for now
+                          </button>
+                        </div>
                         <Input 
                           value={offerData.vehicle_number}
                           onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
