@@ -27,9 +27,9 @@ export function Footer() {
             <Phone className="w-4 h-4 text-blue-500" />
             +91 7207632275
           </a>
-          <a href="mailto:support@vnrpool.in" className="flex items-center gap-2.5 text-sm font-medium text-foreground hover:text-blue-500 transition-colors bg-secondary/50 px-4 py-2 rounded-full w-full justify-center md:justify-end border border-border/40 shadow-sm">
+          <a href="mailto:support.vnrpool@gmail.com" className="flex items-center gap-2.5 text-sm font-medium text-foreground hover:text-blue-500 transition-colors bg-secondary/50 px-4 py-2 rounded-full w-full justify-center md:justify-end border border-border/40 shadow-sm">
             <Mail className="w-4 h-4 text-blue-500" />
-            support@vnrpool.in
+            support.vnrpool@gmail.com
           </a>
         </div>
       </div>
