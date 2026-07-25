@@ -66,7 +66,7 @@ export default function DigiLockerMock() {
               <p className="text-[10px] text-slate-500 uppercase tracking-wider">Government of India</p>
             </div>
           </div>
-          <div className="text-xs font-semibold px-2 py-1 bg-emerald-100 text-emerald-700 rounded">
+          <div className="text-xs font-semibold px-2 py-1 bg-blue-100 text-blue-700 rounded">
             Secure Auth
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function DigiLockerMock() {
                   placeholder="Enter 12 digit Aadhaar or Mobile"
                   value={aadhaar}
                   onChange={e => setAadhaar(e.target.value)}
-                  className="h-12 border-slate-300 focus-visible:ring-emerald-500"
+                  className="h-12 border-slate-300 focus-visible:ring-blue-500"
                 />
               </div>
               <Button 
@@ -103,7 +103,7 @@ export default function DigiLockerMock() {
 
           {step === 2 && (
             <form onSubmit={handleVerifyOtp} className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="p-3 bg-emerald-50 text-emerald-800 text-sm rounded-md border border-emerald-100 mb-4">
+              <div className="p-3 bg-blue-50 text-blue-800 text-sm rounded-md border border-blue-100 mb-4">
                 OTP sent to registered mobile ending in <b>*{(aadhaar.length >= 4 ? aadhaar.slice(-4) : 'XXXX')}</b>
               </div>
               <div className="space-y-2">
@@ -114,7 +114,7 @@ export default function DigiLockerMock() {
                   placeholder="------"
                   value={otp}
                   onChange={e => setOtp(e.target.value)}
-                  className="h-12 border-slate-300 focus-visible:ring-emerald-500 text-center tracking-[1em] font-bold text-lg"
+                  className="h-12 border-slate-300 focus-visible:ring-blue-500 text-center tracking-[1em] font-bold text-lg"
                   maxLength={6}
                 />
               </div>
@@ -130,8 +130,8 @@ export default function DigiLockerMock() {
 
           {step === 3 && (
             <div className="py-8 flex flex-col items-center justify-center space-y-4 animate-in zoom-in duration-500">
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-2">
-                <CheckCircle2 className="w-12 h-12 text-emerald-600" />
+              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                <CheckCircle2 className="w-12 h-12 text-blue-600" />
               </div>
               <h3 className="text-2xl font-bold text-slate-800">Verified!</h3>
               <p className="text-slate-500 text-center">

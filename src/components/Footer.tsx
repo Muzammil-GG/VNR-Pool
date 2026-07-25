@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="w-full bg-card/30 backdrop-blur-md border-t border-border mt-20 py-8 relative z-20">
       <div className="max-w-5xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="text-center md:text-left space-y-2">
-          <h3 className="font-bold text-lg text-foreground bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-cyan-500">
+          <h3 className="font-bold text-lg text-foreground bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-500">
             VNR Pool
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -17,7 +17,7 @@ export function Footer() {
           <p className="text-sm font-semibold flex items-center gap-2 text-foreground">
             Customer Care Support
           </p>
-          <a href="tel:+917207632275" className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+          <a href="tel:+917207632275" className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
             <Phone className="w-4 h-4" />
             +91 7207632275
           </a>

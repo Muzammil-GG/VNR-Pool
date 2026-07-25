@@ -308,7 +308,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 startRideMutation.mutate(ride)
                               }
                             }}
-                            className="h-8 text-primary hover:text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
+                            className="h-8 text-primary hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
                             disabled={startRideMutation.isPending}
                           >
                             <Play className="w-4 h-4 mr-1.5" /> Start Ride
@@ -370,15 +370,15 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                               </p>
                               
                               {booking.pickup_location && booking.dropoff_location && (
-                                <div className="mt-1.5 p-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
-                                  <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1 uppercase tracking-wider mb-0.5">
+                                <div className="mt-1.5 p-1.5 bg-blue-500/10 border border-blue-500/20 rounded-md">
+                                  <p className="text-[10px] text-blue-700 dark:text-blue-400 font-bold flex items-center gap-1 uppercase tracking-wider mb-0.5">
                                     <MapPin className="w-3 h-3" /> En-Route Match
                                   </p>
-                                  <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">
+                                  <p className="text-xs text-blue-700 dark:text-blue-400 font-medium">
                                     <span className="font-semibold">{booking.pickup_location}</span> to <span className="font-semibold">{booking.dropoff_location}</span>
                                   </p>
                                   {booking.fractional_price && (
-                                    <p className="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold mt-0.5">
+                                    <p className="text-[10px] text-blue-600 dark:text-blue-500 font-bold mt-0.5">
                                       Pays fractional fare: ₹{booking.fractional_price}
                                     </p>
                                   )}
@@ -472,7 +472,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                           <div 
                             className={cn(
                               "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black text-white overflow-hidden shadow-sm flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity",
-                              !ride.driver.avatar_url && (ride.driver.gender === 'female' ? "bg-gradient-to-br from-pink-400 to-rose-500" : "bg-gradient-to-br from-emerald-400 to-teal-600")
+                              !ride.driver.avatar_url && (ride.driver.gender === 'female' ? "bg-gradient-to-br from-pink-400 to-rose-500" : "bg-gradient-to-br from-blue-400 to-teal-600")
                             )}
                             onClick={() => setSelectedProfileId(ride.driver.id)}
                           >
@@ -493,7 +493,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             ride.status === 'completed' ? "bg-muted text-muted-foreground border-border" :
                             ride.status === 'in_progress' && isApproved
                               ? "bg-blue-50 text-blue-600 border-blue-200 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-                              : isApproved ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"
+                              : isApproved ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-amber-50 text-amber-600 border-amber-200"
                           )}>
                             {ride.status === 'in_progress' && isApproved && <span className="relative flex h-1.5 w-1.5 mr-0.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span></span>}
                             {b.status === 'approved' && ride.status !== 'active' 

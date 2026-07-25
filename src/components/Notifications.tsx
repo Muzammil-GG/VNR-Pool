@@ -80,7 +80,7 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
       }
     }}>
       <DialogTrigger className="relative p-2 rounded-full border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center w-10 h-10 transition-colors">
-        <Bell className="w-5 h-5 text-emerald-500" />
+        <Bell className="w-5 h-5 text-blue-500" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-background animate-in zoom-in">
             {unreadCount}
@@ -105,12 +105,12 @@ export function Notifications({ currentUserId }: { currentUserId: string }) {
                   "p-4 rounded-xl border transition-all",
                   notif.is_read 
                     ? "bg-background/50 border-border opacity-70" 
-                    : "bg-emerald-500/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+                    : "bg-blue-500/10 border-blue-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
                 )}
               >
                 <h4 className="text-sm font-bold text-foreground mb-1 flex items-center justify-between">
                   {notif.title}
-                  {!notif.is_read && <span className="w-2 h-2 rounded-full bg-emerald-500" />}
+                  {!notif.is_read && <span className="w-2 h-2 rounded-full bg-blue-500" />}
                 </h4>
                 <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                   {notif.message}

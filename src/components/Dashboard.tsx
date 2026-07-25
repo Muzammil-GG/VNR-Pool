@@ -720,7 +720,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         ? "bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500"
                         : ride.ride_category === 'auto_split'
                           ? "bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400"
-                          : "bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400"
+                          : "bg-gradient-to-r from-blue-400 via-blue-400 to-indigo-400"
                     )} />
 
                     {ride.is_women_only && (
@@ -743,7 +743,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               "w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
                               !ride.driver.avatar_url && (ride.driver.gender === 'female'
                                 ? "bg-gradient-to-br from-pink-400 to-rose-500"
-                                : "bg-gradient-to-br from-blue-400 to-teal-600")
+                                : "bg-gradient-to-br from-blue-400 to-blue-600")
                             )}>
                               {ride.driver.avatar_url ? (
                                 <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
@@ -961,7 +961,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                       ? "bg-muted text-muted-foreground cursor-not-allowed"
                                       : hasActiveBooking
                                         ? "bg-muted text-muted-foreground cursor-not-allowed border border-border/50 shadow-inner"
-                                        : "shiny-btn bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-none"
+                                        : "shiny-btn bg-gradient-to-r from-blue-500 to-blue-500 hover:from-blue-600 hover:to-blue-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-none"
                                 )}
                               >
                                 {ride.driver_id === currentUserId 
@@ -1201,7 +1201,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <Button
                 onClick={() => offerMutation.mutate()}
                 disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
-                className="w-full h-12 shiny-btn bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all"
+                className="w-full h-12 shiny-btn bg-gradient-to-r from-blue-500 to-blue-500 hover:from-blue-600 hover:to-blue-600 mt-6 text-white font-black text-base rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all"
               >
                 {offerMutation.isPending ? 'Publishing…' : '🚀 Publish Ride'}
                 </Button>

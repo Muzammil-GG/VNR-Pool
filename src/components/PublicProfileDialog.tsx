@@ -54,7 +54,7 @@ export function PublicProfileDialog({
       <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-background border-border shadow-2xl rounded-3xl">
         {isLoading || !profile ? (
           <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
           </div>
         ) : (
           <div>
@@ -63,7 +63,7 @@ export function PublicProfileDialog({
               "h-24 w-full relative",
               profile.gender === 'female' 
                 ? "bg-gradient-to-br from-pink-400 via-rose-400 to-pink-500"
-                : "bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-500"
+                : "bg-gradient-to-br from-blue-400 via-teal-400 to-cyan-500"
             )}>
               <div className="absolute inset-0 bg-black/10"></div>
             </div>
@@ -73,7 +73,7 @@ export function PublicProfileDialog({
               <div className="flex justify-center -mt-12 mb-4 relative z-10">
                 <div className={cn(
                   "w-24 h-24 rounded-full border-4 border-background flex items-center justify-center text-3xl font-black text-white shadow-xl overflow-hidden",
-                  !profile.avatar_url && (profile.gender === 'female' ? "bg-pink-500" : "bg-emerald-500")
+                  !profile.avatar_url && (profile.gender === 'female' ? "bg-pink-500" : "bg-blue-500")
                 )}>
                   {profile.avatar_url ? (
                     <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
@@ -107,9 +107,9 @@ export function PublicProfileDialog({
                 {profile.car_number && (
                   <div className="flex items-center justify-between text-sm pt-3 border-t border-border/50">
                     <span className="text-muted-foreground flex items-center gap-2 font-medium">
-                      <Car className="w-4 h-4 text-emerald-500" /> Car
+                      <Car className="w-4 h-4 text-blue-500" /> Car
                     </span>
-                    <span className="font-semibold text-foreground bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded">{profile.car_number}</span>
+                    <span className="font-semibold text-foreground bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">{profile.car_number}</span>
                   </div>
                 )}
                 

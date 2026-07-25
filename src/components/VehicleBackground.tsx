@@ -108,7 +108,7 @@ export function VehicleBackground() {
       ></div>
       
       {/* A vibrant animated glowing orb in the center */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/20 dark:bg-emerald-500/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none animate-pulse"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/20 dark:bg-blue-500/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none animate-pulse"></div>
 
       {/* Vehicles */}
       {vehicles.map((v, i) => {

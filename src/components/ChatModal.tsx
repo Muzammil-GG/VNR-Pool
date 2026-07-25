@@ -157,7 +157,7 @@ export function ChatModal({
                 className={cn(
                   "px-4 py-2 rounded-2xl max-w-[80%] break-words",
                   isMe 
-                    ? "bg-emerald-600 self-end rounded-br-sm" 
+                    ? "bg-blue-600 self-end rounded-br-sm" 
                     : "bg-neutral-800 self-start rounded-bl-sm"
                 )}
               >
@@ -173,9 +173,9 @@ export function ChatModal({
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 bg-neutral-800 border-none focus-visible:ring-emerald-500"
+            className="flex-1 bg-neutral-800 border-none focus-visible:ring-blue-500"
           />
-          <Button type="submit" size="icon" className="bg-emerald-600 hover:bg-emerald-700">
+          <Button type="submit" size="icon" className="bg-blue-600 hover:bg-blue-700">
             <Send className="w-4 h-4" />
           </Button>
         </form>

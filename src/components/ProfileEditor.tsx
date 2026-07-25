@@ -186,7 +186,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
         <button className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary transition-colors cursor-pointer w-full text-left font-medium">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
-              <UserCog className="w-4 h-4 text-emerald-500" />
+              <UserCog className="w-4 h-4 text-blue-500" />
             </div>
             <span>Edit Profile</span>
           </div>
@@ -265,7 +265,7 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
                 <Label className="text-right text-muted-foreground font-semibold">Driver Verification</Label>
                 <div className="font-medium text-sm flex items-center">
                   {profile.is_verified_driver ? (
-                    <span className="text-emerald-600 flex items-center gap-1.5 font-bold">
+                    <span className="text-blue-600 flex items-center gap-1.5 font-bold">
                       <CheckCircle2 className="w-4 h-4" /> Verified (DigiLocker)
                     </span>
                   ) : (

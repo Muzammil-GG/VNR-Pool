@@ -22,7 +22,7 @@ export function LocationAutocomplete({
   onChange, 
   placeholder = "Search location...", 
   className,
-  icon = <MapPin className="w-5 h-5 text-emerald-500" />,
+  icon = <MapPin className="w-5 h-5 text-blue-500" />,
   onSelect
 }: LocationAutocompleteProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -116,7 +116,7 @@ export function LocationAutocomplete({
           value={search}
           onChange={handleChange}
           onFocus={() => setIsOpen(true)}
-          className="pl-10 h-12 bg-background border-border focus-visible:ring-emerald-500 w-full"
+          className="pl-10 h-12 bg-background border-border focus-visible:ring-blue-500 w-full"
         />
       </div>
 
@@ -132,7 +132,7 @@ export function LocationAutocomplete({
             <ul className="py-2">
               <li 
                 onClick={handleCurrentLocation}
-                className="px-4 py-3 mb-1 border-b border-border/50 hover:bg-emerald-500/10 cursor-pointer flex items-center gap-3 text-emerald-600 dark:text-emerald-400 transition-colors"
+                className="px-4 py-3 mb-1 border-b border-border/50 hover:bg-blue-500/10 cursor-pointer flex items-center gap-3 text-blue-600 dark:text-blue-400 transition-colors"
               >
                 {isLocating ? (
                   <Loader2 className="w-5 h-5 shrink-0 animate-spin" />

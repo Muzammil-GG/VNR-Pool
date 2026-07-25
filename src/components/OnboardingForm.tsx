@@ -192,7 +192,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
       </div>
       <Card className="w-full max-w-md border-border bg-card/50 backdrop-blur-xl text-foreground shadow-2xl relative z-10">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-cyan-500">
+          <CardTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">
             Complete your profile
           </CardTitle>
           <CardDescription className="text-muted-foreground font-medium">
@@ -237,7 +237,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                     <Input
                       id="full_name"
                       placeholder="John Doe"
-                      className="bg-background border-border focus-visible:ring-emerald-500 h-11"
+                      className="bg-background border-border focus-visible:ring-blue-500 h-11"
                       value={formData.full_name}
                       onChange={e => setFormData({ ...formData, full_name: e.target.value })}
                     />
@@ -247,12 +247,12 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                     <Input
                       id="roll_no"
                       placeholder="21071A05XX"
-                      className="bg-background border-border focus-visible:ring-emerald-500 uppercase h-11"
+                      className="bg-background border-border focus-visible:ring-blue-500 uppercase h-11"
                       value={formData.roll_no}
                       onChange={e => setFormData({ ...formData, roll_no: e.target.value.toUpperCase() })}
                     />
                   </div>
-                  <Button className="w-full h-11 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white mt-4 rounded-lg shadow-lg hover:shadow-emerald-500/30 transition-all" onClick={handleNext}>
+                  <Button className="w-full h-11 font-semibold bg-blue-600 hover:bg-blue-700 text-white mt-4 rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all" onClick={handleNext}>
                     Next
                   </Button>
                 </motion.div>
@@ -269,7 +269,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                   <div className="space-y-2">
                     <Label className="font-semibold text-foreground">Branch</Label>
                     <Select onValueChange={(v) => { if (v) setFormData({ ...formData, branch: v }) }} value={formData.branch}>
-                      <SelectTrigger className="bg-background border-border text-foreground h-11 focus-visible:ring-emerald-500">
+                      <SelectTrigger className="bg-background border-border text-foreground h-11 focus-visible:ring-blue-500">
                         <SelectValue placeholder="Select Branch" />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-border">
@@ -282,7 +282,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                   <div className="space-y-2">
                     <Label className="font-semibold text-foreground">Gender</Label>
                     <Select onValueChange={(v) => { if (v) setFormData({ ...formData, gender: v }) }} value={formData.gender}>
-                      <SelectTrigger className="bg-background border-border text-foreground h-11 focus-visible:ring-emerald-500">
+                      <SelectTrigger className="bg-background border-border text-foreground h-11 focus-visible:ring-blue-500">
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-border">
@@ -296,7 +296,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                     <Button variant="outline" className="w-1/2 h-11 font-semibold bg-transparent border-border text-foreground hover:bg-secondary" onClick={() => setStep(1)}>
                       Back
                     </Button>
-                    <Button className="w-1/2 h-11 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-lg hover:shadow-emerald-500/30 transition-all" onClick={handleNext}>
+                    <Button className="w-1/2 h-11 font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all" onClick={handleNext}>
                       Next
                     </Button>
                   </div>
@@ -317,7 +317,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                       id="mobile"
                       type="tel"
                       placeholder="9876543210"
-                      className="bg-background border-border focus-visible:ring-emerald-500 h-11"
+                      className="bg-background border-border focus-visible:ring-blue-500 h-11"
                       value={formData.mobile_number}
                       onChange={e => setFormData({ ...formData, mobile_number: e.target.value })}
                     />
@@ -327,7 +327,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                     <Button variant="outline" className="w-1/2 h-11 font-semibold bg-transparent border-border text-foreground hover:bg-secondary" onClick={() => setStep(2)}>
                       Back
                     </Button>
-                    <Button type="button" className="w-1/2 h-11 font-bold bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleNext}>
+                    <Button type="button" className="w-1/2 h-11 font-bold bg-blue-600 hover:bg-blue-700 text-white" onClick={handleNext}>
                       Next Step
                     </Button>
                   </div>
@@ -373,7 +373,7 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                       </Button>
                       <Button 
                         type="button" 
-                        className="w-2/3 h-12 text-lg font-bold bg-emerald-600 hover:bg-emerald-700 text-white" 
+                        className="w-2/3 h-12 text-lg font-bold bg-blue-600 hover:bg-blue-700 text-white" 
                         onClick={handleSubmit}
                         disabled={loading}
                       >
