@@ -1071,7 +1071,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
                     <div className="relative">
                       <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
-                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-[72px] rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4">
+                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 min-h-[72px] py-2 rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4 text-left">
                           <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
                         </SelectTrigger>
                         <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700 shadow-xl max-h-[300px]">
@@ -1102,7 +1102,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     </div>
                   </div>
                   
-                  <div className={cn("grid gap-4", rideCategory === 'personal_vehicle' ? "grid-cols-2" : "grid-cols-1")}>
+                  <div className={cn("grid gap-4", rideCategory === 'personal_vehicle' ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1")}>
                     <div className="space-y-2 flex flex-col justify-end">
                       <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2 mb-2">
                         Vehicle Type
@@ -1207,7 +1207,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   </div>
                   <div className="space-y-2 flex flex-col">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Pricing Method</Label>
-                    <div className="flex-1 bg-[#0f3d32] dark:bg-[#064e3b]/30 border border-[#059669]/30 rounded-xl flex items-center px-4 h-12">
+                    <div className="flex-1 bg-[#0f3d32] dark:bg-[#064e3b]/30 border border-[#059669]/30 rounded-xl flex items-center px-4 min-h-[48px] py-2">
                       <span className="text-[#10b981] dark:text-[#34d399] font-bold text-sm tracking-wide">
                         {rideCategory === 'auto_split' ? 'Dynamic split based on active passengers' : 'Fixed price per passenger'}
                       </span>
