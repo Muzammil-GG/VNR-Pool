@@ -524,14 +524,14 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           initial={{ opacity: 0, scale: 0.93 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.15, duration: 0.5, ease: [0.22,1,0.36,1] }}
-          className="flex p-1 bg-muted/60 rounded-full border border-border w-full sm:w-fit backdrop-blur-md shadow-sm overflow-x-auto hide-scrollbar"
+          className="flex p-1 bg-muted/60 rounded-full border border-border w-full backdrop-blur-md shadow-sm"
         >
           {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                "relative px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 z-10",
+                "relative flex-1 px-2 py-2.5 rounded-full text-sm font-bold transition-all duration-300 z-10 text-center whitespace-nowrap",
                 activeTab === tab
                   ? "text-white"
                   : "text-muted-foreground hover:text-foreground"
