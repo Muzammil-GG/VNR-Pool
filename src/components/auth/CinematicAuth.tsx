@@ -82,6 +82,8 @@ export function CinematicAuth() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const engineOscRef = useRef<OscillatorNode | null>(null);
   const engineGainRef = useRef<GainNode | null>(null);
+  const engineStartedRef = useRef(false);
+  const startupEndTimeRef = useRef(0);
   
   const { theme } = useTheme();
 
@@ -102,10 +104,10 @@ export function CinematicAuth() {
 
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.value = 120; // Muffle it to sound like a distant engine
+      filter.frequency.value = 300; // Let more growl through for a louder, harsher sound
 
       const gain = ctx.createGain();
-      gain.gain.value = 0; // Start silent
+      gain.gain.value = 0.001; // Start almost silent (must not be exactly 0 for exponential ramps)
 
       osc.connect(filter);
       filter.connect(gain);
@@ -155,26 +157,72 @@ export function CinematicAuth() {
             setAuthInteractive(false);
           }
 
-          // Handle procedural audio engine fading and revving
+          // Handle procedural audio engine fading, revving, and starting
           if (audioCtxRef.current && engineOscRef.current && engineGainRef.current) {
-            let vol = 0;
-            let pitch = 40; // Idle
+            const now = audioCtxRef.current.currentTime;
 
-            if (self.progress > 0.01 && self.progress < 0.95) {
-              vol = 0.6; // Base volume
+            // Engine Shut off when scrolling all the way back up
+            if (self.progress < 0.005) {
+              engineStartedRef.current = false;
+              engineGainRef.current.gain.setTargetAtTime(0.001, now, 0.1);
+              return;
+            }
+
+            // Engine Startup Sequence!
+            if (self.progress >= 0.005 && !engineStartedRef.current) {
+              engineStartedRef.current = true;
               
+              // Clear previous schedules
+              engineOscRef.current.frequency.cancelScheduledValues(now);
+              engineGainRef.current.gain.cancelScheduledValues(now);
+              
+              // Crank 1 (wub)
+              engineOscRef.current.frequency.setValueAtTime(10, now);
+              engineGainRef.current.gain.setValueAtTime(1.5, now);
+              engineOscRef.current.frequency.exponentialRampToValueAtTime(30, now + 0.1);
+              engineGainRef.current.gain.exponentialRampToValueAtTime(0.1, now + 0.1);
+              
+              // Crank 2 (wub)
+              engineOscRef.current.frequency.setValueAtTime(10, now + 0.15);
+              engineGainRef.current.gain.setValueAtTime(1.5, now + 0.15);
+              engineOscRef.current.frequency.exponentialRampToValueAtTime(30, now + 0.25);
+              engineGainRef.current.gain.exponentialRampToValueAtTime(0.1, now + 0.25);
+
+              // Ignition VROOM!
+              engineOscRef.current.frequency.setValueAtTime(20, now + 0.3);
+              engineGainRef.current.gain.setValueAtTime(3.5, now + 0.3); // Massive volume spike
+              engineOscRef.current.frequency.exponentialRampToValueAtTime(160, now + 0.7);
+              
+              // Settle to aggressive Idle
+              engineOscRef.current.frequency.exponentialRampToValueAtTime(45, now + 1.4);
+              engineGainRef.current.gain.linearRampToValueAtTime(2.0, now + 1.4); // Settle to loud base idle
+
+              startupEndTimeRef.current = now + 1.4;
+              return; // Skip normal update during startup
+            }
+
+            // Don't override the startup sequence while it's playing
+            if (now < startupEndTimeRef.current) return;
+
+            let vol = 2.0; // Loud base volume
+            let pitch = 45; // Idle pitch
+
+            if (self.progress < 0.95) {
               // Phase 3 (50% to 75%) is where car drives away
               if (self.progress > 0.5) {
                 // Fade out volume
-                vol = 0.6 * (1 - ((self.progress - 0.5) / 0.25));
+                vol = 2.0 * (1 - ((self.progress - 0.5) / 0.25));
                 // Rev up engine pitch as it accelerates
-                pitch = 40 + ((self.progress - 0.5) / 0.25) * 80; // revs up to 120hz
+                pitch = 45 + ((self.progress - 0.5) / 0.25) * 120; // revs up heavily
               }
-              vol = Math.max(0, Math.min(0.6, vol));
+              vol = Math.max(0.001, Math.min(2.0, vol));
+            } else {
+               vol = 0.001; // completely silent at the very end
             }
             
             // Smoothly ramp audio parameters
-            const now = audioCtxRef.current.currentTime;
+            engineGainRef.current.gain.cancelScheduledValues(now);
+            engineOscRef.current.frequency.cancelScheduledValues(now);
             engineGainRef.current.gain.setTargetAtTime(vol, now, 0.1);
             engineOscRef.current.frequency.setTargetAtTime(pitch, now, 0.1);
           }
