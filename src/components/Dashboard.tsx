@@ -413,10 +413,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-10 text-foreground relative z-10">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-10 text-foreground relative z-10">
       <VehicleBackground />
       {/* ── Header ────────────────────────────── */}
-      <div className="flex flex-col items-center gap-6 relative pt-2">
+      <div className="flex flex-col items-center gap-5 sm:gap-6 relative pt-1 sm:pt-2">
         <div className="absolute left-0 top-0 flex items-center gap-2 z-50">
           <Sheet>
             <SheetTrigger 
@@ -497,24 +497,24 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         </div>
         {/* Logo + tagline */}
         <motion.div
-          initial={{ opacity: 0, y: -24 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22,1,0.36,1] }}
-          className="text-center space-y-2 mt-4"
+          className="text-center space-y-2 mt-3 sm:mt-4"
         >
           {/* Live pulse */}
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="relative flex h-2 w-2">
+              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="text-[11px] font-bold text-primary uppercase tracking-widest">Live Rides</span>
+            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em]">Live Rides</span>
           </div>
 
-          <h1 className="text-6xl md:text-7xl font-black tracking-tight ">
+          <h1 className="hero-title text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none bg-clip-text">
             VNR Pool
           </h1>
-          <p className="text-base md:text-lg text-muted-foreground font-medium max-w-xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground font-medium max-w-md mx-auto leading-relaxed">
             Share rides · Split costs · Commute smarter 🚗
           </p>
         </motion.div>
@@ -556,7 +556,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.5 }}
-        className="flex justify-center gap-4"
+        className="flex justify-center gap-3 sm:gap-5"
       >
         {[
           { key: 'auto_split',       label: 'Auto / Cab Split', icon: Navigation, color: 'yellow' },
@@ -566,19 +566,31 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             key={key}
             onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
             className={cn(
-              "flex flex-col items-center p-5 rounded-2xl border transition-all duration-300 w-44 group",
+              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group relative overflow-hidden",
               rideCategory === key
                 ? color === 'yellow'
-                  ? "border-yellow-400/60 bg-yellow-400/10 shadow-[0_0_28px_rgba(234,179,8,0.2)] scale-105"
-                  : "border-emerald-400/60 bg-primary/10 shadow-[0_0_28px_rgba(16,185,129,0.2)] scale-105"
-                : "border-border bg-card/50 hover:bg-card/80 opacity-60 hover:opacity-100 hover:scale-102"
+                  ? "border-yellow-400/70 bg-gradient-to-br from-yellow-400/15 to-amber-400/5 shadow-[0_4px_24px_rgba(234,179,8,0.25)] scale-[1.04]"
+                  : "border-emerald-400/70 bg-gradient-to-br from-emerald-400/15 to-teal-400/5 shadow-[0_4px_24px_rgba(16,185,129,0.25)] scale-[1.04]"
+                : "border-border bg-card/40 hover:bg-card/70 opacity-55 hover:opacity-95 hover:scale-[1.02] backdrop-blur-sm"
             )}
           >
-            <Icon className={cn(
-              "w-9 h-9 mb-2 transition-transform group-hover:scale-110 duration-300",
-              color === 'yellow' ? 'text-yellow-500' : 'text-primary'
-            )} />
-            <span className="text-sm font-bold text-foreground">{label}</span>
+            <div className={cn(
+              "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110",
+              rideCategory === key
+                ? color === 'yellow' ? 'bg-yellow-400/20' : 'bg-emerald-400/20'
+                : 'bg-muted/60'
+            )}>
+              <Icon className={cn(
+                "w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300",
+                rideCategory === key
+                  ? color === 'yellow' ? 'text-yellow-500' : 'text-emerald-500'
+                  : 'text-muted-foreground'
+              )} />
+            </div>
+            <span className={cn(
+              "text-xs sm:text-sm font-bold transition-colors duration-300",
+              rideCategory === key ? 'text-foreground' : 'text-muted-foreground'
+            )}>{label}</span>
           </button>
         ))}
       </motion.div>
@@ -655,31 +667,34 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           </motion.div>
 
           {/* ── Ride Feed ──────────────────────── */}
-          <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="skeleton-shimmer rounded-2xl h-52 border border-border" style={{ animationDelay: `${i * 0.1}s` }} />
               ))
             ) : rides?.length === 0 ? (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="col-span-full flex flex-col items-center justify-center py-20 text-muted-foreground gap-4"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                className="col-span-full flex flex-col items-center justify-center py-16 sm:py-24 text-muted-foreground gap-4"
               >
-                <div className="w-20 h-20 rounded-full bg-muted/60 flex items-center justify-center">
-                  <Car className="w-10 h-10 opacity-30" />
+                <div className="w-20 h-20 rounded-3xl bg-muted/50 flex items-center justify-center border border-border">
+                  <Car className="w-9 h-9 opacity-30" />
                 </div>
-                <p className="font-semibold text-lg">No rides found</p>
-                <p className="text-sm">Try adjusting your search filters</p>
+                <div className="text-center">
+                  <p className="font-bold text-lg text-foreground/70">No rides found</p>
+                  <p className="text-sm mt-1">Try adjusting your search filters</p>
+                </div>
               </motion.div>
             ) : (
               rides?.map((ride, i) => (
                 <motion.div
                   key={ride.id}
-                  initial={{ opacity: 0, y: 28, scale: 0.97 }}
+                  initial={{ opacity: 0, y: 24, scale: 0.97 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: i * 0.06, duration: 0.45, ease: [0.22,1,0.36,1] }}
-                  whileHover={{ y: -6, transition: { duration: 0.25 } }}
+                  transition={{ delay: i * 0.05, duration: 0.4, ease: [0.22,1,0.36,1] }}
+                  whileHover={{ y: -5, transition: { duration: 0.22 } }}
                 >
                   <div className={cn(
                     "glass-card rounded-2xl overflow-hidden relative group",
