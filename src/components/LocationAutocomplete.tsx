@@ -87,7 +87,7 @@ export function LocationAutocomplete({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 w-full mt-1 bg-card border border-border rounded-xl shadow-xl max-h-60 overflow-y-auto"
+            className="absolute z-[100] w-full mt-1 bg-popover border border-border rounded-xl shadow-2xl max-h-60 overflow-y-auto"
           >
             {filteredLocations.length > 0 ? (
               <ul className="py-2">
@@ -95,7 +95,7 @@ export function LocationAutocomplete({
                   <li 
                     key={loc.id}
                     onClick={() => handleSelect(loc)}
-                    className="px-4 py-2 hover:bg-secondary cursor-pointer flex items-center gap-2 text-foreground transition-colors"
+                    className="px-4 py-2 hover:bg-accent cursor-pointer flex items-center gap-2 text-popover-foreground transition-colors"
                   >
                     <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
                     <div>

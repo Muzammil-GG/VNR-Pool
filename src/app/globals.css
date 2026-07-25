@@ -135,31 +135,67 @@ body::before {
   100% { transform: translate(30px, 30px) scale(1.05) rotate(5deg); }
 }
 
-/* ─── Premium Glass Card ─────────────────────────────────── */
+/* ─── Premium Glass Card (Magic UI Style) ─────────────────────────────────── */
 .glass-card {
-  background: oklch(1 0 0 / 45%);
-  backdrop-filter: blur(40px) saturate(1.2);
-  -webkit-backdrop-filter: blur(40px) saturate(1.2);
-  border: 1px solid oklch(0.9 0 0 / 50%);
-  box-shadow: 0 8px 32px oklch(0 0 0 / 4%);
+  background: linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 100%);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .dark .glass-card {
-  background: oklch(0.15 0 0 / 55%);
-  border-color: oklch(0.3 0 0 / 40%);
-  box-shadow: 0 8px 32px oklch(0 0 0 / 30%);
+  background: linear-gradient(145deg, rgba(30, 30, 30, 0.6) 0%, rgba(15, 15, 15, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.01);
 }
 
 .glass-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 48px oklch(0 0 0 / 8%);
-  border-color: oklch(0.85 0 0 / 80%);
+  box-shadow: 0 12px 40px oklch(0 0 0 / 8%);
+  border-color: oklch(0.9 0 0 / 80%);
 }
 
 .dark .glass-card:hover {
-  box-shadow: 0 12px 48px oklch(0 0 0 / 45%);
-  border-color: oklch(0.4 0 0 / 60%);
+  box-shadow: 0 12px 40px oklch(0 0 0 / 40%);
+  border-color: oklch(0.3 0 0 / 80%);
+}
+
+/* ─── Shimmer Button (Magic UI Style) ─────────────────────────────────── */
+.shiny-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.shiny-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%) rotate(45deg);
+  animation: btnShimmer 3s infinite linear;
+  z-index: -1;
+  pointer-events: none;
+}
+@keyframes btnShimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  50% { transform: translateX(100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
 }
 
 /* ─── Shimmer skeleton (Refined) ───────────────────────── */

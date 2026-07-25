@@ -920,7 +920,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                       ? "bg-muted text-muted-foreground cursor-not-allowed"
                                       : hasActiveBooking
                                         ? "bg-muted text-muted-foreground cursor-not-allowed border border-border/50 shadow-inner"
-                                        : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md hover:shadow-none"
+                                        : "shiny-btn bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-none"
                                 )}
                               >
                                 {ride.driver_id === currentUserId 
@@ -1160,7 +1160,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
               <Button
                 onClick={() => offerMutation.mutate()}
                 disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
-                className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-lg hover:shadow-none transition-all "
+                className="w-full h-12 shiny-btn bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 mt-6 text-white font-black text-base rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all"
               >
                 {offerMutation.isPending ? 'Publishing…' : '🚀 Publish Ride'}
                 </Button>

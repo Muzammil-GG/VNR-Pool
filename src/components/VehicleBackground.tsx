@@ -90,15 +90,25 @@ export function VehicleBackground() {
   if (!mounted) return <div className="fixed inset-0 -z-10 bg-slate-50 dark:bg-slate-950 pointer-events-none" />
 
   return (
-    <div ref={containerRef} className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-slate-50 dark:bg-slate-950">
-      {/* Subtle dot grid */}
-      <div
-        className="absolute inset-0 opacity-30 dark:opacity-15"
+    <div ref={containerRef} className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-background">
+      {/* Magic UI / Aceternity Style Animated Grid */}
+      <div 
+        className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:[mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"
+      ></div>
+      <div 
+        className="absolute inset-0 opacity-[0.4] dark:opacity-[0.2]"
         style={{
-          backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
+          backgroundImage: `
+            linear-gradient(to right, rgba(16, 185, 129, 0.15) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(16, 185, 129, 0.15) 1px, transparent 1px)
+          `,
           backgroundSize: '40px 40px',
+          maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)'
         }}
-      />
+      ></div>
+      
+      {/* A vibrant animated glowing orb in the center */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/20 dark:bg-emerald-500/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none animate-pulse"></div>
 
       {/* Vehicles */}
       {vehicles.map((v, i) => {
