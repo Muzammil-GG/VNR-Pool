@@ -1,12 +1,30 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { z } from 'zod'
+import { authRateLimit } from '@/lib/rate-limit'
+
+const verifySchema = z.object({
+  email: z.string().email("Invalid email").endsWith("@vnrvjiet.in", "Must be a VNRVJIET email"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  otp: z.string().length(6, "OTP must be exactly 6 digits").regex(/^\d+$/, "OTP must be numeric"),
+})
 
 export async function POST(req: Request) {
   try {
-    const { email, password, otp } = await req.json()
-    if (!email || !password || !otp) {
-      return NextResponse.json({ error: 'Email, password, and OTP are required' }, { status: 400 })
+    const ip = req.headers.get('x-forwarded-for') || 'anonymous'
+    try {
+      await authRateLimit.check(5, `verify_${ip}`)
+    } catch {
+      return NextResponse.json({ error: 'Too many requests. Please try again in 15 minutes.' }, { status: 429 })
     }
+
+    const body = await req.json()
+    const parseResult = verifySchema.safeParse(body)
+    
+    if (!parseResult.success) {
+      return NextResponse.json({ error: parseResult.error.errors[0].message }, { status: 400 })
+    }
+    const { email, password, otp } = parseResult.data
 
     // Initialize Supabase admin client
     const supabaseAdmin = createClient(

@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { z } from 'zod'
+
+const messageSchema = z.object({
+  rideId: z.string().uuid("Invalid ride ID"),
+  text: z.string().min(1, "Message cannot be empty").max(500, "Message cannot exceed 500 characters"),
+})
 
 export async function POST(req: NextRequest) {
   try {
-    const { rideId, text } = await req.json()
-
-    if (!rideId || !text) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    const body = await req.json()
+    const parseResult = messageSchema.safeParse(body)
+    
+    if (!parseResult.success) {
+      return NextResponse.json({ error: parseResult.error.errors[0].message }, { status: 400 })
     }
+    const { rideId, text } = parseResult.data
 
     const userClient = await createClient()
     const { data: { user }, error: authError } = await userClient.auth.getUser()

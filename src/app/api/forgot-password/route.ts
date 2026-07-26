@@ -1,11 +1,29 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import nodemailer from 'nodemailer'
+import { z } from 'zod'
+import { authRateLimit } from '@/lib/rate-limit'
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email format").endsWith("@vnrvjiet.in", "Must be a VNRVJIET email address"),
+})
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json()
-    if (!email) return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+    const ip = req.headers.get('x-forwarded-for') || 'anonymous'
+    try {
+      await authRateLimit.check(5, `forgot_${ip}`)
+    } catch {
+      return NextResponse.json({ error: 'Too many requests. Please try again in 15 minutes.' }, { status: 429 })
+    }
+
+    const body = await req.json()
+    const parseResult = forgotPasswordSchema.safeParse(body)
+    
+    if (!parseResult.success) {
+      return NextResponse.json({ error: parseResult.error.errors[0].message }, { status: 400 })
+    }
+    const { email } = parseResult.data
 
     // Initialize Supabase admin client to interact with password_resets table securely
     const supabaseAdmin = createClient(

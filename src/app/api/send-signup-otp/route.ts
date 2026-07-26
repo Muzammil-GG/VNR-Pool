@@ -1,10 +1,31 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import nodemailer from 'nodemailer'
+import { z } from 'zod'
+import { authRateLimit } from '@/lib/rate-limit'
+
+const signupSchema = z.object({
+  email: z.string().email("Invalid email format").endsWith("@vnrvjiet.in", "Must be a VNRVJIET email address"),
+})
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json()
+    // 1. Rate Limiting (Using IP or a generic 'auth' token if IP is unavailable)
+    const ip = req.headers.get('x-forwarded-for') || 'anonymous'
+    try {
+      await authRateLimit.check(5, `signup_${ip}`)
+    } catch {
+      return NextResponse.json({ error: 'Too many requests. Please try again in 15 minutes.' }, { status: 429 })
+    }
+
+    // 2. Input Validation & Sanitization
+    const body = await req.json()
+    const parseResult = signupSchema.safeParse(body)
+    
+    if (!parseResult.success) {
+      return NextResponse.json({ error: parseResult.error.errors[0].message }, { status: 400 })
+    }
+    const { email } = parseResult.data
     if (!email) return NextResponse.json({ error: 'Email is required' }, { status: 400 })
 
     // Initialize Supabase admin client
