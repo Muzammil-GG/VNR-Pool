@@ -128,7 +128,7 @@ export function CinematicAuth() {
         trigger: containerRef.current,
         start: "top top",
         end: "bottom bottom",
-        scrub: 0.2, // Drastically reduced from 1 to make mobile touch-scrolling instantly responsive
+        scrub: 0.5, // 0.5 provides the perfect balance between instant mobile responsiveness and smooth interpolation to hide touch jitters
         onUpdate: (self) => {
           // Enable pointer events on auth form only when near the end
           if (self.progress > 0.95 && !authInteractive) {
@@ -194,7 +194,7 @@ export function CinematicAuth() {
     const phase2Pos = isMobile ? { x: 0, y: 5, z: -18 } : { x: 0, y: 3, z: -12 };
 
     gsap.set(cameraRef.current.position, startPos); // Forward-right side view
-    gsap.set(carGroupRef.current.position, { y: -0.15 }); // Negatively offset car to fix model origin gap and ground the tires
+    gsap.set(carGroupRef.current.position, { y: -0.02 }); // Ultra-precise offset to prevent both floating and clipping into the ground
 
     // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
     tl.to(cameraRef.current.position, {
@@ -298,13 +298,14 @@ export function CinematicAuth() {
 
       {/* 3D Canvas Layer - pointer-events-none prevents it from blocking touch scrolling on mobile */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <Canvas shadows gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
+        {/* Cap DPR at 1.5 to prevent high-res mobile phones from melting the GPU and lagging */}
+        <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping }}>
           <fog attach="fog" args={["#020617", 20, 120]} />
           <PerspectiveCamera ref={cameraRef} makeDefault fov={45} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
-          {/* Beautiful Blurred Environment Reflections (Removed background prop to fix weird skybox cutoff) */}
-          <Environment preset="city" />
+          {/* Beautiful Blurred Environment Reflections (Reduced resolution to drastically boost mobile FPS) */}
+          <Environment preset="city" resolution={256} />
 
           {/* Group the car and its shadow together so the shadow moves with the car */}
           <group ref={carGroupRef}>
