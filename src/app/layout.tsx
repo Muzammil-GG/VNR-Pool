@@ -20,7 +20,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-background text-foreground min-h-screen antialiased flex flex-col`}>
+      <body className={`${inter.className} bg-background text-foreground min-h-screen antialiased flex flex-col overflow-x-hidden`}>
         <Providers>
           <SWRegister />
           <div className="flex-1">
