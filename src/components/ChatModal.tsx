@@ -5,10 +5,23 @@ import { createClient } from '@/lib/supabase/client'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Send, ShieldAlert } from 'lucide-react'
-import anime from 'animejs'
+import { Send, ShieldAlert, X, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { motion, AnimatePresence } from 'framer-motion'
+
+// Lightweight base64 audio for UI feedback
+const POP_SOUND = "data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAQAAAOIAAQABAAAAAAAAAAAA" 
+const CLICK_SOUND = "data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAQAAAOIAAQABAAAAAAAAAAAA"
+
+const playSound = (type: 'pop' | 'click') => {
+  try {
+    const audio = new Audio(type === 'pop' ? POP_SOUND : CLICK_SOUND)
+    audio.volume = 0.5
+    // Catch errors for browser autoplay policies
+    audio.play().catch(() => {})
+  } catch (e) {}
+}
 
 type Message = {
   id: string
@@ -72,6 +85,7 @@ export function ChatModal({
           if (senderData) {
             newMsg.sender = senderData
           }
+          playSound('pop') // Play sound for incoming message
         }
         setMessages(prev => [...prev, newMsg])
       })
@@ -82,25 +96,10 @@ export function ChatModal({
     }
   }, [isOpen, rideId, supabase])
 
-  // Scroll to bottom and animate new messages
+  // Scroll to bottom
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-    
-    // Animate the last message if it's new
-    if (messages.length > 0 && chatContainerRef.current) {
-      const lastMsg = chatContainerRef.current.lastElementChild as HTMLElement
-      if (lastMsg) {
-        anime({
-          targets: lastMsg,
-          scale: [0.8, 1],
-          opacity: [0, 1],
-          translateY: [20, 0],
-          duration: 600,
-          easing: 'easeOutElastic(1, .5)'
-        })
-      }
     }
   }, [messages])
 
@@ -110,6 +109,7 @@ export function ChatModal({
 
     const newMsg = inputText
     setInputText('')
+    playSound('click') // Play sound on send
 
     const res = await fetch('/api/send-message', {
       method: 'POST',
@@ -124,63 +124,111 @@ export function ChatModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-neutral-900 border-white/10 text-white">
-        <DialogHeader className="flex flex-row items-center justify-between border-b border-white/10 pb-4">
-          <DialogTitle>Ride Chat</DialogTitle>
-        </DialogHeader>
-
-        <div 
-          className="flex flex-col h-[400px] overflow-y-auto p-4 space-y-4"
-          ref={chatContainerRef}
-        >
-          {messages.map((msg) => {
-            const isMe = msg.sender_id === currentUserId
-            const isDriver = msg.sender_id === otherUserId
-            
-            return (
-              <div 
-                key={msg.id}
-                className={cn(
-                  "px-4 py-2 rounded-2xl max-w-[80%] break-words flex flex-col",
-                  isMe 
-                    ? "bg-blue-600 self-end rounded-br-sm" 
-                    : isDriver
-                      ? "bg-indigo-600/40 border border-indigo-500/50 self-start rounded-bl-sm"
-                      : "bg-neutral-800 self-start rounded-bl-sm"
-                )}
-              >
-                {!isMe && msg.sender?.full_name && (
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className={cn("text-[10px] font-bold", isDriver ? "text-indigo-300" : "text-blue-400")}>
-                      {msg.sender.full_name}
-                    </span>
-                    {isDriver && (
-                      <span className="text-[8px] bg-indigo-500/30 text-indigo-200 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                        Driver
-                      </span>
-                    )}
-                  </div>
-                )}
-                <span className={isDriver && !isMe ? "text-indigo-50" : ""}>{msg.text}</span>
-              </div>
-            )
-          })}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <form onSubmit={handleSend} className="flex gap-2 pt-2 border-t border-white/10">
-          <Input 
-            value={inputText}
-            onChange={e => setInputText(e.target.value)}
-            placeholder="Type a message..."
-            className="flex-1 bg-neutral-800 border-none focus-visible:ring-blue-500"
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
           />
-          <Button type="submit" size="icon" className="bg-blue-600 hover:bg-blue-700">
-            <Send className="w-4 h-4" />
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+          
+          {/* Sliding Glassmorphic Panel */}
+          <motion.div
+            initial={{ x: '100%', opacity: 0.5 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0.5 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 right-0 w-full sm:w-[400px] h-[100dvh] z-[101] flex flex-col bg-slate-900/80 backdrop-blur-3xl border-l border-white/10 shadow-2xl"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 border-b border-white/10 bg-black/20">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="font-bold text-white leading-none">Ride Chat</h2>
+                  <p className="text-xs text-blue-300 font-medium mt-1">Coordinating with {otherUserName}</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Warning Banner */}
+            <div className="bg-amber-500/10 border-y border-amber-500/20 p-3 flex items-start gap-2.5">
+              <ShieldAlert className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-200/90 leading-relaxed font-medium">
+                For your safety, never share OTPs, passwords, or pay outside the app.
+              </p>
+            </div>
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={chatContainerRef}>
+              {messages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-3">
+                  <MessageSquare className="w-12 h-12 opacity-20" />
+                  <p className="text-sm font-medium">Say hi to {otherUserName}!</p>
+                </div>
+              ) : (
+                messages.map((msg, i) => {
+                  const isMe = msg.sender_id === currentUserId
+                  return (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className={cn(
+                        "flex flex-col max-w-[85%]",
+                        isMe ? "items-end ml-auto" : "items-start"
+                      )}
+                    >
+                      <div className={cn(
+                        "px-4 py-2.5 rounded-2xl text-sm font-medium shadow-sm",
+                        isMe 
+                          ? "bg-blue-600 text-white rounded-br-sm shadow-blue-900/20" 
+                          : "bg-white/10 text-slate-100 rounded-bl-sm border border-white/5"
+                      )}>
+                        {msg.text}
+                      </div>
+                      <span className="text-[10px] text-white/40 mt-1.5 px-1 font-medium tracking-wide">
+                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </motion.div>
+                  )
+                })
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div className="p-4 bg-black/20 border-t border-white/10 backdrop-blur-xl pb-safe">
+              <form onSubmit={handleSend} className="relative flex items-center">
+                <Input 
+                  value={inputText}
+                  onChange={e => setInputText(e.target.value)}
+                  placeholder="Type a message..."
+                  className="w-full bg-white/5 border-white/10 text-white placeholder:text-white/30 h-12 rounded-full pl-5 pr-12 focus-visible:ring-1 focus-visible:ring-blue-500"
+                  maxLength={500}
+                />
+                <Button 
+                  type="submit" 
+                  disabled={!inputText.trim()}
+                  className="absolute right-1.5 h-9 w-9 rounded-full p-0 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 transition-colors"
+                >
+                  <Send className="w-4 h-4 text-white" />
+                </Button>
+              </form>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
 }

@@ -27,6 +27,8 @@ import Image from 'next/image'
 import { cn, isValidIndianVehicleNumber } from '@/lib/utils'
 import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
+import LiveDashboardMap from '@/components/LiveDashboardMap'
+import { EcoLeaderboard } from '@/components/EcoLeaderboard'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
 import { PublicProfileDialog } from '@/components/PublicProfileDialog'
@@ -75,6 +77,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   const [womenOnlyFilter, setWomenOnlyFilter] = useState(false)
   
   const [chatRide, setChatRide] = useState<Ride | null>(null)
+  const [selectedMapRide, setSelectedMapRide] = useState<any>(null)
   const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null)
   
   const supabase = createClient()
@@ -660,6 +663,16 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           </SpotlightCard>
         ))}
       </motion.div>
+
+      {/* Gamification & Live Map Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 relative z-30 mt-8 mb-4">
+        <div className="lg:col-span-2 h-[350px] sm:h-[450px]">
+          <LiveDashboardMap rides={rides || []} selectedRide={selectedMapRide} onRideSelect={setSelectedMapRide} />
+        </div>
+        <div className="h-full">
+          <EcoLeaderboard currentUserId={currentUserId} />
+        </div>
+      </div>
 
       {/* Content Area */}
       {activeTab === 'Find a Ride' ? (
