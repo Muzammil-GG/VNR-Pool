@@ -1125,6 +1125,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         </a>
                       </div>
                     </div>
+                  </SpotlightCard>
                 </motion.div>
               ))
             )}
