@@ -670,7 +670,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           {/* Gamification & Live Map Area */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 relative z-30 mt-8 mb-4">
             <div className="lg:col-span-2 h-[220px] sm:h-[300px]">
-              <LiveDashboardMap rides={rides || []} selectedRide={selectedMapRide} onRideSelect={setSelectedMapRide} />
+              <LiveDashboardMap 
+                rides={rides || []} 
+                selectedRide={selectedMapRide} 
+                onRideSelect={setSelectedMapRide} 
+                searchOrigin={originFilter}
+                searchDestination={destinationFilter}
+              />
             </div>
             <div className="h-full">
               <EcoLeaderboard currentUserId={currentUserId} />

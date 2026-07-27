@@ -21,7 +21,19 @@ const glowingIcon = new L.DivIcon({
   iconAnchor: [12, 12],
 })
 
-export default function LiveDashboardMap({ rides, selectedRide, onRideSelect }: { rides: any[], selectedRide: any, onRideSelect: (ride: any) => void }) {
+export default function LiveDashboardMap({ 
+  rides, 
+  selectedRide, 
+  onRideSelect,
+  searchOrigin = '',
+  searchDestination = ''
+}: { 
+  rides: any[], 
+  selectedRide: any, 
+  onRideSelect: (ride: any) => void,
+  searchOrigin?: string,
+  searchDestination?: string
+}) {
   const [mounted, setMounted] = useState(false)
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([])
 
@@ -66,10 +78,13 @@ export default function LiveDashboardMap({ rides, selectedRide, onRideSelect }: 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
 
-        {/* Plot all available rides as glowing nodes */}
+        {/* Plot available rides as glowing nodes based on search context */}
         {rides.map(ride => {
-          const loc = ride.origin.toLowerCase().includes('vnr') ? VNR_COORDS : findBestMatchLocation(ride.origin)
+          // If the user searched for an origin, plot the point there (since it's en-route). Otherwise use ride origin.
+          const plotName = searchOrigin ? searchOrigin : ride.origin
+          const loc = plotName.toLowerCase().includes('vnr') ? VNR_COORDS : findBestMatchLocation(plotName)
           if (!loc) return null
+          
           return (
             <Marker 
               key={ride.id} 
@@ -82,6 +97,7 @@ export default function LiveDashboardMap({ rides, selectedRide, onRideSelect }: 
               <Popup className="dark-popup">
                 <div className="font-semibold text-slate-800">{ride.origin} → {ride.destination}</div>
                 <div className="text-sm text-slate-500">Driver: {ride.driver?.full_name}</div>
+                {searchOrigin && <div className="text-xs text-emerald-400 mt-1 font-medium">Passes through {searchOrigin}</div>}
               </Popup>
             </Marker>
           )
