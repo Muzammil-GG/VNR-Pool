@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 import { Footer } from "@/components/Footer";
 import { SWRegister } from "@/components/SWRegister";
+import { AIChatbot } from "@/components/AIChatbot";
 
 export default async function RootLayout({
   children,
@@ -25,6 +26,7 @@ export default async function RootLayout({
           <SWRegister />
           <div className="flex-1">
             {children}
+            <AIChatbot />
           </div>
           <Footer />
         </Providers>
