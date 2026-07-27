@@ -5,7 +5,6 @@ import { useChat } from '@ai-sdk/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Send, Sparkles, Loader2, Bot } from 'lucide-react'
 import { Button } from './ui/button'
-import { Input } from './ui/input'
 
 
 export function AIChatbot() {
@@ -87,11 +86,12 @@ export function AIChatbot() {
               {/* Input Area */}
               <div className="p-3 border-t border-border bg-background/50">
                 <form onSubmit={handleSubmit} className="flex items-center gap-2">
-                  <Input
+                  <input
+                    type="text"
                     value={input || ''}
                     onChange={handleInputChange}
                     placeholder="Ask me anything..."
-                    className="flex-1 bg-secondary/50 border-transparent focus-visible:ring-1 focus-visible:ring-indigo-500 rounded-full h-10 px-4 text-sm"
+                    className="flex-1 bg-secondary/50 border border-transparent focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none rounded-full h-10 px-4 text-sm transition-all"
                   />
                   <Button 
                     type="submit" 
