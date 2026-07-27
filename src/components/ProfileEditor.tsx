@@ -41,6 +41,9 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
     avatar_url: '' as string | null
   })
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [showOtp, setShowOtp] = useState(false)
+  const [otpValue, setOtpValue] = useState('')
+  const [otpLoading, setOtpLoading] = useState(false)
 
   // Sync state when editing starts
   const startEditing = () => {
@@ -54,6 +57,8 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
       })
     }
     setIsEditing(true)
+    setShowOtp(false)
+    setOtpValue('')
   }
 
   const compressImage = (file: File, maxWidth: number, maxHeight: number, quality: number): Promise<Blob> => {
@@ -139,6 +144,51 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
       toast.error(error.message || "Error uploading image")
     } finally {
       setUploadingAvatar(false)
+    }
+  }
+
+  const sendOtp = async () => {
+    setOtpLoading(true)
+    try {
+      const res = await fetch('/api/send-phone-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: formData.mobile_number })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
+      
+      toast.success("OTP sent to your new mobile number")
+      setShowOtp(true)
+    } catch (err: any) {
+      toast.error(err.message)
+    } finally {
+      setOtpLoading(false)
+    }
+  }
+
+  const verifyOtpAndSave = async () => {
+    if (otpValue.length !== 6) {
+      toast.error("OTP must be 6 digits")
+      return
+    }
+    setOtpLoading(true)
+    try {
+      const res = await fetch('/api/verify-phone-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: formData.mobile_number, otp: otpValue })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Invalid OTP')
+      
+      toast.success("Phone verified successfully!")
+      setShowOtp(false)
+      updateProfile.mutate(formData)
+    } catch (err: any) {
+      toast.error(err.message)
+    } finally {
+      setOtpLoading(false)
     }
   }
 
@@ -297,25 +347,56 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
             <div className="pt-4 border-t border-border flex justify-end gap-3">
               {isEditing ? (
                 <>
-                  <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-                  <Button 
-                    className="bg-primary hover:opacity-90 text-primary-foreground"
-                    onClick={() => {
-                      if (formData.car_number && !isValidIndianVehicleNumber(formData.car_number)) {
-                        toast.error("Please enter a valid Indian car number (e.g., TS09XX1234)")
-                        return
-                      }
-                      if (formData.bike_number && !isValidIndianVehicleNumber(formData.bike_number)) {
-                        toast.error("Please enter a valid Indian bike number (e.g., TS09YY5678)")
-                        return
-                      }
-                      updateProfile.mutate(formData)
-                    }}
-                    disabled={updateProfile.isPending}
-                  >
-                    {updateProfile.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                    Save Changes
-                  </Button>
+                  <Button variant="outline" onClick={() => { setIsEditing(false); setShowOtp(false); }}>Cancel</Button>
+                  
+                  {showOtp ? (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="text"
+                        maxLength={6}
+                        placeholder="Enter 6-digit OTP"
+                        className="h-9 w-32 text-center tracking-widest font-bold"
+                        value={otpValue}
+                        onChange={e => setOtpValue(e.target.value)}
+                      />
+                      <Button 
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                        onClick={verifyOtpAndSave}
+                        disabled={otpLoading || updateProfile.isPending}
+                      >
+                        {(otpLoading || updateProfile.isPending) ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
+                        Verify & Save
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      className="bg-primary hover:opacity-90 text-primary-foreground"
+                      onClick={() => {
+                        if (!formData.mobile_number || !/^[6-9]\d{9}$/.test(formData.mobile_number)) {
+                          toast.error("Please enter a valid 10-digit Indian mobile number")
+                          return
+                        }
+                        if (formData.car_number && !isValidIndianVehicleNumber(formData.car_number)) {
+                          toast.error("Please enter a valid Indian car number (e.g., TS09XX1234)")
+                          return
+                        }
+                        if (formData.bike_number && !isValidIndianVehicleNumber(formData.bike_number)) {
+                          toast.error("Please enter a valid Indian bike number (e.g., TS09YY5678)")
+                          return
+                        }
+                        
+                        if (formData.mobile_number !== profile.mobile_number) {
+                          sendOtp()
+                        } else {
+                          updateProfile.mutate(formData)
+                        }
+                      }}
+                      disabled={updateProfile.isPending || otpLoading}
+                    >
+                      {(updateProfile.isPending || otpLoading) ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                      Save Changes
+                    </Button>
+                  )}
                 </>
               ) : (
                 <>
