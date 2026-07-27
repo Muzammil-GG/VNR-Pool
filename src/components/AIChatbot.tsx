@@ -1,36 +1,58 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
-import { useChat } from '@ai-sdk/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Send, Sparkles, Loader2, Bot } from 'lucide-react'
 import { Button } from './ui/button'
 
+type Message = { id: string, role: 'user' | 'assistant', content: string }
 
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [localInput, setLocalInput] = useState('')
-  const chatState = useChat() as any
-  const messages = chatState.messages || []
-  const append = chatState.append
-  const sendMessage = chatState.sendMessage
-  const isLoading = chatState.isLoading || chatState.status === 'streaming' || chatState.status === 'submitted'
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!localInput.trim()) return
     
-    if (append) {
-      append({ role: 'user', content: localInput })
-    } else if (sendMessage) {
-      // sendMessage usually takes a message or an array of messages
-      sendMessage([{ role: 'user', content: localInput }])
-    } else {
-      console.error('Neither append nor sendMessage is available on useChat return value:', chatState)
-    }
-    
+    const userMsg: Message = { id: Date.now().toString(), role: 'user', content: localInput }
+    const newMessages = [...messages, userMsg]
+    setMessages(newMessages)
     setLocalInput('')
+    setIsLoading(true)
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages })
+      })
+
+      if (!res.ok) throw new Error('API Error')
+
+      const reader = res.body?.getReader()
+      const decoder = new TextDecoder()
+      
+      let assistantMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: '' }
+      setMessages([...newMessages, assistantMsg])
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          const text = decoder.decode(value, { stream: true })
+          assistantMsg.content += text
+          setMessages([...newMessages, { ...assistantMsg }])
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
