@@ -38,7 +38,9 @@ export function ChatModal({
   rideId,
   currentUserId,
   otherUserId,
-  otherUserName
+  otherUserName,
+  rideOrigin,
+  rideDestination
 }: {
   isOpen: boolean
   onClose: () => void
@@ -46,6 +48,8 @@ export function ChatModal({
   currentUserId: string
   otherUserId: string
   otherUserName: string
+  rideOrigin?: string
+  rideDestination?: string
 }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
@@ -142,17 +146,19 @@ export function ChatModal({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0.5 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 w-full sm:w-[400px] h-[100dvh] z-[101] flex flex-col bg-slate-900/80 backdrop-blur-3xl border-l border-white/10 shadow-2xl"
+            className="fixed inset-y-0 right-0 w-full sm:w-[400px] z-[101] flex flex-col bg-slate-900/80 backdrop-blur-3xl border-l border-white/10 shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/10 bg-black/20">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center shrink-0">
                   <MessageSquare className="w-5 h-5 text-blue-400" />
                 </div>
-                <div>
-                  <h2 className="font-bold text-white leading-none">Ride Chat</h2>
-                  <p className="text-xs text-blue-300 font-medium mt-1">Coordinating with {otherUserName}</p>
+                <div className="min-w-0 pr-4">
+                  <h2 className="font-bold text-white leading-none truncate">Ride Group Chat</h2>
+                  <p className="text-xs text-blue-300 font-medium mt-1 truncate">
+                    {rideOrigin && rideDestination ? `${rideOrigin} → ${rideDestination}` : `Coordinating with ${otherUserName}`}
+                  </p>
                 </div>
               </div>
               <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors">
@@ -164,7 +170,7 @@ export function ChatModal({
             <div className="bg-amber-500/10 border-y border-amber-500/20 p-3 flex items-start gap-2.5">
               <ShieldAlert className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
               <p className="text-xs text-amber-200/90 leading-relaxed font-medium">
-                For your safety, never share OTPs, passwords, or pay outside the app.
+                Everyone in this ride can see these messages. Never share OTPs or pay outside the app.
               </p>
             </div>
 
@@ -208,7 +214,7 @@ export function ChatModal({
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-black/20 border-t border-white/10 backdrop-blur-xl pb-safe">
+            <div className="p-4 bg-black/20 border-t border-white/10 backdrop-blur-xl shrink-0">
               <form onSubmit={handleSend} className="relative flex items-center">
                 <Input 
                   value={inputText}
