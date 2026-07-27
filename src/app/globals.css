@@ -528,8 +528,8 @@ input:focus, textarea:focus {
    WIGGLE ANIMATION (for floating vehicles)
    ═══════════════════════════════════════════════════════════ */
 @keyframes wiggle {
-  0%, 100% { transform: rotate(-8deg); }
-  50% { transform: rotate(8deg); }
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
 }
 .animate-wiggle {
   animation: wiggle 1s ease-in-out infinite;
