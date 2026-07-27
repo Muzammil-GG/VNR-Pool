@@ -9,8 +9,16 @@ import { Button } from './ui/button'
 
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat()
+  const [localInput, setLocalInput] = useState('')
+  const { messages, append, isLoading } = useChat()
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!localInput.trim()) return
+    append({ role: 'user', content: localInput })
+    setLocalInput('')
+  }
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -85,18 +93,18 @@ export function AIChatbot() {
 
               {/* Input Area */}
               <div className="p-3 border-t border-border bg-background/50">
-                <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                <form onSubmit={onSubmit} className="flex items-center gap-2">
                   <input
                     type="text"
-                    value={input || ''}
-                    onChange={handleInputChange}
+                    value={localInput}
+                    onChange={(e) => setLocalInput(e.target.value)}
                     placeholder="Ask me anything..."
                     className="flex-1 bg-secondary/50 border border-transparent focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none rounded-full h-10 px-4 text-sm transition-all"
                   />
                   <Button 
                     type="submit" 
                     size="icon" 
-                    disabled={!input?.trim() || isLoading}
+                    disabled={!localInput.trim() || isLoading}
                     className="rounded-full h-10 w-10 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md transition-transform active:scale-95"
                   >
                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
