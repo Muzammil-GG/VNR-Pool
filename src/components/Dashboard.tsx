@@ -29,6 +29,7 @@ import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
 import LiveDashboardMap from '@/components/LiveDashboardMap'
 import { EcoLeaderboard } from '@/components/EcoLeaderboard'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
 import { PublicProfileDialog } from '@/components/PublicProfileDialog'
@@ -667,20 +668,46 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       {/* Content Area */}
       {activeTab === 'Find a Ride' ? (
         <div className="space-y-6">
-          {/* Gamification & Live Map Area */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 relative z-30 mt-8 mb-4 items-stretch">
-            <div className="lg:col-span-2 min-h-[280px] h-full">
-              <LiveDashboardMap 
-                rides={rides || []} 
-                selectedRide={selectedMapRide} 
-                onRideSelect={setSelectedMapRide} 
-                searchOrigin={originFilter}
-                searchDestination={destinationFilter}
-              />
-            </div>
-            <div className="h-full">
-              <EcoLeaderboard currentUserId={currentUserId} />
-            </div>
+          {/* Feature Buttons (Map & Leaderboard) */}
+          <div className="flex flex-col sm:flex-row gap-4 relative z-30 mt-8 mb-4">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="flex-1 glass-card border border-blue-500/30 hover:border-blue-400/50 bg-black/40 hover:bg-black/60 text-white rounded-2xl h-14 relative group overflow-hidden shadow-[0_4px_20px_rgba(59,130,246,0.15)] transition-all">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <MapPin className="w-5 h-5 mr-2 text-blue-400" />
+                  <span className="font-bold tracking-wide">Route Maps</span>
+                  
+                  {/* Notification Badge */}
+                  {(rides?.length || 0) > 0 && (
+                    <div className="absolute top-2 right-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                      {rides?.length}
+                    </div>
+                  )}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-5xl w-[95vw] h-[85vh] p-0 overflow-hidden bg-slate-900 border-slate-700/50 rounded-3xl shadow-2xl">
+                <LiveDashboardMap 
+                  rides={rides || []} 
+                  selectedRide={selectedMapRide} 
+                  onRideSelect={setSelectedMapRide} 
+                  searchOrigin={originFilter}
+                  searchDestination={destinationFilter}
+                />
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="flex-1 glass-card border border-emerald-500/30 hover:border-emerald-400/50 bg-black/40 hover:bg-black/60 text-white rounded-2xl h-14 relative group overflow-hidden shadow-[0_4px_20px_rgba(16,185,129,0.15)] transition-all">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Zap className="w-5 h-5 mr-2 text-emerald-400" />
+                  <span className="font-bold tracking-wide">Eco Impacts Leaderboard</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg w-[95vw] p-0 overflow-hidden bg-transparent border-none shadow-none">
+                <EcoLeaderboard currentUserId={currentUserId} />
+              </DialogContent>
+            </Dialog>
           </div>
 
           {/* ── Search bar ─────────────────────── */}
