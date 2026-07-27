@@ -24,7 +24,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen relative overflow-hidden">
+    <main className="min-h-[100dvh] relative overflow-x-hidden">
       <div className="relative z-10">
         <Dashboard currentUserId={user.id} />
       </div>
