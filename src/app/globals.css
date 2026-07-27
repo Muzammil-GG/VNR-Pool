@@ -523,3 +523,15 @@ input:focus, textarea:focus {
 .delay-100 { animation-delay: 100ms; }
 .delay-150 { animation-delay: 150ms; }
 .delay-200 { animation-delay: 200ms; }
+
+/* ═══════════════════════════════════════════════════════════
+   WIGGLE ANIMATION (for floating vehicles)
+   ═══════════════════════════════════════════════════════════ */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out infinite;
+  display: inline-block;
+}
