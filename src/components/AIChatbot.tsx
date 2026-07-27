@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Send, Sparkles, Loader2, Bot } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
-import { ScrollArea } from './ui/scroll-area'
+
 
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -48,7 +48,7 @@ export function AIChatbot() {
               </div>
 
               {/* Messages Area */}
-              <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+              <div className="flex-1 p-4 overflow-y-auto" ref={scrollRef}>
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70 mt-20">
                     <Bot className="w-12 h-12 text-muted-foreground" />
@@ -82,7 +82,7 @@ export function AIChatbot() {
                     )}
                   </div>
                 )}
-              </ScrollArea>
+              </div>
 
               {/* Input Area */}
               <div className="p-3 border-t border-border bg-background/50">
