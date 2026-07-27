@@ -58,6 +58,7 @@ export default function LiveDashboardMap({ rides, selectedRide, onRideSelect }: 
         zoom={12} 
         style={{ height: '100%', width: '100%', background: '#0f172a' }}
         zoomControl={false}
+        scrollWheelZoom={false}
       >
         {/* CartoDB Dark Matter TileLayer for stunning neon look */}
         <TileLayer

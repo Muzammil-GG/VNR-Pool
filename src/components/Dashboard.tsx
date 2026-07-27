@@ -669,7 +669,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         <div className="space-y-6">
           {/* Gamification & Live Map Area */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 relative z-30 mt-8 mb-4">
-            <div className="lg:col-span-2 h-[350px] sm:h-[450px]">
+            <div className="lg:col-span-2 h-[220px] sm:h-[300px]">
               <LiveDashboardMap rides={rides || []} selectedRide={selectedMapRide} onRideSelect={setSelectedMapRide} />
             </div>
             <div className="h-full">
