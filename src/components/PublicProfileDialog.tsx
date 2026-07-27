@@ -133,9 +133,9 @@ export function PublicProfileDialog({
                 <DialogTitle className="text-2xl font-black text-white flex items-center justify-center gap-1">
                   {profile.full_name}
                 </DialogTitle>
-                <DialogDescription className="text-sm font-medium flex items-center justify-center gap-4 text-slate-400">
-                  <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> {profile.branch || 'N/A'}</span>
-                  <span className="flex items-center gap-1"><Hash className="w-3.5 h-3.5" /> {profile.roll_no || 'N/A'}</span>
+                <DialogDescription className="text-sm font-medium flex items-center justify-center gap-4 text-slate-300">
+                  <span><span className="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-1">Branch:</span>{profile.branch || 'N/A'}</span>
+                  <span><span className="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-1">Roll No:</span>{profile.roll_no || 'N/A'}</span>
                 </DialogDescription>
               </div>
 
