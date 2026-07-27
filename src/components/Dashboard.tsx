@@ -669,7 +669,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       {activeTab === 'Find a Ride' ? (
         <div className="space-y-6">
           {/* Feature Buttons (Map & Leaderboard) */}
-          <div className="flex flex-col sm:flex-row w-full max-w-5xl mx-auto gap-4 sm:gap-6 relative z-30">
+          <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-6 relative z-30">
             <div className="flex-1 flex">
               <Dialog>
                 <DialogTrigger asChild>
