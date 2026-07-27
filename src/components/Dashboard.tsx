@@ -669,17 +669,17 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       {activeTab === 'Find a Ride' ? (
         <div className="space-y-6">
           {/* Feature Buttons (Map & Leaderboard) */}
-          <div className="flex flex-col sm:flex-row gap-4 relative z-30 mt-8 mb-4">
+          <div className="flex flex-col sm:flex-row w-full max-w-5xl mx-auto gap-4 sm:gap-6 relative z-30 mt-8 mb-6">
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="flex-1 glass-card border border-blue-500/30 hover:border-blue-400/50 bg-black/40 hover:bg-black/60 text-white rounded-2xl h-14 relative group overflow-hidden shadow-[0_4px_20px_rgba(59,130,246,0.15)] transition-all">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <MapPin className="w-5 h-5 mr-2 text-blue-400" />
-                  <span className="font-bold tracking-wide">Route Maps</span>
+                <Button className="flex-1 w-full glass-card retro-noise border border-blue-500/20 hover:border-blue-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-blue-500" />
+                  <span className="font-bold text-sm sm:text-base tracking-wide">Route Maps</span>
                   
                   {/* Notification Badge */}
                   {(rides?.length || 0) > 0 && (
-                    <div className="absolute top-2 right-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                    <div className="absolute top-2 sm:top-3 right-3 sm:right-4 flex h-5 sm:h-6 min-w-[20px] sm:min-w-[24px] items-center justify-center rounded-full bg-red-500 px-1.5 sm:px-2 text-[10px] sm:text-xs font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]">
                       {rides?.length}
                     </div>
                   )}
@@ -698,10 +698,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="flex-1 glass-card border border-emerald-500/30 hover:border-emerald-400/50 bg-black/40 hover:bg-black/60 text-white rounded-2xl h-14 relative group overflow-hidden shadow-[0_4px_20px_rgba(16,185,129,0.15)] transition-all">
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Zap className="w-5 h-5 mr-2 text-emerald-400" />
-                  <span className="font-bold tracking-wide">Eco Impacts Leaderboard</span>
+                <Button className="flex-1 w-full glass-card retro-noise border border-emerald-500/20 hover:border-emerald-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)] transition-all">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-emerald-500" />
+                  <span className="font-bold text-sm sm:text-base tracking-wide">Eco Impacts Leaderboard</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-lg w-[95vw] p-0 overflow-hidden bg-transparent border-none shadow-none">
