@@ -29,9 +29,6 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
     bike_number: '',
     avatar_url: '' as string | null
   })
-  const [showOtp, setShowOtp] = useState(false)
-  const [otpValue, setOtpValue] = useState('')
-  const [otpLoading, setOtpLoading] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -62,66 +59,11 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
       toast.error("Please select branch and gender")
       return
     }
-    if (step === 3) {
-      if (!formData.mobile_number || !/^[6-9]\d{9}$/.test(formData.mobile_number)) {
-        toast.error("Please enter a valid 10-digit Indian mobile number")
-        return
-      }
-      if (!showOtp) {
-        sendOtp()
-        return
-      }
-    }
-    setStep(s => s + 1)
-  }
-
-  const sendOtp = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/send-phone-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: formData.mobile_number })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
-      
-      if (data.mockOtp) {
-        toast.info(`[MOCK SMS] Your OTP is: ${data.mockOtp}`, { duration: 10000 })
-      } else {
-        toast.success("OTP sent to your mobile number")
-      }
-      setShowOtp(true)
-    } catch (err: any) {
-      toast.error(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const verifyOtp = async () => {
-    if (otpValue.length !== 6) {
-      toast.error("OTP must be 6 digits")
+    if (step === 3 && (!formData.mobile_number || !/^[6-9]\d{9}$/.test(formData.mobile_number))) {
+      toast.error("Please enter a valid 10-digit Indian mobile number")
       return
     }
-    setOtpLoading(true)
-    try {
-      const res = await fetch('/api/verify-phone-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: formData.mobile_number, otp: otpValue })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Invalid OTP')
-      
-      toast.success("Phone verified successfully!")
-      setShowOtp(false)
-      setStep(4)
-    } catch (err: any) {
-      toast.error(err.message)
-    } finally {
-      setOtpLoading(false)
-    }
+    setStep(s => s + 1)
   }
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -233,7 +175,6 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
           id: userId,
           email: userEmail,
           ...formData,
-          is_phone_verified: true,
           profile_completed: true
         })
 
@@ -380,56 +321,26 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                   exit={{ x: -50, opacity: 0 }}
                   className="space-y-4"
                 >
-                  {!showOtp ? (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="mobile" className="font-semibold text-foreground">Mobile Number</Label>
-                        <Input
-                          id="mobile"
-                          type="tel"
-                          placeholder="9876543210"
-                          className="bg-background border-border focus-visible:ring-blue-500 h-11"
-                          value={formData.mobile_number}
-                          onChange={e => setFormData({ ...formData, mobile_number: e.target.value })}
-                        />
-                        <p className="text-xs text-muted-foreground font-medium mt-1">We will send an OTP to verify your number.</p>
-                      </div>
-                      <div className="flex justify-between gap-4 mt-6">
-                        <Button variant="outline" className="w-1/2 h-11 font-semibold bg-transparent border-border text-foreground hover:bg-secondary" onClick={() => setStep(2)}>
-                          Back
-                        </Button>
-                        <Button type="button" className="w-1/2 h-11 font-bold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center" onClick={handleNext} disabled={loading}>
-                          {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                          Send OTP
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="otp" className="font-semibold text-foreground">Enter OTP</Label>
-                        <Input
-                          id="otp"
-                          type="text"
-                          maxLength={6}
-                          placeholder="123456"
-                          className="bg-background border-border focus-visible:ring-blue-500 h-11 text-center tracking-widest font-bold text-xl"
-                          value={otpValue}
-                          onChange={e => setOtpValue(e.target.value)}
-                        />
-                        <p className="text-xs text-muted-foreground font-medium mt-1">OTP sent to {formData.mobile_number}. <button type="button" className="text-blue-500 hover:underline" onClick={() => setShowOtp(false)}>Change</button></p>
-                      </div>
-                      <div className="flex justify-between gap-4 mt-6">
-                        <Button variant="outline" className="w-1/2 h-11 font-semibold bg-transparent border-border text-foreground hover:bg-secondary" onClick={() => setShowOtp(false)}>
-                          Back
-                        </Button>
-                        <Button type="button" className="w-1/2 h-11 font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center" onClick={verifyOtp} disabled={otpLoading}>
-                          {otpLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
-                          Verify
-                        </Button>
-                      </div>
-                    </>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="mobile" className="font-semibold text-foreground">Mobile Number</Label>
+                    <Input
+                      id="mobile"
+                      type="tel"
+                      placeholder="9876543210"
+                      className="bg-background border-border focus-visible:ring-blue-500 h-11"
+                      value={formData.mobile_number}
+                      onChange={e => setFormData({ ...formData, mobile_number: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground font-medium mt-1">Your number is obfuscated and only shared on approved bookings.</p>
+                  </div>
+                  <div className="flex justify-between gap-4 mt-6">
+                    <Button variant="outline" className="w-1/2 h-11 font-semibold bg-transparent border-border text-foreground hover:bg-secondary" onClick={() => setStep(2)}>
+                      Back
+                    </Button>
+                    <Button type="button" className="w-1/2 h-11 font-bold bg-blue-600 hover:bg-blue-700 text-white" onClick={handleNext}>
+                      Next Step
+                    </Button>
+                  </div>
                 </motion.div>
               )}
 
