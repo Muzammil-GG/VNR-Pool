@@ -10,13 +10,26 @@ import { Button } from './ui/button'
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [localInput, setLocalInput] = useState('')
-  const { messages, append, isLoading } = useChat()
+  const chatState = useChat() as any
+  const messages = chatState.messages || []
+  const append = chatState.append
+  const sendMessage = chatState.sendMessage
+  const isLoading = chatState.isLoading || chatState.status === 'streaming' || chatState.status === 'submitted'
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!localInput.trim()) return
-    append({ role: 'user', content: localInput })
+    
+    if (append) {
+      append({ role: 'user', content: localInput })
+    } else if (sendMessage) {
+      // sendMessage usually takes a message or an array of messages
+      sendMessage([{ role: 'user', content: localInput }])
+    } else {
+      console.error('Neither append nor sendMessage is available on useChat return value:', chatState)
+    }
+    
     setLocalInput('')
   }
 
