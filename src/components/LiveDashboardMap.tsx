@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { findBestMatchLocation, VNR_COORDS } from '@/lib/locations'
@@ -20,6 +20,19 @@ const glowingIcon = new L.DivIcon({
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 })
+
+// Automatically resizes the map when its container stretches in the CSS Grid
+function MapResizer() {
+  const map = useMap()
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize()
+    })
+    observer.observe(map.getContainer())
+    return () => observer.disconnect()
+  }, [map])
+  return null
+}
 
 export default function LiveDashboardMap({ 
   rides, 
@@ -77,6 +90,8 @@ export default function LiveDashboardMap({
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
+        
+        <MapResizer />
 
         <ZoomControl position="bottomright" />
 
