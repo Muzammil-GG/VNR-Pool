@@ -41,7 +41,7 @@ export function EcoLeaderboard({ currentUserId }: { currentUserId: string }) {
   const co2Saved = ((userStats?.eco_points || 0) * 2.85).toFixed(1)
 
   return (
-    <Card className="bg-slate-900/40 backdrop-blur-xl border-emerald-500/20 overflow-hidden relative">
+    <Card className="bg-slate-900/40 backdrop-blur-xl border-emerald-500/20 overflow-hidden relative h-full">
       <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-emerald-400">
