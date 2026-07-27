@@ -96,12 +96,12 @@ export function PublicProfileDialog({
 
             {/* Header / Cover */}
             <div className={cn(
-              "h-28 w-full relative",
+              "h-32 w-full relative",
               profile.gender === 'female' 
                 ? "bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600"
-                : "bg-gradient-to-br from-blue-500 via-teal-500 to-emerald-500"
+                : "bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800"
             )}>
-              <div className="absolute inset-0 bg-black/20"></div>
+              <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]"></div>
               {profile.is_verified && (
                 <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/50 flex items-center gap-1.5 shadow-[0_0_15px_#10b981]">
                   <ShieldCheck className="w-3.5 h-3.5" /> VNR Verified
@@ -111,10 +111,10 @@ export function PublicProfileDialog({
 
             <div className="px-6 pb-6 pt-0 relative transform-gpu" style={{ transform: "translateZ(30px)" }}>
               {/* Avatar overlapping cover */}
-              <div className="flex justify-center -mt-14 mb-4 relative z-10">
+              <div className="flex justify-center -mt-16 mb-4 relative z-10">
                 <div className={cn(
-                  "w-28 h-28 rounded-full border-4 border-slate-900 flex items-center justify-center text-4xl font-black text-white shadow-2xl overflow-hidden relative",
-                  !profile.avatar_url && (profile.gender === 'female' ? "bg-pink-500" : "bg-blue-500")
+                  "w-32 h-32 rounded-full border-4 border-slate-900 flex items-center justify-center text-4xl font-black text-white shadow-[0_0_30px_rgba(79,70,229,0.3)] overflow-hidden relative",
+                  !profile.avatar_url && (profile.gender === 'female' ? "bg-gradient-to-br from-pink-400 to-pink-600" : "bg-gradient-to-br from-indigo-500 to-indigo-700")
                 )}>
                   {profile.avatar_url ? (
                     <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
@@ -140,46 +140,52 @@ export function PublicProfileDialog({
               </div>
 
               {/* Stats Row */}
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-xl p-3 text-center">
-                  <div className="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Trust Score</div>
-                  <div className="text-xl font-bold text-amber-400">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex-1 bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 text-center shadow-inner relative overflow-hidden group hover:border-indigo-500/30 transition-colors">
+                  <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1.5">Trust Score</div>
+                  <div className="text-2xl font-black text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">
                     {profile.rating_count === 0 ? 'New' : (profile.total_rating_score / profile.rating_count).toFixed(1)}
                   </div>
                 </div>
-                <div className="flex-1 bg-slate-800/50 border border-emerald-500/20 rounded-xl p-3 text-center relative overflow-hidden">
-                  <div className="absolute -right-2 -top-2 w-10 h-10 bg-emerald-500/10 rounded-full blur-xl"></div>
-                  <div className="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1 flex items-center justify-center gap-1">
+                <div className="flex-1 bg-slate-800/80 border border-emerald-500/20 rounded-2xl p-4 text-center shadow-inner relative overflow-hidden group hover:border-emerald-500/40 transition-colors">
+                  <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors"></div>
+                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-center gap-1.5">
                     <Leaf className="w-3 h-3 text-emerald-400" /> Eco Points
                   </div>
-                  <div className="text-xl font-bold text-emerald-400">{profile.eco_points || 0}</div>
+                  <div className="text-2xl font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">{profile.eco_points || 0}</div>
                 </div>
               </div>
 
               {/* Additional Details */}
-              <div className="space-y-3 bg-slate-800/30 rounded-2xl p-4 border border-slate-700/50">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400 flex items-center gap-2 font-medium">
-                    <Phone className="w-4 h-4 text-blue-400" /> Contact
+              <div className="space-y-0.5 bg-slate-900 rounded-2xl border border-slate-700/50 overflow-hidden shadow-lg">
+                <a 
+                  href={`tel:${profile.mobile_number}`}
+                  className="flex items-center justify-between text-sm p-4 hover:bg-indigo-600/10 transition-colors cursor-pointer group active:bg-indigo-600/20"
+                >
+                  <span className="text-slate-400 flex items-center gap-2.5 font-bold uppercase tracking-wider text-[11px] group-hover:text-indigo-400 transition-colors">
+                    <Phone className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" /> Call Driver
                   </span>
-                  <span className="font-semibold text-slate-200 tracking-widest">{obfuscatePhone(profile.mobile_number)}</span>
-                </div>
+                  <span className="font-bold text-slate-200 tracking-widest flex items-center gap-2">
+                    {profile.mobile_number} 
+                  </span>
+                </a>
                 
                 {profile.car_number && (
-                  <div className="flex items-center justify-between text-sm pt-3 border-t border-slate-700/50">
-                    <span className="text-slate-400 flex items-center gap-2 font-medium">
-                      <Car className="w-4 h-4 text-blue-400" /> Car
+                  <div className="flex items-center justify-between text-sm p-4 border-t border-slate-700/50 bg-slate-800/20">
+                    <span className="text-slate-400 flex items-center gap-2.5 font-bold uppercase tracking-wider text-[11px]">
+                      <Car className="w-4 h-4 text-indigo-400" /> Car
                     </span>
-                    <span className="font-semibold text-blue-300 bg-blue-900/40 border border-blue-500/30 px-2 py-0.5 rounded">{profile.car_number}</span>
+                    <span className="font-bold text-indigo-300 bg-indigo-950/50 border border-indigo-500/30 px-2.5 py-1 rounded-md tracking-wider">{profile.car_number}</span>
                   </div>
                 )}
                 
                 {profile.bike_number && (
-                  <div className="flex items-center justify-between text-sm pt-3 border-t border-slate-700/50">
-                    <span className="text-slate-400 flex items-center gap-2 font-medium">
-                      <Bike className="w-4 h-4 text-blue-400" /> Bike
+                  <div className="flex items-center justify-between text-sm p-4 border-t border-slate-700/50 bg-slate-800/20">
+                    <span className="text-slate-400 flex items-center gap-2.5 font-bold uppercase tracking-wider text-[11px]">
+                      <Bike className="w-4 h-4 text-indigo-400" /> Bike
                     </span>
-                    <span className="font-semibold text-blue-300 bg-blue-900/40 border border-blue-500/30 px-2 py-0.5 rounded">{profile.bike_number}</span>
+                    <span className="font-bold text-indigo-300 bg-indigo-950/50 border border-indigo-500/30 px-2.5 py-1 rounded-md tracking-wider">{profile.bike_number}</span>
                   </div>
                 )}
               </div>
