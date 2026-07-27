@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     console.log(`Your VNR Pool verification code is: ${otp}`)
     console.log(`========================================\n`)
 
-    return NextResponse.json({ success: true, mock: true })
+    return NextResponse.json({ success: true, mock: true, mockOtp: otp })
 
   } catch (error: any) {
     console.error('Send phone OTP error:', error)

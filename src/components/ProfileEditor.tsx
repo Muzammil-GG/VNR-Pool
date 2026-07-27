@@ -158,7 +158,11 @@ export function ProfileEditor({ currentUserId }: { currentUserId: string }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
       
-      toast.success("OTP sent to your new mobile number")
+      if (data.mockOtp) {
+        toast.info(`[MOCK SMS] Your OTP is: ${data.mockOtp}`, { duration: 10000 })
+      } else {
+        toast.success("OTP sent to your new mobile number")
+      }
       setShowOtp(true)
     } catch (err: any) {
       toast.error(err.message)

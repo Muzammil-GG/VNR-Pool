@@ -86,7 +86,11 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
       
-      toast.success("OTP sent to your mobile number")
+      if (data.mockOtp) {
+        toast.info(`[MOCK SMS] Your OTP is: ${data.mockOtp}`, { duration: 10000 })
+      } else {
+        toast.success("OTP sent to your mobile number")
+      }
       setShowOtp(true)
     } catch (err: any) {
       toast.error(err.message)
