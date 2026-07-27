@@ -93,7 +93,13 @@ export default function LiveDashboardMap({
               position={[loc.lat, loc.lng]} 
               icon={glowingIcon}
               eventHandlers={{
-                click: () => onRideSelect(ride)
+                click: () => {
+                  if (selectedRide?.id === ride.id) {
+                    onRideSelect(null)
+                  } else {
+                    onRideSelect(ride)
+                  }
+                }
               }}
             >
               <Popup className="dark-popup">
