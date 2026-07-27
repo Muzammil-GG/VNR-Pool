@@ -719,9 +719,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="relative z-50 glass-card retro-noise rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-end border-blue-400/10"
+            className="relative z-50 bg-background/60 dark:bg-slate-900/40 backdrop-blur-3xl rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row flex-wrap gap-5 items-start sm:items-end border border-indigo-500/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(79,70,229,0.1)]"
           >
-            <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
+            <div className="space-y-2 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-primary" /> From
               </Label>
@@ -729,10 +729,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. JNTU Metro"
                 value={originFilter}
                 onChange={setOriginFilter}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-blue-500 rounded-xl font-medium w-full"
+                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-indigo-500 focus-visible:border-indigo-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
               />
             </div>
-            <div className="space-y-1.5 w-full sm:flex-1 min-w-[140px]">
+            <div className="space-y-2 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                 <Navigation className="w-3.5 h-3.5 text-muted-foreground" /> To
               </Label>
@@ -740,10 +740,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. VNR VJIET"
                 value={destinationFilter}
                 onChange={setDestinationFilter}
-                className="bg-background/70 border-border text-foreground focus-visible:ring-blue-500 rounded-xl font-medium w-full"
+                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-indigo-500 focus-visible:border-indigo-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
               />
             </div>
-            <div className="space-y-1.5 w-full sm:flex-[0.5] min-w-[120px]">
+            <div className="space-y-2 w-full sm:flex-[0.5] min-w-[120px]">
               <div className="flex items-center justify-between">
                 <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-muted-foreground" /> Date
@@ -763,7 +763,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   value={dateFilter}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={e => setDateFilter(e.target.value)}
-                  className="h-[42px] bg-background/70 border-border text-foreground focus-visible:ring-blue-500 rounded-xl font-medium px-3 w-full"
+                  className="h-[46px] bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-indigo-500 focus-visible:border-indigo-500 rounded-xl font-medium px-3 w-full shadow-sm"
                 />
               </div>
             </div>
@@ -817,107 +817,141 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         ? 'oklch(0.65 0.20 340 / 0.15)'
                         : ride.ride_category === 'auto_split'
                         ? 'oklch(0.70 0.18 80 / 0.15)'
-                        : 'oklch(0.58 0.22 160 / 0.15)'
+                        : 'oklch(0.58 0.22 255 / 0.15)' /* Indigo */
                     }
                     className={cn(
-                      "glass-card rounded-2xl overflow-hidden relative group float-hover border transition-colors duration-300 hover:border-blue-500/50",
-                      ride.is_women_only ? "border-pink-400/40 hover:border-pink-500/60" : "border-border"
+                      "bg-card text-card-foreground rounded-2xl overflow-hidden relative group float-hover shadow-xl border-none",
+                      ride.is_women_only ? "ring-2 ring-pink-500/20 hover:ring-pink-500/50" : "ring-1 ring-border/50 hover:ring-indigo-500/30 transition-all duration-300"
                     )}
                   >
                     {/* Subtle top gradient stripe */}
                     <div className={cn(
-                      "absolute top-0 inset-x-0 h-1 rounded-t-2xl",
+                      "absolute top-0 inset-x-0 h-1.5",
                       ride.is_women_only
                         ? "bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500"
                         : ride.ride_category === 'auto_split'
                           ? "bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400"
-                          : "bg-gradient-to-r from-blue-400 via-blue-400 to-indigo-400"
+                          : "bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-400"
                     )} />
 
                     {ride.is_women_only && (
-                      <div className="absolute top-1 right-0 bg-pink-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl flex items-center gap-1 shadow-md">
+                      <div className="absolute top-1 right-0 bg-pink-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl flex items-center gap-1 shadow-md z-10">
                         <Shield className="w-3 h-3" /> Women Only
                       </div>
                     )}
 
-                    {/* Card body */}
-                    <div className="p-5 space-y-4">
-                      {/* Top row: driver + price */}
+                    {/* TOP SECTION: ROUTE & TIME (Boarding Pass Style) */}
+                    <div className="p-5 pb-4 space-y-4">
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
-                          {/* Driver avatar + name */}
-                          <div 
-                            className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => setSelectedProfileId(ride.driver.id)}
-                          >
-                            <div className={cn(
-                              "w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
-                              !ride.driver.avatar_url && (ride.driver.gender === 'female'
-                                ? "bg-gradient-to-br from-pink-400 to-rose-500"
-                                : "bg-gradient-to-br from-blue-400 to-blue-600")
-                            )}>
-                              {ride.driver.avatar_url ? (
-                                <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                              ) : (
-                                ride.driver.full_name.charAt(0).toUpperCase()
-                              )}
-                            </div>
-                            <div>
-                              <p className="text-base font-extrabold text-foreground leading-tight flex items-center">{ride.driver.full_name} {renderStars(ride.driver.total_rating_score, ride.driver.rating_count)}</p>
-                              <p className="text-[11px] text-muted-foreground font-medium">{obfuscatePhone(ride.driver.mobile_number)}</p>
-                            </div>
+                          <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground flex items-center gap-1">
+                            <Navigation className="w-3 h-3" /> Route
+                          </p>
+                          <div className="text-xl sm:text-2xl font-black text-foreground leading-tight tracking-tight">
+                            {ride.origin} <br />
+                            <span className="text-indigo-500">→</span> {ride.destination}
                           </div>
-                          {/* Badges */}
-                          <div className="flex flex-wrap gap-1.5 mt-1.5">
-                            <span className={cn(
-                              "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide border",
-                              ride.ride_category === 'auto_split'
-                                ? "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-muted/30 border-amber-200 dark:border-amber-800/40"
-                                : "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800/40"
-                            )}>
-                              {ride.ride_category === 'auto_split' ? 'Auto Split' : 'Student Pool'}
-                            </span>
-                            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold capitalize border text-foreground/70 bg-secondary/50 border-border flex items-center gap-1">
-                            <span className="text-sm mr-1">
-                              {ride.vehicle_type === 'bike' ? '🏍️' : 
-                               ride.vehicle_type === 'auto' ? '🛺' : 
-                               (ride.ride_category === 'auto_split' ? '🚕' : '🚗')}
-                            </span>
-                              {ride.vehicle_type}
-                              {ride.vehicle_number && (
-                                <>
-                                  <span className="mx-1 h-3 border-l border-border/60" />
-                                  <span className="uppercase text-muted-foreground">{ride.vehicle_number}</span>
-                                </>
-                              )}
-                            </span>
+                        </div>
+                        
+                        <div className="text-right">
+                          <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground flex items-center justify-end gap-1">
+                            <Clock className="w-3 h-3" /> Departure
+                          </p>
+                          <div className="text-base sm:text-lg font-black text-foreground">
+                            {new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}
+                          </div>
+                          <div className="text-xs font-semibold text-muted-foreground">
+                            {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric' })}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Vehicle & Category Badges */}
+                      <div className="flex flex-wrap gap-1.5">
+                        <span className={cn(
+                          "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide",
+                          ride.ride_category === 'auto_split'
+                            ? "text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/40"
+                            : "text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/40"
+                        )}>
+                          {ride.ride_category === 'auto_split' ? 'Auto Split' : 'Student Pool'}
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full font-bold capitalize text-foreground/80 bg-secondary/80 flex items-center gap-1">
+                        <span className="text-sm mr-1">
+                          {ride.vehicle_type === 'bike' ? '🏍️' : 
+                           ride.vehicle_type === 'auto' ? '🛺' : 
+                           (ride.ride_category === 'auto_split' ? '🚕' : '🚗')}
+                        </span>
+                          {ride.vehicle_type}
+                          {ride.vehicle_number && (
+                            <>
+                              <span className="mx-1 h-3 border-l border-foreground/20" />
+                              <span className="uppercase text-muted-foreground">{ride.vehicle_number}</span>
+                            </>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* PERFORATED DIVIDER */}
+                    <div className="relative w-full h-4 flex items-center justify-center my-1 overflow-hidden">
+                      <div className="absolute inset-x-0 h-[2px] border-t-2 border-dashed border-border/80"></div>
+                      <div className="absolute -left-2 w-4 h-4 rounded-full bg-background shadow-inner"></div>
+                      <div className="absolute -right-2 w-4 h-4 rounded-full bg-background shadow-inner"></div>
+                    </div>
+
+                    {/* BOTTOM SECTION: DRIVER & PRICE */}
+                    <div className="p-5 pt-3 space-y-4">
+                      <div className="flex justify-between items-end">
+                        {/* Driver */}
+                        <div 
+                          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => setSelectedProfileId(ride.driver.id)}
+                        >
+                          <div className={cn(
+                            "w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
+                            !ride.driver.avatar_url && (ride.driver.gender === 'female'
+                              ? "bg-gradient-to-br from-pink-400 to-rose-500"
+                              : "bg-gradient-to-br from-indigo-500 to-indigo-700")
+                          )}>
+                            {ride.driver.avatar_url ? (
+                              <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              ride.driver.full_name.charAt(0).toUpperCase()
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-xs uppercase font-bold tracking-widest text-muted-foreground mb-0.5">Driver</p>
+                            <p className="text-sm font-extrabold text-foreground leading-none flex items-center">
+                              {ride.driver.full_name} 
+                              <span className="ml-1 scale-90">{renderStars(ride.driver.total_rating_score, ride.driver.rating_count)}</span>
+                            </p>
                           </div>
                         </div>
 
                         {/* Price */}
-                        <div className="text-right flex-shrink-0">
+                        <div className="text-right">
                           {ride.ride_category === 'auto_split' ? (
                             <>
-                              <div className="text-[11px] text-muted-foreground font-bold mb-0.5 flex items-center justify-end gap-1">
-                                <span>Total Trip:</span>
-                                <span className="text-foreground/80">₹{ride.price_per_seat}</span>
+                              <div className="text-[10px] text-muted-foreground font-bold mb-0.5 uppercase tracking-wide">
+                                Total Trip: ₹{ride.price_per_seat}
                               </div>
-                              <div className="text-3xl font-black text-amber-600 dark:text-amber-500 price-glow flex items-end justify-end gap-1 leading-none">
+                              <div className="text-3xl font-black text-amber-600 dark:text-amber-500 leading-none">
                                 ₹{(ride as any).dynamic_price}
                               </div>
-                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest flex flex-col items-end gap-1 mt-1.5">
-                                <span className="flex items-center gap-0.5"><Zap className="w-2.5 h-2.5 fill-current" /> Your Share</span>
+                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest mt-1">
+                                Your Share
                               </div>
                             </>
                           ) : (
                             <>
-                              <div className="text-3xl font-black text-primary price-glow flex items-end justify-end gap-1">
+                              <div className="text-3xl font-black text-indigo-500 dark:text-indigo-400 flex items-end justify-end gap-1 leading-none">
                                 {(ride as any).matchType === 'fractional' && (
-                                  <span className="text-[10px] text-blue-500 line-through mb-1">₹{ride.price_per_seat}</span>
+                                  <span className="text-[12px] text-indigo-300 dark:text-indigo-700 line-through mb-1">₹{ride.price_per_seat}</span>
                                 )}
                                 ₹{(ride as any).fractional_price}
                               </div>
-                              <div className="text-[10px] text-muted-foreground font-semibold">
+                              <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide mt-1">
                                 {(ride as any).matchType === 'fractional' ? 'your fraction' : 'per seat'}
                               </div>
                             </>
@@ -925,33 +959,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         </div>
                       </div>
 
-                      {/* Route */}
-                      <div className="route-line pl-5 space-y-2">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                          <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-                          <span>{ride.origin}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm font-semibold text-foreground/80">
-                          <Navigation className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                          <span>{ride.destination}</span>
-                        </div>
-                      </div>
-
-                      {/* Time + Seats */}
-                      <div className="flex items-center gap-3 text-xs font-bold">
-                        <div className="flex items-center gap-1.5 text-secondary-foreground bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1.5 rounded-lg border border-blue-100 dark:border-blue-900/40">
-                          <Clock className="w-3.5 h-3.5" />
-                          {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
-                        </div>
+                      {/* Time + Seats (Moved below driver info) */}
+                      <div className="flex items-center gap-3 text-xs font-bold pt-2">
                         <div className={cn(
-                          "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border",
+                          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border",
                           ride.available_seats === 0
-                            ? "text-red-500 bg-red-50 dark:bg-red-950/40 border-red-100 dark:border-red-900/40"
-                            : "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-100 dark:border-amber-900/40"
+                            ? "text-red-600 bg-red-100 dark:bg-red-950/40 border-red-200 dark:border-red-900/40"
+                            : "text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/40"
                         )}>
                           <Users className="w-3.5 h-3.5" />
-                          {ride.available_seats === 0 ? 'Full' : `${ride.available_seats} left`}
+                          {ride.available_seats === 0 ? 'Full' : `${ride.available_seats} Seats Left`}
                         </div>
+
                         {/* Seat dots */}
                         <div className="flex gap-1 ml-auto">
                           {Array.from({ length: ride.total_seats }).map((_, si) => (
@@ -1044,7 +1063,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                   className={cn(
                                     "w-full font-bold transition-all duration-300",
                                     ride.status === 'in_progress'
-                                      ? "bg-blue-500 text-white opacity-100"
+                                      ? "bg-indigo-500 text-white opacity-100"
                                       : isApproved
                                         ? "bg-primary hover:bg-red-500 text-primary-foreground hover:text-white shadow-md hover:shadow-red-500/30"
                                         : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
@@ -1070,7 +1089,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                       ? "bg-muted text-muted-foreground cursor-not-allowed"
                                       : hasActiveBooking
                                         ? "bg-muted text-muted-foreground cursor-not-allowed border border-border/50 shadow-inner"
-                                        : "shiny-btn bg-gradient-to-r from-blue-500 to-blue-500 hover:from-blue-600 hover:to-blue-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-none"
+                                        : "shiny-btn bg-indigo-600 hover:bg-indigo-700 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] border-none"
                                 )}
                               >
                                 {ride.driver_id === currentUserId 
@@ -1088,7 +1107,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="bg-transparent border-border hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-300 flex-shrink-0 transition-colors"
+                          className="bg-transparent border-border hover:bg-indigo-100 dark:hover:bg-indigo-950/30 hover:border-indigo-300 flex-shrink-0 transition-colors"
                           onClick={() => setChatRide(ride)}
                           title="Chat with Rider"
                         >
@@ -1098,15 +1117,14 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="bg-transparent border-border hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-300 flex-shrink-0 transition-colors"
+                            className="border-border hover:bg-secondary flex-shrink-0"
                             title="Call Rider"
                           >
-                            <Phone className="w-4 h-4 text-secondary-foreground" />
+                            <Phone className="w-4 h-4 text-primary" />
                           </Button>
                         </a>
                       </div>
                     </div>
-                  </SpotlightCard>
                 </motion.div>
               ))
             )}
