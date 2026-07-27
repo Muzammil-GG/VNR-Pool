@@ -669,18 +669,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       {activeTab === 'Find a Ride' ? (
         <div className="space-y-6">
           {/* Feature Buttons (Map & Leaderboard) */}
-          <div className="flex flex-col sm:flex-row w-full max-w-5xl mx-auto gap-4 sm:gap-6 relative z-30 mt-8 mb-6">
+          <div className="flex flex-col sm:flex-row w-full max-w-5xl mx-auto gap-4 sm:gap-6 relative z-30">
             <div className="flex-1 flex">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="w-full glass-card retro-noise border border-blue-500/20 hover:border-blue-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all">
+                  <Button className="w-full glass-card retro-noise border border-blue-500/20 hover:border-blue-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all flex items-center justify-center gap-2">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <MapPin className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-blue-500" />
+                    <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 shrink-0" />
                     <span className="font-bold text-sm sm:text-base tracking-wide">Route Maps</span>
                     
                     {/* Notification Badge */}
                     {(rides?.length || 0) > 0 && (
-                      <div className="absolute top-2 sm:top-3 right-3 sm:right-4 flex h-5 sm:h-6 min-w-[20px] sm:min-w-[24px] items-center justify-center rounded-full bg-red-500 px-1.5 sm:px-2 text-[10px] sm:text-xs font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                      <div className="flex h-5 sm:h-6 min-w-[20px] sm:min-w-[24px] items-center justify-center rounded-full bg-red-500 px-1.5 sm:px-2 text-[10px] sm:text-xs font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)] shrink-0">
                         {rides?.length}
                       </div>
                     )}
@@ -701,9 +701,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             <div className="flex-1 flex">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="w-full glass-card retro-noise border border-emerald-500/20 hover:border-emerald-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)] transition-all">
+                  <Button className="w-full glass-card retro-noise border border-emerald-500/20 hover:border-emerald-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)] transition-all flex items-center justify-center gap-2">
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-emerald-500" />
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
                     <span className="font-bold text-sm sm:text-base tracking-wide">Eco Impacts Leaderboard</span>
                   </Button>
                 </DialogTrigger>
