@@ -16,71 +16,52 @@ export function AIChatbot() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!localInput.trim()) return
+    const trimmed = localInput.trim()
+    if (!trimmed) return
+
+    const userMsg: Message = { id: Date.now().toString(), role: 'user', content: trimmed }
     
-    const userMsg: Message = { id: Date.now().toString(), role: 'user', content: localInput }
+    // Capture current messages BEFORE state update for API payload
+    const apiMessages = [...messages, { role: 'user' as const, content: trimmed }]
+    
     setLocalInput('')
     setIsLoading(true)
-
-    // Use functional update for reliable state management
-    setMessages(prev => {
-      const updated = [...prev, userMsg]
-      return updated
-    })
-
-    // Build messages for API
-    const apiMessages = [...messages, userMsg]
+    setMessages(prev => [...prev, userMsg])
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages })
+        body: JSON.stringify({ messages: apiMessages.map(m => ({ role: m.role, content: m.content })) })
       })
 
-      // Try to parse error body first
       if (!res.ok) {
         let errorMsg = 'The AI service returned an error.'
         try {
           const errBody = await res.json()
           if (errBody?.error) errorMsg = errBody.error
-          if (errBody?.code === 'MISSING_API_KEY') {
-            errorMsg = 'The Gemini AI API key is not configured. Please add `GOOGLE_GENERATIVE_AI_API_KEY` to your Vercel project environment variables.'
-          }
         } catch {}
         throw new Error(errorMsg)
       }
 
-      const reader = res.body?.getReader()
-      const decoder = new TextDecoder()
-      
-      const assistantId = (Date.now() + 1).toString()
-      
-      // Insert a placeholder assistant message
-      setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '' }])
+      // The API returns plain text (not a stream), so just read it directly
+      const text = await res.text()
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-          const text = decoder.decode(value, { stream: true })
-          // Use functional update to accumulate streamed content reliably
-          setMessages(prev => {
-            const updated = [...prev]
-            const lastIdx = updated.length - 1
-            if (lastIdx >= 0 && updated[lastIdx].id === assistantId) {
-              updated[lastIdx] = { ...updated[lastIdx], content: updated[lastIdx].content + text }
-            }
-            return updated
-          })
-        }
+      if (!text || !text.trim()) {
+        throw new Error('The AI returned an empty response. The API key may be invalid or the service may be down.')
       }
+
+      setMessages(prev => [...prev, { 
+        id: (Date.now() + 1).toString(), 
+        role: 'assistant' as const, 
+        content: text 
+      }])
     } catch (error: any) {
-      const errorText = error?.message || "Oops! The chatbot encountered an issue. If you're the admin, ensure the `GOOGLE_GENERATIVE_AI_API_KEY` environment variable is set in your Vercel project."
+      const errorText = error?.message || "Oops! Something went wrong. Please try again."
       setMessages(prev => [...prev, { 
         id: Date.now().toString(), 
         role: 'assistant' as const, 
-        content: errorText
+        content: `⚠️ ${errorText}`
       }])
     } finally {
       setIsLoading(false)
