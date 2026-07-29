@@ -27,7 +27,6 @@ import Image from 'next/image'
 import { cn, isValidIndianVehicleNumber } from '@/lib/utils'
 import { LocationAutocomplete } from '@/components/LocationAutocomplete'
 import { findBestMatchLocation } from '@/lib/locations'
-import LiveDashboardMap from '@/components/LiveDashboardMap'
 import { EcoLeaderboard } from '@/components/EcoLeaderboard'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -37,6 +36,7 @@ import { COLLEGE_ROUTES, getRouteById, checkFractionalMatch, getSlicedWaypoints 
 import { calculateFractionalPrice, calculateDynamicSplitPricing, PassengerTrip } from '@/lib/pricing'
 
 const RouteMap = dynamic(() => import('@/components/RouteMap'), { ssr: false, loading: () => <div className="h-48 w-full bg-secondary animate-pulse rounded-xl" /> })
+const LiveDashboardMap = dynamic(() => import('@/components/LiveDashboardMap'), { ssr: false, loading: () => <div className="h-full w-full bg-secondary/20 animate-pulse rounded-2xl" /> })
 
 
 type Ride = {
@@ -672,7 +672,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-6 relative z-30">
             <div className="flex-1 flex">
               <Dialog>
-                <DialogTrigger asChild>
+                <DialogTrigger render={
                   <Button className="w-full glass-card retro-noise border border-blue-500/20 hover:border-blue-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all flex items-center justify-center gap-2">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 shrink-0" />
@@ -685,7 +685,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       </div>
                     )}
                   </Button>
-                </DialogTrigger>
+                } />
                 <DialogContent className="max-w-5xl w-[95vw] h-[85vh] p-0 overflow-hidden bg-slate-900 border-slate-700/50 rounded-3xl shadow-2xl">
                   <LiveDashboardMap 
                     rides={rides || []} 
@@ -700,13 +700,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
             <div className="flex-1 flex">
               <Dialog>
-                <DialogTrigger asChild>
+                <DialogTrigger render={
                   <Button className="w-full glass-card retro-noise border border-emerald-500/20 hover:border-emerald-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)] transition-all flex items-center justify-center gap-2">
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
                     <span className="font-bold text-sm sm:text-base tracking-wide">Eco Impacts Leaderboard</span>
                   </Button>
-                </DialogTrigger>
+                } />
                 <DialogContent className="max-w-lg w-[95vw] p-0 overflow-hidden bg-transparent border-none shadow-none">
                   <EcoLeaderboard currentUserId={currentUserId} />
                 </DialogContent>
