@@ -50,6 +50,11 @@ export function AIChatbot() {
       }
     } catch (error) {
       console.error(error)
+      setMessages(prev => [...prev, { 
+        id: Date.now().toString(), 
+        role: 'assistant', 
+        content: "Oops! I couldn't process that. If you're the admin, please ensure the `GOOGLE_GENERATIVE_AI_API_KEY` is added to Vercel Environment Variables!" 
+      }])
     } finally {
       setIsLoading(false)
     }
