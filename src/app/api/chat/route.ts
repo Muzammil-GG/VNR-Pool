@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 
     // Using Gemini 1.5 Flash for fast, conversational responses
     const result = streamText({
-      model: google('gemini-1.5-flash'),
+      model: google('gemini-1.5-pro'),
       system: SYSTEM_PROMPT,
       messages,
     })
