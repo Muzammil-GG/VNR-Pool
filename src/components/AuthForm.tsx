@@ -1,20 +1,54 @@
 "use client"
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { Loader2, Car } from 'lucide-react'
+import { Loader2, Mail, Lock, KeyRound } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { WavyBackground } from '@/components/ui/wavy-background'
 import { VehicleBackground } from '@/components/VehicleBackground'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
 import Image from 'next/image'
+
+const FloatingInput = ({ icon: Icon, label, id, type, value, onChange, placeholder, required = false }: any) => {
+  const [isFocused, setIsFocused] = useState(false)
+  const isFilled = value.length > 0 || isFocused
+
+  return (
+    <div className="relative group">
+      <div className={`absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-300 ${isFocused ? 'text-blue-500' : 'text-slate-400 dark:text-slate-500'}`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        required={required}
+        placeholder={isFocused ? placeholder : ""}
+        className="block w-full rounded-2xl border-0 py-3.5 pl-12 pr-4 bg-black/5 dark:bg-white/5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-200/50 dark:ring-slate-800/50 focus:ring-2 focus:ring-inset focus:ring-blue-600 transition-all sm:text-sm sm:leading-6 backdrop-blur-md outline-none"
+      />
+      <label
+        htmlFor={id}
+        className={`absolute left-12 transition-all duration-300 pointer-events-none ${
+          isFilled 
+            ? '-top-2.5 bg-white dark:bg-[#040914] px-1 text-xs font-semibold text-blue-600 rounded-md' 
+            : 'top-3.5 text-sm text-slate-500 dark:text-slate-400 font-medium'
+        }`}
+      >
+        {label}
+      </label>
+      {/* Background glow on focus */}
+      <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-0 group-focus-within:opacity-20 transition duration-500 pointer-events-none -z-10`} />
+    </div>
+  )
+}
 
 export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot_password' | 'reset_password' | 'signup_verify'>('login')
@@ -128,9 +162,18 @@ export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="w-full max-w-[420px] relative z-10"
       >
-        <SpotlightCard className="w-full glass-card p-1 shadow-2xl rounded-[2rem] overflow-hidden relative">
-          <Card className="w-full bg-card/80 backdrop-blur-3xl border-0 shadow-none rounded-[1.8rem] overflow-hidden relative">
+        <SpotlightCard className="w-full p-[1px] shadow-2xl rounded-[2.2rem] overflow-hidden relative bg-gradient-to-b from-slate-200 to-transparent dark:from-slate-800 dark:to-transparent">
+          <Card className="w-full bg-white/60 dark:bg-[#020617]/80 backdrop-blur-3xl border-0 shadow-none rounded-[2.1rem] overflow-hidden relative">
             
+            {/* Ambient inner glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent pointer-events-none" />
+            
+            {/* Noise texture overlay for premium frosted glass feel */}
+            <div 
+              className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay"
+              style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}
+            />
+
             <CardHeader className="relative z-10 text-center pb-4 pt-8">
               <div className="w-24 h-24 mx-auto rounded-3xl flex items-center justify-center shadow-[0_8px_32px_rgba(29,78,216,0.3)] mb-4 hover:scale-105 transition-transform duration-300 overflow-hidden relative border-2 border-blue-500/20 bg-[#1e3a8a]">
                 <Image src="/vnr-logo.png" alt="VNR VJIET" fill className="object-contain p-1.5" />
@@ -146,73 +189,85 @@ export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
             </CardDescription>
           </CardHeader>
           <CardContent className="relative z-10 pb-8 px-6">
-          <form onSubmit={handleAuth} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground font-semibold">College Email ID</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="21071A05XX@vnrvjiet.in"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="bg-background/70 border-border focus-visible:ring-blue-600 h-11"
-                required
-              />
-            </div>
+          <form onSubmit={handleAuth} className="space-y-6">
             
-            {(mode === 'reset_password' || mode === 'signup_verify') && (
-              <div className="space-y-2">
-                <Label htmlFor="otp" className="text-foreground font-semibold">6-Digit OTP</Label>
-                <Input 
-                  id="otp" 
-                  type="text"
-                  placeholder="123456"
-                  value={otp}
-                  onChange={e => setOtp(e.target.value)}
-                  className="bg-background/70 border-border focus-visible:ring-blue-600 h-11 tracking-widest text-center"
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={mode}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: "circOut" }}
+                className="space-y-5"
+              >
+                
+                <FloatingInput
+                  icon={Mail}
+                  label="College Email ID"
+                  id="email"
+                  type="email"
+                  placeholder="21071A05XX@vnrvjiet.in"
+                  value={email}
+                  onChange={(e: any) => setEmail(e.target.value)}
                   required
                 />
-              </div>
-            )}
+                
+                {(mode === 'reset_password' || mode === 'signup_verify') && (
+                  <FloatingInput
+                    icon={KeyRound}
+                    label="6-Digit OTP"
+                    id="otp"
+                    type="text"
+                    placeholder="123456"
+                    value={otp}
+                    onChange={(e: any) => setOtp(e.target.value)}
+                    required
+                  />
+                )}
 
-            {(mode !== 'forgot_password' && mode !== 'signup_verify') && (
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="password" className="text-foreground font-semibold">
-                    {mode === 'reset_password' ? 'New Password' : 'Password'}
-                  </Label>
-                  {mode === 'login' && (
-                    <button 
-                      type="button" 
-                      onClick={() => setMode('forgot_password')}
-                      className="text-xs text-muted-foreground hover:text-blue-600 font-medium transition-colors"
-                    >
-                      Forgot Password?
-                    </button>
-                  )}
-                </div>
-                <Input 
-                  id="password" 
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="bg-background/70 border-border focus-visible:ring-blue-600 h-11"
-                  required
-                />
-              </div>
-            )}
+                {(mode !== 'forgot_password' && mode !== 'signup_verify') && (
+                  <div className="space-y-2">
+                    <FloatingInput
+                      icon={Lock}
+                      label={mode === 'reset_password' ? 'New Password' : 'Password'}
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e: any) => setPassword(e.target.value)}
+                      required
+                    />
+                    {mode === 'login' && (
+                      <div className="flex justify-end pt-1">
+                        <button 
+                          type="button" 
+                          onClick={() => setMode('forgot_password')}
+                          className="text-xs text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition-colors"
+                        >
+                          Forgot Password?
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </motion.div>
+            </AnimatePresence>
 
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-12 shiny-btn bg-blue-700 hover:bg-blue-800 text-white transition-all text-base font-bold rounded-xl shadow-lg shadow-blue-700/20 press-scale mt-2"
+              className="w-full h-12 shiny-btn bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white transition-all text-base font-bold rounded-2xl shadow-[0_8px_20px_rgba(29,78,216,0.25)] hover:shadow-[0_8px_25px_rgba(29,78,216,0.4)] press-scale mt-4 relative overflow-hidden group border border-blue-500/30"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 
-               mode === 'login' ? 'Sign In' : 
-               mode === 'signup' ? 'Send OTP' : 
-               mode === 'signup_verify' ? 'Verify & Complete' :
-               mode === 'forgot_password' ? 'Send Reset OTP' : 
-               'Reset & Sign In'}
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <span className="relative z-10 flex items-center justify-center">
+                {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 
+                 mode === 'login' ? 'Sign In' : 
+                 mode === 'signup' ? 'Send OTP' : 
+                 mode === 'signup_verify' ? 'Verify & Complete' :
+                 mode === 'forgot_password' ? 'Send Reset OTP' : 
+                 'Reset & Sign In'}
+              </span>
             </Button>
           </form>
           <div className="mt-8 text-center text-sm font-medium">
