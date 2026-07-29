@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Send, Sparkles, Loader2, Bot } from 'lucide-react'
 import { Button } from './ui/button'
+import { generateResponse, type ChatMessage } from '@/lib/chatbot-engine'
 
 type Message = { id: string, role: 'user' | 'assistant', content: string }
 
@@ -11,68 +12,64 @@ export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [localInput, setLocalInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const trimmed = localInput.trim()
-    if (!trimmed) return
+    if (!trimmed || isTyping) return
 
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: trimmed }
-    
-    // Capture current messages BEFORE state update for API payload
-    const apiMessages = [...messages, { role: 'user' as const, content: trimmed }]
-    
+    const updatedMessages = [...messages, userMsg]
     setLocalInput('')
-    setIsLoading(true)
-    setMessages(prev => [...prev, userMsg])
+    setMessages(updatedMessages)
+    setIsTyping(true)
 
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages.map(m => ({ role: m.role, content: m.content })) })
-      })
+    // Build conversation history for context-awareness
+    const history: ChatMessage[] = updatedMessages.map(m => ({
+      role: m.role,
+      content: m.content,
+    }))
 
-      if (!res.ok) {
-        let errorMsg = 'The AI service returned an error.'
-        try {
-          const errBody = await res.json()
-          if (errBody?.error) errorMsg = errBody.error
-        } catch {}
-        throw new Error(errorMsg)
-      }
+    // Generate response from local engine (instant, no API needed)
+    const response = generateResponse(trimmed, history)
 
-      // The API returns plain text (not a stream), so just read it directly
-      const text = await res.text()
+    // Small typing delay (300-600ms) to feel natural, not robotic
+    const delay = 300 + Math.min(response.length * 2, 300)
+    await new Promise(resolve => setTimeout(resolve, delay))
 
-      if (!text || !text.trim()) {
-        throw new Error('The AI returned an empty response. The API key may be invalid or the service may be down.')
-      }
-
-      setMessages(prev => [...prev, { 
-        id: (Date.now() + 1).toString(), 
-        role: 'assistant' as const, 
-        content: text 
-      }])
-    } catch (error: any) {
-      const errorText = error?.message || "Oops! Something went wrong. Please try again."
-      setMessages(prev => [...prev, { 
-        id: Date.now().toString(), 
-        role: 'assistant' as const, 
-        content: `⚠️ ${errorText}`
-      }])
-    } finally {
-      setIsLoading(false)
-    }
+    setMessages(prev => [...prev, {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant',
+      content: response,
+    }])
+    setIsTyping(false)
   }
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
-  }, [messages])
+  }, [messages, isTyping])
+
+  // Simple markdown-lite renderer for bold text
+  const renderContent = (text: string) => {
+    // Split by **bold** markers
+    const parts = text.split(/(\*\*[^*]+\*\*)/g)
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-bold">{part.slice(2, -2)}</strong>
+      }
+      // Handle newlines
+      return part.split('\n').map((line, j) => (
+        <span key={`${i}-${j}`}>
+          {j > 0 && <br />}
+          {line}
+        </span>
+      ))
+    })
+  }
 
   return (
     <>
@@ -94,7 +91,10 @@ export function AIChatbot() {
                   </div>
                   <div>
                     <h3 className="font-bold text-sm text-foreground">VNR Pool Assistant</h3>
-                    <p className="text-[10px] text-emerald-500 font-medium">Powered by Gemini AI</p>
+                    <div className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                      <p className="text-[10px] text-emerald-500 font-medium">Always Online • Instant Replies</p>
+                    </div>
                   </div>
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-muted-foreground hover:bg-secondary" onClick={() => setIsOpen(false)}>
@@ -108,32 +108,62 @@ export function AIChatbot() {
                   <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-70 mt-20">
                     <Bot className="w-12 h-12 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground font-medium px-4">
-                      Hi! I'm the VNR Pool AI. Ask me how to book a ride, split fares, or navigate the app!
+                      Hi! I&apos;m the VNR Pool Assistant. Ask me how to book a ride, split fares, or navigate the app!
                     </p>
+                    {/* Quick action chips */}
+                    <div className="flex flex-wrap gap-2 justify-center mt-3 px-2">
+                      {['How do I book a ride?', 'How does fare splitting work?', 'What are Eco Points?'].map(q => (
+                        <button
+                          key={q}
+                          onClick={() => { setLocalInput(q); }}
+                          className="px-3 py-1.5 text-xs bg-secondary/80 hover:bg-secondary border border-border/50 rounded-full transition-colors text-muted-foreground hover:text-foreground"
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-4 pb-4">
                     {messages.map((m) => (
-                      <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <motion.div
+                        key={m.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        {m.role === 'assistant' && (
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center mr-2 mt-1 shrink-0">
+                            <Sparkles className="w-3 h-3 text-white" />
+                          </div>
+                        )}
                         <div 
-                          className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
+                          className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
                             m.role === 'user' 
                               ? 'bg-blue-600 text-white rounded-br-sm shadow-md' 
                               : 'bg-secondary text-foreground rounded-bl-sm border border-border/50'
                           }`}
                         >
-                          {m.content}
+                          {m.role === 'assistant' ? renderContent(m.content) : m.content}
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
-                    {isLoading && (
-                      <div className="flex justify-start">
-                        <div className="bg-secondary text-foreground rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-2">
-                          <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-                          <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
-                          <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.4s]" />
+                    {isTyping && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex justify-start"
+                      >
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center mr-2 mt-1 shrink-0">
+                          <Sparkles className="w-3 h-3 text-white" />
                         </div>
-                      </div>
+                        <div className="bg-secondary text-foreground rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
+                          <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" />
+                          <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0.15s]" />
+                          <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0.3s]" />
+                        </div>
+                      </motion.div>
                     )}
                   </div>
                 )}
@@ -152,10 +182,10 @@ export function AIChatbot() {
                   <Button 
                     type="submit" 
                     size="icon" 
-                    disabled={!localInput.trim() || isLoading}
+                    disabled={!localInput.trim() || isTyping}
                     className="rounded-full h-10 w-10 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md transition-transform active:scale-95"
                   >
-                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
+                    {isTyping ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
                   </Button>
                 </form>
               </div>
