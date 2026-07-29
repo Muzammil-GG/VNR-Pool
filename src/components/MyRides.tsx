@@ -666,7 +666,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
                       </div>
                       <a 
-                        href={`https://wa.me/?text=${encodeURIComponent(`🚗 I'm joining a ride on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}\n\nBook your seat here: https://vnrpool.vercel.app/?ride=${ride.id}`)}`}
+                        href={`https://wa.me/?text=${encodeURIComponent(`🚗 I'm joining a ride on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}\n\nBook your seat here: https://vnr-pool-psi.vercel.app/?ride=${ride.id}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[11px] sm:text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-1 rounded-md transition-colors"
