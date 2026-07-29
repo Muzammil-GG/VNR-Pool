@@ -114,7 +114,7 @@ export function VehicleBackground() {
             }}
           >
             <div 
-              className={`flex items-center justify-center ${flipClass} drop-shadow-2xl opacity-60 dark:opacity-40`}
+              className={`flex items-center justify-center ${flipClass} drop-shadow-2xl opacity-40 dark:opacity-20`}
               style={{ fontSize: `${v.size}px` }}
             >
               <div 
