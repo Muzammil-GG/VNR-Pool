@@ -1086,7 +1086,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             </button>
                             
                             <a 
-                              href={`https://wa.me/?text=${encodeURIComponent(`🚗 Ride offered on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}\n💰 ₹${ride.ride_category === 'auto_split' ? 'Auto Split' : ride.price_per_seat}\n\nBook my seat here: https://vnrpool.vercel.app`)}`}
+                              href={`https://wa.me/?text=${encodeURIComponent(`🚗 Ride offered on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}\n💰 ₹${ride.ride_category === 'auto_split' ? 'Auto Split' : ride.price_per_seat}\n\nBook my seat here: https://vnrpool.vercel.app/?ride=${ride.id}`)}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-[11px] sm:text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5 transition-colors bg-emerald-500/10 px-2.5 py-1 rounded-md"
