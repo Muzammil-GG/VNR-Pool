@@ -65,7 +65,7 @@ export function CinematicAuth() {
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
   const [sceneReady, setSceneReady] = useState(false);
-  const [dpr, setDpr] = useState<[number, number]>([1, 1.5]);
+  const [dpr, setDpr] = useState<[number, number]>([1.5, 2]);
 
   useEffect(() => {
     // Initialize real MP3 audio
@@ -85,9 +85,9 @@ export function CinematicAuth() {
     window.addEventListener('keydown', unlockAudio);
     window.addEventListener('click', unlockAudio);
 
-    // Optimize DPR for mobile to prevent lag
+    // Boost DPR on mobile to ensure crisp, high-quality rendering
     if (window.innerWidth < 768) {
-      setDpr([1, 1]); // Strict 1x DPR on mobile for max FPS
+      setDpr([1.5, 2]); // High quality Retina DPR on mobile
     }
 
     return () => {
@@ -237,14 +237,14 @@ export function CinematicAuth() {
 
       {/* 3D Canvas Layer - pointer-events-none prevents it from blocking touch scrolling on mobile */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        {/* Cap DPR at 1 to prevent high-res mobile phones from melting the GPU and lagging */}
-        <Canvas shadows dpr={dpr} gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping }}>
+        {/* Pass DPR and enable antialiasing for ultra-crisp edges */}
+        <Canvas shadows dpr={dpr} gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
           <fog attach="fog" args={["#020617", 20, 120]} />
           <PerspectiveCamera ref={cameraRef} makeDefault fov={45} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
-          {/* Beautiful Blurred Environment Reflections (Reduced resolution to drastically boost mobile FPS) */}
-          <Environment preset="city" resolution={128} />
+          {/* High resolution environment for premium, crisp reflections on the Ferrari paint */}
+          <Environment preset="city" resolution={512} />
 
           {/* Group the car and its shadow together so the shadow moves with the car */}
           <group ref={carGroupRef}>
