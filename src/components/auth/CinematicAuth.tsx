@@ -11,6 +11,9 @@ import { RealisticCar } from "../3d/RealisticCar";
 import { AuthForm } from "../AuthForm";
 import { VehicleBackground } from '@/components/VehicleBackground';
 import { useTheme } from "next-themes";
+import { Righteous } from 'next/font/google';
+
+const righteous = Righteous({ weight: '400', subsets: ['latin'] });
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -337,7 +340,7 @@ export function CinematicAuth() {
           ref={brandTextRef} 
           className="absolute top-[15%] md:top-1/4 text-center opacity-0 translate-y-8 will-change-transform will-change-opacity"
         >
-          <h1 className="text-5xl md:text-8xl font-black tracking-tighter" style={{ color: "#0056A3" }}>
+          <h1 className={`text-6xl md:text-8xl tracking-tighter ${righteous.className}`} style={{ color: "#0056A3" }}>
             VNR Pool
           </h1>
         </div>
