@@ -94,7 +94,6 @@ export function CinematicAuth() {
   const { theme } = useTheme();
 
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
-  const [authInteractive, setAuthInteractive] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
   const [dpr, setDpr] = useState<[number, number]>([1, 1.5]);
 
@@ -142,13 +141,6 @@ export function CinematicAuth() {
         end: "bottom bottom",
         scrub: 1, // Increased from 0.5 to 1 for much smoother mobile interpolation
         onUpdate: (self) => {
-          // Enable pointer events on auth form only when near the end
-          if (self.progress > 0.95 && !authInteractive) {
-            setAuthInteractive(true);
-          } else if (self.progress <= 0.95 && authInteractive) {
-            setAuthInteractive(false);
-          }
-
           // Handle real audio sync with car flow
           if (audioRef.current) {
             if (self.progress > 0.05 && self.progress < 0.60) {
@@ -245,18 +237,9 @@ export function CinematicAuth() {
     tl.to(feature3Ref.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 7.5);
     tl.to(feature3Ref.current, { opacity: 0, y: -40, duration: 0.5, ease: "power2.in" }, 8.5);
 
-    // PHASE 5: Auth Reveal (9.0 -> 10.5)
-    // Classic Background fades in
+    // PHASE 5: Classic Background (9.0 -> 10.5)
+    // Classic Background fades in (Auth form will naturally scroll up over this)
     tl.to(classicBgRef.current, { opacity: 1, duration: 1.5, ease: "power2.inOut" }, 9.0);
-    
-    // Auth form slides up
-    tl.to(authFormRef.current, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 1.5,
-      ease: "power3.out",
-    }, 9.2);
 
     // Post-transition buffer 
     tl.to({}, { duration: 1.0 });
@@ -392,21 +375,19 @@ export function CinematicAuth() {
         >
           <VehicleBackground />
         </div>
-
-        {/* Phase 5 Auth Form */}
-        <div 
-          ref={authFormRef}
-          className={`absolute inset-0 flex items-center justify-center opacity-0 scale-95 translate-y-12 transition-all will-change-transform will-change-opacity ${
-            authInteractive ? "pointer-events-auto" : "pointer-events-none"
-          }`}
-        >
-          {/* We wrap AuthForm in a glassmorphism container */}
-          <div className="w-full max-w-[420px] p-6 glass-card rounded-[2.5rem] shadow-2xl border border-white/10 bg-black/20 backdrop-blur-xl mt-32 md:mt-0">
-            <AuthForm isCinematic={true} />
-          </div>
-        </div>
-
       </div>
+
+      {/* Normal Flow Auth Form at the very bottom of 1000vh container */}
+      {/* This perfectly allows the global footer to follow right below it without popping over fixed elements */}
+      <div 
+        ref={authFormRef}
+        className="absolute bottom-0 left-0 right-0 min-h-screen flex items-center justify-center z-20 pointer-events-auto"
+      >
+        <div className="w-full max-w-[420px] p-6 glass-card rounded-[2.5rem] shadow-2xl border border-white/10 bg-black/20 backdrop-blur-xl mt-12 mb-12">
+          <AuthForm isCinematic={true} />
+        </div>
+      </div>
+
     </div>
   );
 }
