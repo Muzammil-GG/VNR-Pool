@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import anime from 'animejs'
@@ -15,8 +15,9 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { RideCardSkeleton } from '@/components/ui/RideCardSkeleton'
 import { toast } from 'sonner'
-import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut, CheckCircle2 } from 'lucide-react'
+import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut, CheckCircle2, XCircle } from 'lucide-react'
 import { VehicleBackground } from '@/components/VehicleBackground'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -262,6 +263,30 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           return false
         })
       }
+      
+      // SMART FEED SORTING
+      // Calculate a penalty score for each ride (lower score = higher in feed)
+      const nowMs = Date.now();
+      fetchedRides.sort((a, b) => {
+        // 1. Time Penalty (Hours until departure)
+        const timeA = Math.max(0, (new Date(a.departure_time).getTime() - nowMs) / (1000 * 60 * 60));
+        const timeB = Math.max(0, (new Date(b.departure_time).getTime() - nowMs) / (1000 * 60 * 60));
+        
+        // 2. Price Penalty (Normalized price)
+        const priceA = (a as any).dynamic_price || (a as any).fractional_price || a.price_per_seat || 0;
+        const priceB = (b as any).dynamic_price || (b as any).fractional_price || b.price_per_seat || 0;
+        
+        // 3. Match Quality Penalty (Exact match = 0, Fractional = 5, No Search = 2)
+        const matchScoreA = (a as any).matchType === 'exact' ? 0 : ((a as any).matchType === 'fractional' ? 5 : 2);
+        const matchScoreB = (b as any).matchType === 'exact' ? 0 : ((b as any).matchType === 'fractional' ? 5 : 2);
+
+        // Weights: Time matters a lot, Price matters slightly less (₹10 = 1 penalty point)
+        const scoreA = (timeA * 2) + (priceA * 0.1) + matchScoreA;
+        const scoreB = (timeB * 2) + (priceB * 0.1) + matchScoreB;
+        
+        return scoreA - scoreB;
+      });
+
       return fetchedRides
     },
     enabled: !!currentUserProfile,
@@ -810,22 +835,32 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="skeleton-shimmer rounded-2xl h-52 border border-border" style={{ animationDelay: `${i * 0.1}s` }} />
+                <RideCardSkeleton key={i} />
               ))
             ) : rides?.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4 }}
-                className="col-span-full flex flex-col items-center justify-center py-16 sm:py-24 text-muted-foreground gap-4"
+                className="col-span-full flex flex-col items-center justify-center py-16 sm:py-24 text-muted-foreground gap-5"
               >
-                <div className="w-20 h-20 rounded-3xl bg-muted/50 flex items-center justify-center border border-border">
-                  <Car className="w-9 h-9 opacity-30" />
+                <div className="relative w-24 h-24 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-indigo-500/10 rounded-full animate-ping opacity-50" />
+                  <div className="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-muted to-muted/30 flex items-center justify-center border border-border shadow-inner">
+                    <Car className="w-10 h-10 text-indigo-500/50" />
+                  </div>
                 </div>
-                <div className="text-center">
-                  <p className="font-bold text-lg text-foreground/70">No rides found</p>
-                  <p className="text-sm mt-1">Try adjusting your search filters</p>
+                <div className="text-center space-y-2 max-w-sm">
+                  <p className="font-bold text-xl text-foreground">No rides right now</p>
+                  <p className="text-sm text-muted-foreground">It's a little quiet on this route. Why not be the first to offer a seat and help others out?</p>
                 </div>
+                <Button 
+                  onClick={() => setActiveTab('Offer a Seat')}
+                  className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-500/30 px-6 py-6"
+                >
+                  <Car className="w-5 h-5 mr-2" />
+                  Be the first to offer a seat!
+                </Button>
               </motion.div>
             ) : (
               rides?.map((ride, i) => (
@@ -992,7 +1027,23 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             : "text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/40"
                         )}>
                           <Users className="w-3.5 h-3.5" />
-                          {ride.available_seats === 0 ? 'Full' : `${ride.available_seats} Seats Left`}
+                          {ride.available_seats === 0 ? 'Full' : (
+                            <span className="flex items-center">
+                              <AnimatePresence mode="popLayout">
+                                <motion.span
+                                  key={ride.available_seats}
+                                  initial={{ y: -10, opacity: 0 }}
+                                  animate={{ y: 0, opacity: 1 }}
+                                  exit={{ y: 10, opacity: 0 }}
+                                  transition={{ duration: 0.3 }}
+                                  className="inline-block mr-1 text-center"
+                                >
+                                  {ride.available_seats}
+                                </motion.span>
+                              </AnimatePresence>
+                              Seats Left
+                            </span>
+                          )}
                         </div>
 
                         {/* Seat dots */}
@@ -1074,14 +1125,21 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                               <motion.div className="flex-1" whileTap={{ scale: 0.97 }}>
                                 <Button
                                   onClick={() => {
-                                    if (window.confirm('Are you sure you want to cancel your seat request?')) {
-                                      cancelBookingMutation.mutate({
-                                        bookingId: myBooking.id,
-                                        rideId: ride.id,
-                                        wasApproved: isApproved,
-                                        currentSeats: ride.available_seats
-                                      })
-                                    }
+                                    toast('Cancel Seat Request?', {
+                                      description: 'Are you sure you want to cancel your seat request?',
+                                      action: {
+                                        label: 'Yes, Cancel',
+                                        onClick: () => cancelBookingMutation.mutate({
+                                          bookingId: myBooking.id,
+                                          rideId: ride.id,
+                                          wasApproved: isApproved,
+                                          currentSeats: ride.available_seats
+                                        })
+                                      },
+                                      cancel: {
+                                        label: 'Keep Seat'
+                                      }
+                                    })
                                   }}
                                   disabled={cancelBookingMutation.isPending || ride.status === 'in_progress'}
                                   className={cn(
@@ -1277,13 +1335,33 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         <div className="flex items-center justify-between mb-2">
                           <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
                         </div>
-                        <Input 
-                          required
-                          value={offerData.vehicle_number}
-                          onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
-                          className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase"
-                          placeholder="TS09XX1234"
-                        />
+                        <div className="relative">
+                          <Input 
+                            required
+                            value={offerData.vehicle_number}
+                            onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
+                            className={cn(
+                              "bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase pr-10",
+                              offerData.vehicle_number.length > 0 && !isValidIndianVehicleNumber(offerData.vehicle_number) ? "border-red-500 focus-visible:ring-red-500" : ""
+                            )}
+                            placeholder="TS09XX1234"
+                          />
+                          {offerData.vehicle_number.length > 0 && (
+                            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                              {isValidIndianVehicleNumber(offerData.vehicle_number) ? (
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                              ) : (
+                                <XCircle className="w-5 h-5 text-red-500" />
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {offerData.vehicle_number.length > 0 && !isValidIndianVehicleNumber(offerData.vehicle_number) && (
+                          <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                            <XCircle className="w-3 h-3" />
+                            Please enter a valid Indian vehicle number (e.g., TS09XX1234)
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1293,13 +1371,24 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Departure Date & Time</Label>
-                    <Input 
-                      type="datetime-local"
-                      value={offerData.departure_time}
-                      min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
-                      onChange={e => setOfferData({...offerData, departure_time: e.target.value})}
-                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500"
-                    />
+                    <div className="relative">
+                      <Input 
+                        type="datetime-local"
+                        value={offerData.departure_time}
+                        min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                        onChange={e => setOfferData({...offerData, departure_time: e.target.value})}
+                        className={cn(
+                          "bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500",
+                          offerData.departure_time && new Date(offerData.departure_time).getTime() < Date.now() ? "border-red-500 focus-visible:ring-red-500" : ""
+                        )}
+                      />
+                    </div>
+                    {offerData.departure_time && new Date(offerData.departure_time).getTime() < Date.now() && (
+                      <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                        <XCircle className="w-3 h-3" />
+                        Departure time must be in the future
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">

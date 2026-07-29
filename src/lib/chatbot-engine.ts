@@ -909,11 +909,25 @@ export function generateResponse(input: string, history: ChatMessage[]): string 
   // ── Return best match ───────────────────────
   if (scored.length > 0 && scored[0].score >= 5) {
     const bestIntent = scored[0].intent
-    const response = Array.isArray(bestIntent.response)
+    let response = Array.isArray(bestIntent.response)
       ? bestIntent.response[Math.floor(Math.random() * bestIntent.response.length)]
       : bestIntent.response
 
-    // Add follow-up suggestion if available
+    const wantsDetails = /\b(detail|details|detailed|elaborate|explain|more|everything|long|full)\b/i.test(normalized)
+
+    // Truncate long responses for brevity unless details are requested
+    if (!wantsDetails && response.includes('\n\n')) {
+      const parts = response.split('\n\n');
+      if (parts.length > 2) {
+        response = parts.slice(0, 2).join('\n\n');
+        const followUpText = bestIntent.followUp 
+          ? `💡 ${bestIntent.followUp} (Or say "elaborate" for full details)`
+          : `💡 Want more details? Just ask me to elaborate!`;
+        return `${response}\n\n${followUpText}`;
+      }
+    }
+
+    // Add follow-up suggestion if available and no truncation happened
     if (bestIntent.followUp) {
       return `${response}\n\n💡 ${bestIntent.followUp}`
     }

@@ -352,9 +352,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 toast.error('You can only start the ride 30 minutes before the departure time.');
                                 return;
                               }
-                              if (window.confirm('Start this ride and notify passengers?')) {
-                                startRideMutation.mutate(ride)
-                              }
+                              toast('Start Ride?', {
+                                description: 'Start this ride and notify passengers?',
+                                action: {
+                                  label: 'Start',
+                                  onClick: () => startRideMutation.mutate(ride)
+                                },
+                                cancel: { label: 'Cancel' }
+                              })
                             }}
                             className="h-8 text-primary hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
                             disabled={startRideMutation.isPending}
@@ -375,9 +380,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => {
-                              if (window.confirm('Are you sure you want to delete this ride? This will notify all approved passengers.')) {
-                                deleteRide.mutate(ride.id)
-                              }
+                              toast('Delete Ride?', {
+                                description: 'Are you sure you want to delete this ride? This will notify all approved passengers.',
+                                action: {
+                                  label: 'Delete',
+                                  onClick: () => deleteRide.mutate(ride.id)
+                                },
+                                cancel: { label: 'Cancel' }
+                              })
                             }}
                             className="h-8 text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
                             disabled={deleteRide.isPending}
@@ -392,9 +402,14 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => {
-                            if (window.confirm('Complete this ride?')) {
-                              completeRideMutation.mutate(ride)
-                            }
+                            toast('Complete Ride?', {
+                              description: 'Are you sure you want to complete this ride?',
+                              action: {
+                                label: 'Complete',
+                                onClick: () => completeRideMutation.mutate(ride)
+                              },
+                              cancel: { label: 'Cancel' }
+                            })
                           }}
                           className="h-8 text-secondary-foreground hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
                           disabled={completeRideMutation.isPending}
@@ -743,14 +758,19 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         <div className="flex gap-2 w-full">
                           <Button 
                             onClick={() => {
-                              if (window.confirm('Cancel this seat request?')) {
-                                cancelMyBooking.mutate({ 
-                                  bookingId: b.id, 
-                                  rideId: ride.id, 
-                                  wasApproved: isApproved, 
-                                  currentSeats: ride.available_seats 
-                                })
-                              }
+                              toast('Cancel Request?', {
+                                description: 'Are you sure you want to cancel this seat request?',
+                                action: {
+                                  label: 'Yes, Cancel',
+                                  onClick: () => cancelMyBooking.mutate({ 
+                                    bookingId: b.id, 
+                                    rideId: ride.id, 
+                                    wasApproved: isApproved, 
+                                    currentSeats: ride.available_seats 
+                                  })
+                                },
+                                cancel: { label: 'Keep Seat' }
+                              })
                             }}
                             disabled={cancelMyBooking.isPending}
                             variant={isApproved ? "default" : "secondary"}

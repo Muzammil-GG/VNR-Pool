@@ -1,7 +1,7 @@
-import { streamText } from 'ai'
+import { generateText } from 'ai'
 import { google } from '@ai-sdk/google'
 
-export const maxDuration = 30; // Max execution time for serverless functions
+export const maxDuration = 30
 
 const SYSTEM_PROMPT = `
 You are the VNR Pool AI Assistant, a helpful and friendly chatbot integrated directly into the VNR Pool app. 
@@ -25,7 +25,7 @@ Guidelines for responding:
 - Do NOT hallucinate features that don't exist (like integrated payments).
 - Answer immediately based on the context above.
 - If a user asks for rides right now, politely tell them to "head over to the Dashboard to search for available rides!" as you cannot currently book rides for them.
-`;
+`
 
 export async function POST(req: Request) {
   try {
@@ -50,29 +50,39 @@ export async function POST(req: Request) {
       )
     }
 
-    // Using Gemini 1.5 Flash for fast, conversational responses
-    const result = streamText({
-      model: google('gemini-1.5-flash'),
+    // Use generateText for reliable error detection.
+    // streamText in AI SDK v7 swallows API errors internally (the default
+    // onError handler just logs, and the stream ends silently empty). generateText
+    // properly throws on API errors so we can catch them and return a clear error.
+    const result = await generateText({
+      model: google('gemini-2.0-flash'),
       system: SYSTEM_PROMPT,
       messages,
     })
 
-    return result.toTextStreamResponse()
+    // Return the generated text as a simple response
+    return new Response(result.text, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    })
   } catch (error: any) {
-    console.error('Chat API Error:', error?.message || error)
+    console.error('Chat API error:', error?.message || error)
     
-    // Detect common provider errors
-    const errorMessage = error?.message?.toLowerCase() || ''
-    let userMessage = 'The AI service is currently unavailable. Please try again later.'
+    const errMsg = (error?.message || error?.toString() || '').toLowerCase()
+    let userMessage = 'The AI assistant is temporarily unavailable. Please try again later.'
+    let code = 'UNKNOWN'
     
-    if (errorMessage.includes('api key') || errorMessage.includes('not found') || errorMessage.includes('permission')) {
-      userMessage = 'The Gemini AI API key is invalid or missing. Please ensure `GOOGLE_GENERATIVE_AI_API_KEY` is correctly set in your Vercel environment variables.'
-    } else if (errorMessage.includes('rate') || errorMessage.includes('quota') || errorMessage.includes('limit')) {
-      userMessage = 'The AI service is currently rate-limited. Please wait a moment and try again.'
+    if (errMsg.includes('quota exceeded') || errMsg.includes('limit: 0') || errMsg.includes('rate limit')) {
+      code = 'QUOTA_EXCEEDED'
+      userMessage = 'The Gemini AI service quota has been exhausted. Your API key has run out of free tier requests. Please create a new API key at https://aistudio.google.com/apikey and set it as GOOGLE_GENERATIVE_AI_API_KEY in your Vercel environment variables.'
+    } else if (errMsg.includes('api key') || errMsg.includes('not found for api version') || errMsg.includes('model')) {
+      code = 'INVALID_CONFIG'
+      userMessage = 'The AI service configuration is invalid. Please ensure GOOGLE_GENERATIVE_AI_API_KEY is a valid Gemini API key (starts with AIzaSy) set in your Vercel environment variables.'
     }
-
+    
     return new Response(
-      JSON.stringify({ error: userMessage }),
+      JSON.stringify({ error: userMessage, code }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     )
   }
