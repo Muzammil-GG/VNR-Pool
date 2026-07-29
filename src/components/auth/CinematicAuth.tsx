@@ -31,37 +31,7 @@ const CameraRig = ({ cameraRef }: { cameraRef: React.RefObject<THREE.Perspective
 const EnvironmentScenery = () => {
   return (
     <group>
-      {/* Abstract Dark Monoliths framing the road with random neon glows */}
-      {Array.from({ length: 30 }).map((_, i) => {
-        const height = 20 + Math.random() * 40;
-        return (
-          <mesh key={`building-l-${i}`} position={[-15 - Math.random() * 10, height / 2 - 1, -100 + i * 8]}>
-            <boxGeometry args={[4, height, 4]} />
-            <meshStandardMaterial 
-              color="#050505" 
-              roughness={0.2} 
-              metalness={0.8} 
-              emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
-              emissiveIntensity={1.5}
-            />
-          </mesh>
-        );
-      })}
-      {Array.from({ length: 30 }).map((_, i) => {
-        const height = 20 + Math.random() * 40;
-        return (
-          <mesh key={`building-r-${i}`} position={[15 + Math.random() * 10, height / 2 - 1, -100 + i * 8]}>
-            <boxGeometry args={[4, height, 4]} />
-            <meshStandardMaterial 
-              color="#050505" 
-              roughness={0.2} 
-              metalness={0.8} 
-              emissive={Math.random() > 0.8 ? "#0056A3" : "#000000"}
-              emissiveIntensity={1.5}
-            />
-          </mesh>
-        );
-      })}
+      {/* Performance Optimization: Removed the 60 heavy monoliths for mobile 60FPS lock */}
 
       {/* Glowing Neon Rails bounding the road (VNR Blue) */}
       <mesh position={[-4.5, 0.05, 0]}>
@@ -274,7 +244,7 @@ export function CinematicAuth() {
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
           {/* Beautiful Blurred Environment Reflections (Reduced resolution to drastically boost mobile FPS) */}
-          <Environment preset="city" resolution={256} />
+          <Environment preset="city" resolution={128} />
 
           {/* Group the car and its shadow together so the shadow moves with the car */}
           <group ref={carGroupRef}>
@@ -284,7 +254,7 @@ export function CinematicAuth() {
             </Suspense>
 
             {/* Baked shadow attached to the car, rendering exactly ONCE to fix mobile lag */}
-            <ContactShadows position={[0, 0, 0]} resolution={512} frames={1} scale={30} blur={1.5} opacity={0.8} far={10} color="#000000" />
+            <ContactShadows position={[0, 0, 0]} resolution={256} frames={1} scale={15} blur={1.5} opacity={0.8} far={10} color="#000000" />
           </group>
 
           {/* The Road - Extruded very wide to prevent seeing the void edge */}
@@ -321,7 +291,7 @@ export function CinematicAuth() {
         {/* Phase 3 Brand Text */}
         <div 
           ref={brandTextRef} 
-          className="absolute top-[15%] md:top-1/4 text-center opacity-0 translate-y-8 will-change-transform will-change-opacity"
+          className="absolute top-[15%] md:top-1/4 text-center opacity-0 translate-y-8"
         >
           <h1 className={`text-6xl md:text-8xl tracking-tighter ${righteous.className}`} style={{ color: "#0056A3" }}>
             VNR Pool
@@ -331,7 +301,7 @@ export function CinematicAuth() {
         {/* Phase 4 Features */}
         <div 
           ref={feature1Ref}
-          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
+          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16"
         >
           <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
             <div className="text-4xl mb-4">🎓</div>
@@ -344,7 +314,7 @@ export function CinematicAuth() {
 
         <div 
           ref={feature2Ref}
-          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
+          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16"
         >
           <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
             <div className="text-4xl mb-4">💰</div>
@@ -357,7 +327,7 @@ export function CinematicAuth() {
 
         <div 
           ref={feature3Ref}
-          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
+          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16"
         >
           <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
             <div className="text-4xl mb-4">🌱</div>

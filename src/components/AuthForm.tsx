@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Loader2, Mail, Lock, KeyRound } from 'lucide-react'
+import { Loader2, Mail, Lock, KeyRound, Eye, EyeOff } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { WavyBackground } from '@/components/ui/wavy-background'
@@ -19,7 +19,10 @@ const righteous = Righteous({ weight: '400', subsets: ['latin'] })
 
 const FloatingInput = ({ icon: Icon, label, id, type, value, onChange, placeholder, required = false }: any) => {
   const [isFocused, setIsFocused] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const isFilled = value.length > 0 || isFocused
+  const isPasswordField = type === 'password'
+  const inputType = isPasswordField ? (showPassword ? 'text' : 'password') : type
 
   return (
     <div className="relative group">
@@ -28,15 +31,25 @@ const FloatingInput = ({ icon: Icon, label, id, type, value, onChange, placehold
       </div>
       <input
         id={id}
-        type={type}
+        type={inputType}
         value={value}
         onChange={onChange}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         required={required}
         placeholder={isFocused ? placeholder : ""}
-        className="block w-full rounded-2xl border-0 py-3.5 pl-12 pr-4 bg-black/5 dark:bg-white/5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-200/50 dark:ring-slate-800/50 focus:ring-2 focus:ring-inset focus:ring-blue-600 transition-all sm:text-sm sm:leading-6 backdrop-blur-md outline-none"
+        className={`block w-full rounded-2xl border-0 py-3.5 pl-12 ${isPasswordField ? 'pr-12' : 'pr-4'} bg-black/5 dark:bg-white/5 text-slate-900 dark:text-slate-100 ring-1 ring-inset ring-slate-200/50 dark:ring-slate-800/50 focus:ring-2 focus:ring-inset focus:ring-blue-600 transition-all sm:text-sm sm:leading-6 backdrop-blur-md outline-none`}
       />
+      {isPasswordField && (
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors z-10"
+          tabIndex={-1}
+        >
+          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+        </button>
+      )}
       <label
         htmlFor={id}
         className={`absolute left-12 transition-all duration-300 pointer-events-none ${
