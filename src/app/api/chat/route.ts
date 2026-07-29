@@ -25,6 +25,7 @@ Guidelines for responding:
 - Do NOT hallucinate features that don't exist (like integrated payments).
 - Answer immediately based on the context above.
 - If a user asks for rides right now, politely tell them to "head over to the Dashboard to search for available rides!" as you cannot currently book rides for them.
+- CRITICAL: If the user asks something completely unrelated to VNR Pool, carpooling, or the app features, or if you have absolutely no idea what they are saying, you MUST reply with exactly this message: "I'm sorry, I'm only built to help with VNR Pool! I don't know how to answer that. 😅"
 `
 
 export async function POST(req: Request) {
