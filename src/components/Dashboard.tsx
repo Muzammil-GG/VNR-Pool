@@ -23,6 +23,8 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
 import { ProfileEditor } from '@/components/ProfileEditor'
 import { MyRides } from '@/components/MyRides'
+import { Righteous } from 'next/font/google'
+const righteous = Righteous({ weight: '400', subsets: ['latin'] })
 import Image from 'next/image'
 import { cn, isValidIndianVehicleNumber } from '@/lib/utils'
 import { LocationAutocomplete } from '@/components/LocationAutocomplete'
@@ -577,7 +579,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             </div>
           </div>
 
-          <h1 className="hero-title gradient-text">
+          <h1 className={`hero-title gradient-text ${righteous.className}`}>
             VNR Pool
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-xs sm:max-w-md mx-auto leading-relaxed mt-3">
