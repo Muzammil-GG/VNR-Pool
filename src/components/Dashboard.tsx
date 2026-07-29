@@ -835,7 +835,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <RideCardSkeleton key={i} />
+                <RideCardSkeleton key={i} index={i} />
               ))
             ) : rides?.length === 0 ? (
               <motion.div
