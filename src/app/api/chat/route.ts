@@ -31,6 +31,25 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json()
 
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'Messages array is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Check if the environment variable is configured
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      console.error('Missing GOOGLE_GENERATIVE_AI_API_KEY environment variable')
+      return new Response(
+        JSON.stringify({ 
+          error: 'The GOOGLE_GENERATIVE_AI_API_KEY environment variable is not set. Please add it in your Vercel project dashboard under Settings > Environment Variables.',
+          code: 'MISSING_API_KEY'
+        }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Using Gemini 1.5 Flash for fast, conversational responses
     const result = streamText({
       model: google('gemini-1.5-flash'),
@@ -40,9 +59,20 @@ export async function POST(req: Request) {
 
     return result.toTextStreamResponse()
   } catch (error: any) {
-    console.error('Chat API Error:', error)
+    console.error('Chat API Error:', error?.message || error)
+    
+    // Detect common provider errors
+    const errorMessage = error?.message?.toLowerCase() || ''
+    let userMessage = 'The AI service is currently unavailable. Please try again later.'
+    
+    if (errorMessage.includes('api key') || errorMessage.includes('not found') || errorMessage.includes('permission')) {
+      userMessage = 'The Gemini AI API key is invalid or missing. Please ensure `GOOGLE_GENERATIVE_AI_API_KEY` is correctly set in your Vercel environment variables.'
+    } else if (errorMessage.includes('rate') || errorMessage.includes('quota') || errorMessage.includes('limit')) {
+      userMessage = 'The AI service is currently rate-limited. Please wait a moment and try again.'
+    }
+
     return new Response(
-      JSON.stringify({ error: 'Failed to process chat request' }),
+      JSON.stringify({ error: userMessage }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     )
   }

@@ -19,41 +19,68 @@ export function AIChatbot() {
     if (!localInput.trim()) return
     
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: localInput }
-    const newMessages = [...messages, userMsg]
-    setMessages(newMessages)
     setLocalInput('')
     setIsLoading(true)
+
+    // Use functional update for reliable state management
+    setMessages(prev => {
+      const updated = [...prev, userMsg]
+      return updated
+    })
+
+    // Build messages for API
+    const apiMessages = [...messages, userMsg]
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages })
+        body: JSON.stringify({ messages: apiMessages })
       })
 
-      if (!res.ok) throw new Error('API Error')
+      // Try to parse error body first
+      if (!res.ok) {
+        let errorMsg = 'The AI service returned an error.'
+        try {
+          const errBody = await res.json()
+          if (errBody?.error) errorMsg = errBody.error
+          if (errBody?.code === 'MISSING_API_KEY') {
+            errorMsg = 'The Gemini AI API key is not configured. Please add `GOOGLE_GENERATIVE_AI_API_KEY` to your Vercel project environment variables.'
+          }
+        } catch {}
+        throw new Error(errorMsg)
+      }
 
       const reader = res.body?.getReader()
       const decoder = new TextDecoder()
       
-      let assistantMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: '' }
-      setMessages([...newMessages, assistantMsg])
+      const assistantId = (Date.now() + 1).toString()
+      
+      // Insert a placeholder assistant message
+      setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '' }])
 
       if (reader) {
         while (true) {
           const { done, value } = await reader.read()
           if (done) break
           const text = decoder.decode(value, { stream: true })
-          assistantMsg.content += text
-          setMessages([...newMessages, { ...assistantMsg }])
+          // Use functional update to accumulate streamed content reliably
+          setMessages(prev => {
+            const updated = [...prev]
+            const lastIdx = updated.length - 1
+            if (lastIdx >= 0 && updated[lastIdx].id === assistantId) {
+              updated[lastIdx] = { ...updated[lastIdx], content: updated[lastIdx].content + text }
+            }
+            return updated
+          })
         }
       }
-    } catch (error) {
-      console.error(error)
+    } catch (error: any) {
+      const errorText = error?.message || "Oops! The chatbot encountered an issue. If you're the admin, ensure the `GOOGLE_GENERATIVE_AI_API_KEY` environment variable is set in your Vercel project."
       setMessages(prev => [...prev, { 
         id: Date.now().toString(), 
-        role: 'assistant', 
-        content: "Oops! I couldn't process that. If you're the admin, please ensure the `GOOGLE_GENERATIVE_AI_API_KEY` is added to Vercel Environment Variables!" 
+        role: 'assistant' as const, 
+        content: errorText
       }])
     } finally {
       setIsLoading(false)
