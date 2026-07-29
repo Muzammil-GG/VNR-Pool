@@ -81,6 +81,9 @@ export function CinematicAuth() {
   const textOverlayRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
   const authFormRef = useRef<HTMLDivElement>(null);
+  const feature1Ref = useRef<HTMLDivElement>(null);
+  const feature2Ref = useRef<HTMLDivElement>(null);
+  const feature3Ref = useRef<HTMLDivElement>(null);
   const sceneBgRef = useRef<HTMLDivElement>(null);
   const classicBgRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -90,6 +93,7 @@ export function CinematicAuth() {
   // We use state to delay rendering AuthForm until needed, or just keep it opacity 0
   const [authInteractive, setAuthInteractive] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
+  const [dpr, setDpr] = useState<[number, number]>([1, 1.5]);
 
   useEffect(() => {
     // Initialize real MP3 audio
@@ -108,6 +112,11 @@ export function CinematicAuth() {
     window.addEventListener('pointerdown', unlockAudio);
     window.addEventListener('keydown', unlockAudio);
     window.addEventListener('click', unlockAudio);
+
+    // Optimize DPR for mobile to prevent lag
+    if (window.innerWidth < 768) {
+      setDpr([1, 1]); // Strict 1x DPR on mobile for max FPS
+    }
 
     return () => {
       window.removeEventListener('pointerdown', unlockAudio);
@@ -128,7 +137,7 @@ export function CinematicAuth() {
         trigger: containerRef.current,
         start: "top top",
         end: "bottom bottom",
-        scrub: 0.5, // 0.5 provides the perfect balance between instant mobile responsiveness and smooth interpolation to hide touch jitters
+        scrub: 1, // Increased from 0.5 to 1 for much smoother mobile interpolation
         onUpdate: (self) => {
           // Enable pointer events on auth form only when near the end
           if (self.progress > 0.95 && !authInteractive) {
@@ -139,11 +148,7 @@ export function CinematicAuth() {
 
           // Handle real audio sync with car flow
           if (audioRef.current) {
-            // Trigger audio much earlier (at 10% scroll).
-            // It will fire exactly ONCE per scroll-down to prevent jittering 
-            // if the user scrubs back and forth in the middle of the transition.
-            if (self.progress > 0.10 && self.progress < 0.85) {
-              
+            if (self.progress > 0.05 && self.progress < 0.60) {
               // Play it only once
               if (!hasPlayedRef.current) {
                 hasPlayedRef.current = true;
@@ -152,20 +157,20 @@ export function CinematicAuth() {
                 audioRef.current.play().catch(() => {});
               }
 
-              // Dynamically fade out the volume as the car visually vanishes
+              // Dynamically fade out the volume as the car visually vanishes (around 40-50% mark)
               let vol = 1.0;
-              if (self.progress > 0.7) {
-                vol = 1 - ((self.progress - 0.7) / 0.15); // Fade from 1.0 to 0.0
+              if (self.progress > 0.40) {
+                vol = 1 - ((self.progress - 0.40) / 0.10); // Fade from 1.0 to 0.0
               }
               audioRef.current.volume = Math.max(0, Math.min(1, vol));
               
-            } else if (self.progress <= 0.10) {
+            } else if (self.progress <= 0.05) {
               // Reset the audio sequence ONLY when they scroll back up to the very top
               hasPlayedRef.current = false;
               audioRef.current.pause();
               audioRef.current.currentTime = 0;
-            } else if (self.progress >= 0.85) {
-               // Silence completely at the very end
+            } else if (self.progress >= 0.60) {
+               // Silence completely
                audioRef.current.pause();
             }
           }
@@ -194,86 +199,64 @@ export function CinematicAuth() {
     const phase2Pos = isMobile ? { x: 0, y: 5, z: -18 } : { x: 0, y: 3, z: -12 };
 
     gsap.set(cameraRef.current.position, startPos); // Forward-right side view
-    gsap.set(carGroupRef.current.position, { y: -0.02 }); // Ultra-precise offset to prevent both floating and clipping into the ground
+    gsap.set(carGroupRef.current.position, { y: -0.02 }); // Ultra-precise offset to prevent floating/clipping
 
-    // Phase 1 -> 2: Side to Top-Diagonal (0% to 25% of timeline)
+    // PHASE 1: Intro (0 -> 1.5)
     tl.to(cameraRef.current.position, {
       ...phase1Pos,
-      duration: 1,
-      ease: "none", // Linear ease prevents stopping in the middle of the arc
+      duration: 1.5,
+      ease: "none", 
     }, 0);
-
-    // Fade out initial scroll text
     tl.to(textOverlayRef.current, { opacity: 0, duration: 0.2 }, 0.1);
 
-    // Phase 2 -> 3: Top-Diagonal to Direct Back (25% to 50% of timeline)
+    // PHASE 2: Swoop behind (1.5 -> 3.0)
     tl.to(cameraRef.current.position, {
       ...phase2Pos,
-      duration: 1,
-      ease: "power2.out", // Softly land behind the car
-    }, 1);
+      duration: 1.5,
+      ease: "power2.out",
+    }, 1.5);
 
-    // 50% Mark: Brake lights flicker on
+    // PHASE 3: Brake & Speed Away (3.0 -> 4.5)
     if (brakeMaterial) {
-      tl.to(brakeMaterial, {
-        emissiveIntensity: 5,
-        duration: 0.1,
-        yoyo: true,
-        repeat: 3, // Flicker
-      }, 2);
-      // Leave them on slightly
-      tl.to(brakeMaterial, {
-        emissiveIntensity: 2,
-        duration: 0.1,
-      }, 2.4);
+      tl.to(brakeMaterial, { emissiveIntensity: 5, duration: 0.1, yoyo: true, repeat: 3 }, 3.0);
+      tl.to(brakeMaterial, { emissiveIntensity: 2, duration: 0.1 }, 3.4);
     }
 
-    // Phase 3 -> 4: Dive away (50% to 75% of timeline)
-    // Car moves forward (positive Z)
-    tl.to(carGroupRef.current.position, {
-      z: 30,
-      duration: 1,
-      ease: "power2.in",
-    }, 2);
-    // Background fades to dark void
-    tl.to(sceneBgRef.current, {
-      backgroundColor: "#020617", // slate-950
-      duration: 1,
-    }, 2);
-    // Brand text fades in
-    tl.to(brandTextRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.5,
-      ease: "power2.out",
-    }, 2.5);
-
-    // Phase 4 -> 5: Road exit & Auth reveal (75% to 100% of timeline)
-    tl.to(roadRef.current.position, {
-      y: -10, // Drops out
-      duration: 1,
-      ease: "power2.in",
-    }, 3);
+    tl.to(carGroupRef.current.position, { z: 30, duration: 1.5, ease: "power2.in" }, 3.2);
+    tl.to(sceneBgRef.current, { backgroundColor: "#020617", duration: 1.5 }, 3.2);
+    tl.to(roadRef.current.position, { y: -10, duration: 1.5, ease: "power2.in" }, 4.0);
     
-    // Auth form fades in
+    // Brand Text Reveal
+    tl.to(brandTextRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 4.0);
+
+    // PHASE 4: Features Showcase (4.5 -> 9.0)
+    // Feature 1: Exclusive
+    tl.to(feature1Ref.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 4.5);
+    tl.to(feature1Ref.current, { opacity: 0, y: -40, duration: 0.5, ease: "power2.in" }, 5.5);
+    
+    // Feature 2: Pricing
+    tl.to(feature2Ref.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 6.0);
+    tl.to(feature2Ref.current, { opacity: 0, y: -40, duration: 0.5, ease: "power2.in" }, 7.0);
+
+    // Feature 3: Safe & Eco
+    tl.to(feature3Ref.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 7.5);
+    tl.to(feature3Ref.current, { opacity: 0, y: -40, duration: 0.5, ease: "power2.in" }, 8.5);
+
+    // PHASE 5: Auth Reveal (9.0 -> 10.5)
+    // Classic Background fades in
+    tl.to(classicBgRef.current, { opacity: 1, duration: 1.5, ease: "power2.inOut" }, 9.0);
+    
+    // Auth form slides up
     tl.to(authFormRef.current, {
       opacity: 1,
       y: 0,
       scale: 1,
-      duration: 1,
-      ease: "power3.out",
-    }, 3);
-
-    // Classic Background fades in
-    tl.to(classicBgRef.current, {
-      opacity: 1,
       duration: 1.5,
-      ease: "power2.inOut",
-    }, 2.5);
+      ease: "power3.out",
+    }, 9.2);
 
-    // Post-transition buffer: add empty duration so the user can scroll more 
-    // after the auth form is fully visible before hitting the footer
-    tl.to({}, { duration: 1.5 });
+    // Post-transition buffer 
+    tl.to({}, { duration: 1.0 });
 
   }, { scope: containerRef, dependencies: [sceneReady] });
 
@@ -288,7 +271,7 @@ export function CinematicAuth() {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full" style={{ height: "600vh" }}>
+    <div ref={containerRef} className="relative w-full" style={{ height: "1000vh" }}>
       
       {/* Fixed Background for color transitions */}
       <div 
@@ -298,8 +281,8 @@ export function CinematicAuth() {
 
       {/* 3D Canvas Layer - pointer-events-none prevents it from blocking touch scrolling on mobile */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        {/* Cap DPR at 1.5 to prevent high-res mobile phones from melting the GPU and lagging */}
-        <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping }}>
+        {/* Cap DPR at 1 to prevent high-res mobile phones from melting the GPU and lagging */}
+        <Canvas shadows dpr={dpr} gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping }}>
           <fog attach="fog" args={["#020617", 20, 120]} />
           <PerspectiveCamera ref={cameraRef} makeDefault fov={45} />
           <ambientLight intensity={0.5} />
@@ -342,30 +325,67 @@ export function CinematicAuth() {
       <div className="fixed inset-0 z-10 pointer-events-none flex flex-col items-center justify-center overflow-hidden">
         
         {/* Phase 1 Text */}
-        <div ref={textOverlayRef} className="absolute bottom-12 text-center">
+        <div ref={textOverlayRef} className="absolute bottom-12 text-center will-change-transform will-change-opacity">
           <p className="text-sm md:text-lg font-medium tracking-widest uppercase text-slate-800 dark:text-slate-300 opacity-70">
             Scroll to begin your journey
           </p>
           <div className="w-px h-12 bg-slate-800 dark:bg-slate-300 mx-auto mt-4 animate-pulse opacity-50" />
         </div>
 
-        {/* Phase 4 Brand Text */}
+        {/* Phase 3 Brand Text */}
         <div 
           ref={brandTextRef} 
-          className="absolute top-1/4 text-center opacity-0 translate-y-8"
+          className="absolute top-[15%] md:top-1/4 text-center opacity-0 translate-y-8 will-change-transform will-change-opacity"
         >
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter" style={{ color: "#0056A3" }}>
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter" style={{ color: "#0056A3" }}>
             VNR Pool
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 mt-4 font-light">
-            Verified rideshares for your daily commute.
-          </p>
+        </div>
+
+        {/* Phase 4 Features */}
+        <div 
+          ref={feature1Ref}
+          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
+        >
+          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-white/10 bg-black/30 backdrop-blur-xl text-center">
+            <div className="text-4xl mb-4">🎓</div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Exclusive Community</h2>
+            <p className="text-slate-300 text-lg md:text-xl font-light">
+              Built strictly for VNR VJIET. Connect with verified students and staff. No strangers allowed.
+            </p>
+          </div>
+        </div>
+
+        <div 
+          ref={feature2Ref}
+          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
+        >
+          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-white/10 bg-black/30 backdrop-blur-xl text-center">
+            <div className="text-4xl mb-4">💰</div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Dynamic Splitting</h2>
+            <p className="text-slate-300 text-lg md:text-xl font-light">
+              Join mid-route and pay less. Our smart algorithm calculates fractional fares automatically.
+            </p>
+          </div>
+        </div>
+
+        <div 
+          ref={feature3Ref}
+          className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
+        >
+          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-white/10 bg-black/30 backdrop-blur-xl text-center">
+            <div className="text-4xl mb-4">🌱</div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Safe & Eco-Friendly</h2>
+            <p className="text-slate-300 text-lg md:text-xl font-light">
+              Build your Trust Score, use SOS alerts, and earn Eco Points for reducing campus traffic.
+            </p>
+          </div>
         </div>
 
         {/* Phase 5 Classic Backgrounds */}
         <div 
           ref={classicBgRef} 
-          className="absolute inset-0 z-0 pointer-events-none opacity-0"
+          className="absolute inset-0 z-0 pointer-events-none opacity-0 will-change-opacity"
         >
           <VehicleBackground />
         </div>
@@ -373,12 +393,12 @@ export function CinematicAuth() {
         {/* Phase 5 Auth Form */}
         <div 
           ref={authFormRef}
-          className={`absolute inset-0 flex items-center justify-center opacity-0 scale-95 transition-all ${
+          className={`absolute inset-0 flex items-center justify-center opacity-0 scale-95 translate-y-12 transition-all will-change-transform will-change-opacity ${
             authInteractive ? "pointer-events-auto" : "pointer-events-none"
           }`}
         >
           {/* We wrap AuthForm in a glassmorphism container */}
-          <div className="w-full max-w-[420px] p-6 glass-card rounded-[2.5rem] shadow-2xl border border-white/10 bg-black/20 backdrop-blur-xl">
+          <div className="w-full max-w-[420px] p-6 glass-card rounded-[2.5rem] shadow-2xl border border-white/10 bg-black/20 backdrop-blur-xl mt-32 md:mt-0">
             <AuthForm isCinematic={true} />
           </div>
         </div>
