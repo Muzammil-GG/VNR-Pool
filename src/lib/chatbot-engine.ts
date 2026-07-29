@@ -275,7 +275,7 @@ const INTENTS: Intent[] = [
     id: 'bot_capabilities',
     keywords: ['can', 'you', 'bot', 'chatbot', 'assistant', 'help', 'ai'],
     phrases: ['what can you do', 'what do you do', 'how can you help', 'who are you', 'are you ai', 'are you a bot', 'what are you', 'help me', 'i need help', 'can you help'],
-    response: "🤖 **I'm your VNR Pool Assistant!**\n\nI can help you with:\n\n🚗 **Rides** — How to find, book, post, or cancel rides\n💰 **Fares** — How pricing and fare splitting works\n🛡️ **Safety** — Trust scores, ratings, and reporting\n🌱 **Eco Points** — How to earn and track your green impact\n📱 **Navigation** — Finding features in the app\n🔐 **Account** — Signup, login, and profile help\n🗺️ **Maps** — Using route maps to find rides\n❓ **General** — How VNR Pool works overall\n\nJust type your question naturally — I understand casual language! 😊\n\n*Try: \"How do I split the fare?\" or \"My driver didn't show up\"*",
+    response: "🤖 **I'm your VNR Pool Assistant!**\n\nI can help you with absolutely everything in the app! Here's a taste:\n\n🚗 **Rides:** Post, find, group rides, auto-split vs personal, routes, locations.\n💰 **Pricing:** Fare calculation, dynamic splitting, mid-route joining.\n🛡️ **Safety:** DigiLocker verification, Women-Only rides, trust scores, SOS info.\n⏰ **Timing:** Ride start windows, daily limits, exam/late schedules.\n⚙️ **App Features:** Dark mode, PWA installation, notifications, stats.\n\nJust ask me anything naturally! Try:\n• *\"How does Auto Split work?\"*\n• *\"Can I cancel a ride?\"*\n• *\"What is DigiLocker verification?\"*\n• *\"How many rides can I post a day?\"*",
     priority: 2,
   },
 
@@ -312,6 +312,286 @@ const INTENTS: Intent[] = [
     response: "⏰ **Ride Timing Tips:**\n\n🌅 **Morning Rush (7:30 AM - 9:30 AM):**\n• Most rides available heading TO college\n• Book early for guaranteed seats!\n\n🌆 **Evening Rush (3:30 PM - 6:00 PM):**\n• Most rides heading FROM college\n• Great time to share autos!\n\n💡 **Pro Tips:**\n• Post/search rides **the night before** for the best matches\n• Set your departure time accurately — it helps others find you\n• Morning rides fill up fast, so don't wait last minute!\n\n📅 You can book rides for any time — just set the departure time when posting or searching!",
     priority: 3,
   },
+
+  // ── Popular Routes & Areas ────────────────
+  {
+    id: 'popular_routes',
+    keywords: ['kompally', 'kphb', 'jntu', 'miyapur', 'ameerpet', 'secunderabad', 'kukatpally', 'bachupally', 'nizampet', 'dilsukhnagar', 'lb', 'nagar', 'uppal', 'gachibowli', 'hitech', 'madhapur', 'kondapur', 'tarnaka', 'ecil', 'alwal', 'attapur', 'mehdipatnam', 'shamshabad', 'medchal', 'paradise', 'habsiguda', 'bowenpally', 'balanagar', 'lingampally', 'patancheru', 'bhel', 'manikonda', 'nagole', 'malkajgiri', 'suchitra', 'beeramguda'],
+    phrases: ['popular routes', 'which routes', 'available routes', 'route from kompally', 'route from kphb', 'ride from miyapur', 'ride from ameerpet', 'common routes', 'bus routes', 'college routes', 'routes available', 'which areas', 'where can i get ride', 'areas covered', 'locations covered', 'ride from secunderabad', 'ride from dilsukhnagar', 'ride from gachibowli', 'ride to vnr', 'ride to college'],
+    response: "🗺️ **Popular Routes to VNR VJIET:**\n\nVNR Pool covers **40+ predefined routes** across Hyderabad! Here are the most popular ones:\n\n🔵 **North Hyderabad:**\n• Kompally → Suchitra → Bachupally → VNR\n• Medchal → Kompally → Bachupally → VNR\n• Alwal → Suchitra → Jeedimetla → VNR\n\n🟢 **West Hyderabad (Most Popular!):**\n• KPHB → JNTU → Nizampet → Pragathi Nagar → VNR\n• Miyapur → Hafeezpet → Nizampet → VNR\n• Kukatpally → KPHB → JNTU → VNR\n• BHEL → Chandanagar → Miyapur → VNR\n\n🟡 **Central/South:**\n• Ameerpet → SR Nagar → Kukatpally → VNR\n• Mehdipatnam → Gachibowli → Hi-Tech City → VNR\n• Secunderabad → Paradise → Balanagar → VNR\n\n🔴 **East Hyderabad:**\n• ECIL → Bowenpally → Kukatpally → VNR\n• Uppal → Tarnaka → Secunderabad → VNR\n• LB Nagar → Dilsukhnagar → Ameerpet → VNR\n\n💡 **Pro tip:** Even if your exact location isn't listed, search for rides — the app matches partial routes too!",
+    followUp: "Tell me your area and I'll suggest the best route!",
+    priority: 4,
+  },
+
+  // ── VNR VJIET College Info ─────────────────
+  {
+    id: 'college_info',
+    keywords: ['vnrvjiet', 'vnr', 'college', 'campus', 'gate', 'hostel', 'bachupally', 'pragathi'],
+    phrases: ['about vnr', 'about vnrvjiet', 'college address', 'where is vnr', 'vnr location', 'campus location', 'college location', 'vnr address', 'vnr vjiet address', 'which college', 'gate 1', 'gate 2', 'college gate', 'vnr campus'],
+    response: "🏫 **VNR VJIET Campus Info:**\n\n📍 **Location:** Bachupally, Nizampet, Hyderabad - 500090\n📌 **Coordinates:** 17.5389°N, 78.3868°E\n\n🚪 **Campus Gates:**\n• **Gate 1** — Main entrance (Bachupally Road)\n• **Gate 2** — Side entrance\n\n🏠 **Nearby Landmarks:**\n• Pragathi Nagar Lake\n• Simhapuri Colony\n• VNR Hostel Road\n• Bachupally Bus Stop\n\n🍽️ **Nearby Food Spots:**\n• Ullas Restaurant\n• SR Nagar Food Street\n• Bachupally Junction\n\n💡 When booking rides, you can set **VNR VJIET**, **Gate 1**, **Gate 2**, or **VNR Bus Stop** as your destination!",
+    priority: 3,
+  },
+
+  // ── DigiLocker Verification ────────────────
+  {
+    id: 'digilocker',
+    keywords: ['digilocker', 'verify', 'verification', 'document', 'id', 'identity', 'aadhar', 'aadhaar', 'license', 'dl', 'verified', 'badge'],
+    phrases: ['digilocker verification', 'verify identity', 'verify id', 'how to verify', 'get verified', 'verification badge', 'digilocker login', 'connect digilocker', 'identity verification', 'aadhar verification', 'driving license verification', 'verified badge', 'how to get verified'],
+    response: "🪪 **DigiLocker Verification:**\n\nGet a **verified badge** on your profile for extra trust!\n\n🔗 **How to verify:**\n1️⃣ Go to your **Profile Settings**\n2️⃣ Click **\"Verify with DigiLocker\"**\n3️⃣ Log in with your DigiLocker credentials\n4️⃣ Authorize VNR Pool to verify your identity\n5️⃣ You'll get a ✅ verified badge on your profile!\n\n📋 **What gets verified:**\n• Your name matches your college records\n• Your identity is confirmed via government documents\n• No personal documents are stored — just verification status\n\n🛡️ **Why verify?**\n• Verified users get MORE ride approvals\n• Drivers prefer passengers with verified identities\n• Builds maximum trust in the community\n\n💡 DigiLocker is India's official document wallet by the Government — it's 100% safe! 🇮🇳",
+    priority: 4,
+  },
+
+  // ── Install App / PWA ─────────────────────
+  {
+    id: 'install_app',
+    keywords: ['install', 'download', 'app', 'pwa', 'homescreen', 'desktop', 'mobile', 'phone', 'android', 'ios', 'iphone', 'offline'],
+    phrases: ['install app', 'download app', 'add to homescreen', 'add to home screen', 'is there an app', 'mobile app', 'android app', 'ios app', 'iphone app', 'play store', 'app store', 'works offline', 'use on phone', 'install on phone'],
+    response: "📱 **Install VNR Pool on Your Phone:**\n\nVNR Pool is a **Progressive Web App (PWA)** — you can install it like a native app!\n\n🤖 **Android (Chrome):**\n1️⃣ Open VNR Pool in Chrome\n2️⃣ Tap the **three dots** (⋮) menu\n3️⃣ Select **\"Add to Home Screen\"**\n4️⃣ Tap **\"Install\"** — done! 🎉\n\n🍎 **iPhone (Safari):**\n1️⃣ Open VNR Pool in Safari\n2️⃣ Tap the **Share** button (↑)\n3️⃣ Select **\"Add to Home Screen\"**\n4️⃣ Tap **\"Add\"** — done! 🎉\n\n💻 **Desktop (Chrome/Edge):**\n1️⃣ Look for the **install icon** (⊕) in the address bar\n2️⃣ Click **\"Install\"**\n\n⚡ **Benefits of installing:**\n• App icon on your home screen\n• Faster loading\n• Push notifications for ride updates\n• Feels like a native app!",
+    priority: 4,
+  },
+
+  // ── Notifications & Reminders ──────────────
+  {
+    id: 'notifications',
+    keywords: ['notification', 'notifications', 'notify', 'alert', 'alerts', 'reminder', 'reminders', 'push', 'bell'],
+    phrases: ['ride notifications', 'push notifications', 'get notified', 'ride alerts', 'ride reminders', 'booking notification', 'how to get alerts', 'enable notifications', 'notification settings', 'will i be notified', 'reminder before ride'],
+    response: "🔔 **Notifications & Ride Reminders:**\n\nVNR Pool keeps you updated at every step!\n\n📬 **You'll get notified when:**\n• ✅ Your booking is **approved** by the driver\n• ❌ Your booking is **declined**\n• 💬 You receive a **new message** from your ride partner\n• ⏰ Your ride is **30 minutes away** (reminder!)\n• 🚗 New rides match your **saved search**\n\n🔧 **Enable notifications:**\n1️⃣ When prompted, click **\"Allow\"** for browser notifications\n2️⃣ If you missed it, go to browser settings → Site permissions → Notifications\n3️⃣ Install the PWA for more reliable notifications\n\n💡 **Tip:** Installing VNR Pool as an app (PWA) gives you the best notification experience!",
+    priority: 3,
+  },
+
+  // ── Ride Approval Process ──────────────────
+  {
+    id: 'ride_approval',
+    keywords: ['approve', 'approved', 'approval', 'accept', 'accepted', 'decline', 'declined', 'reject', 'rejected', 'pending', 'waiting', 'confirm', 'confirmed', 'confirmation'],
+    phrases: ['how to approve', 'approve booking', 'accept booking', 'decline booking', 'reject booking', 'booking pending', 'waiting for approval', 'how long to approve', 'ride confirmed', 'booking confirmed', 'pending request', 'approve or decline', 'when will driver approve'],
+    response: "✅ **Ride Approval Process:**\n\n**For Passengers:**\n1️⃣ You send a **booking request**\n2️⃣ The driver gets notified\n3️⃣ They **approve** or **decline** your request\n4️⃣ You get notified of their decision\n5️⃣ If approved → Chat opens! 💬\n\n**For Drivers:**\n1️⃣ Go to **My Rides** section\n2️⃣ You'll see **pending requests** with passenger details\n3️⃣ Click ✅ **Approve** or ❌ **Decline**\n4️⃣ The passenger is notified instantly\n\n⏱️ **How long does approval take?**\n• It's up to the driver — usually within minutes\n• If no response, try messaging the driver\n• You can cancel and book another ride while waiting\n\n💡 **Tip:** Complete your profile and get DigiLocker verified — drivers approve verified passengers faster! ⚡",
+    priority: 5,
+  },
+
+  // ── Women's Safety ────────────────────────
+  {
+    id: 'women_safety',
+    keywords: ['women', 'woman', 'girl', 'girls', 'female', 'ladies', 'lady', 'safe', 'safety', 'alone'],
+    phrases: ['women safety', 'safe for women', 'safe for girls', 'is it safe for girls', 'girls only', 'female only', 'women only ride', 'riding alone', 'solo female', 'women safety features', 'safe for ladies'],
+    response: "👩 **Women's Safety on VNR Pool:**\n\nYour safety is our top priority! Here's what makes VNR Pool safe for everyone:\n\n🔐 **Built-in Safety:**\n• ✅ All users verified with **@vnrvjiet.in** email — only college peers\n• 📞 Driver/passenger phone numbers visible for direct contact\n• ⭐ **Trust Scores** — check ratings before booking\n• 🪪 **DigiLocker verification** for identity confirmation\n• 💬 In-app chat so you don't need to share personal numbers\n\n🛡️ **Safety Tips:**\n• Check the driver's **trust score** before booking (4+ stars recommended)\n• Share your ride details with a friend or family member\n• Prefer rides with **verified drivers** (✅ badge)\n• For late evening rides, prefer **car rides** with other passengers\n• Always meet at well-lit, public pickup points\n\n🚨 **If something goes wrong:**\n• Report the user from their profile\n• Contact campus security\n• Cancel the ride immediately if you feel unsafe\n\n💡 We're working on adding gender-preference filters in future updates!",
+    priority: 5,
+  },
+
+  // ── Rainy Day / Weather Tips ───────────────
+  {
+    id: 'weather',
+    keywords: ['rain', 'rainy', 'raining', 'weather', 'monsoon', 'wet', 'umbrella', 'flood', 'waterlogging'],
+    phrases: ['rainy day', 'what if it rains', 'ride in rain', 'monsoon rides', 'rain tips', 'bad weather', 'raining today', 'weather conditions', 'waterlogging'],
+    response: "🌧️ **Rainy Day Ride Tips:**\n\n☔ **During monsoon season:**\n\n🚗 **Prefer Car rides** over bikes/autos\n• Stay dry and comfortable\n• Cars handle waterlogged roads better\n• More seats = share with more people!\n\n📱 **Book in advance:**\n• Rainy days = higher demand for rides\n• Post/search the night before\n• Morning slots fill up fast on rainy days!\n\n🏍️ **If taking a bike ride:**\n• Carry a raincoat (not just an umbrella!)\n• Ask the driver about rain gear availability\n• Avoid bike rides during heavy downpour\n\n📍 **Meeting point tips:**\n• Choose a **covered/sheltered** pickup spot\n• Metro stations make great meeting points\n• College gates have covered areas\n\n💡 **Pro tip:** On rainy days, check Route Maps for car rides specifically — filter by vehicle type!",
+    priority: 3,
+  },
+
+  // ── Hostel Students ───────────────────────
+  {
+    id: 'hostel',
+    keywords: ['hostel', 'hosteler', 'hosteller', 'hostelite', 'staying', 'pg', 'paying', 'guest', 'accommodation', 'room'],
+    phrases: ['hostel student', 'i stay in hostel', 'hostel to college', 'hostel rides', 'near hostel', 'vnr hostel', 'bachupally hostel', 'pg near vnr', 'paying guest', 'room near vnr', 'need ride from hostel'],
+    response: "🏠 **For Hostel & PG Students:**\n\nEven if you stay near campus, VNR Pool is useful for you!\n\n🚌 **Weekend trips home:**\n• Find rides to your hometown area\n• Share auto fares to bus stations/railway stations\n• Split cab fares to Secunderabad/Nampally stations\n\n🛒 **Errands & hangouts:**\n• Rides to malls (Nexus, Manjeera)\n• Trips to KPHB/JNTU food street\n• Visits to other areas in Hyderabad\n\n📍 **Nearby pickup points for hostel students:**\n• VNR Hostel Road\n• Simhapuri Colony\n• Bachupally Junction\n• VNR Bus Stop (Pragathi Nagar)\n\n💡 **Tip:** Post rides for your weekend commute home — other students from your area might want to share!",
+    priority: 3,
+  },
+
+  // ── Savings / Money Saved ──────────────────
+  {
+    id: 'savings',
+    keywords: ['save', 'saving', 'savings', 'saved', 'cheaper', 'budget', 'economical', 'daily', 'monthly', 'weekly', 'compare'],
+    phrases: ['how much can i save', 'money saved', 'daily savings', 'monthly savings', 'cost comparison', 'cheaper than auto', 'cheaper than cab', 'how much cheaper', 'compare cost', 'is it cheaper', 'save money', 'budget friendly'],
+    response: "💸 **How Much Can You Save with VNR Pool?**\n\nLet's do the math! 🧮\n\n🛺 **Without VNR Pool (Solo Auto):**\n• Daily auto fare: ~₹150-250 (one way)\n• Monthly (25 days): ₹3,750 - ₹6,250\n• Per semester (5 months): ₹18,750 - ₹31,250 😱\n\n🚗 **With VNR Pool (Shared):**\n• Daily shared fare: ~₹40-80 (one way)\n• Monthly: ₹1,000 - ₹2,000\n• Per semester: ₹5,000 - ₹10,000 🎉\n\n📊 **You save approximately:**\n• **₹100-170 per day** 💰\n• **₹2,500-4,250 per month** 💰💰\n• **₹12,500-21,250 per semester** 💰💰💰\n\n🌍 **PLUS environmental savings:**\n• ~2.5 kg CO₂ saved per shared ride\n• ~125 kg CO₂ saved per semester\n• That's like planting 5+ trees! 🌳\n\nStart sharing rides and watch your wallet thank you! 🙌",
+    followUp: "Want to know the best routes for savings?",
+    priority: 4,
+  },
+
+  // ── Ride Etiquette ────────────────────────
+  {
+    id: 'etiquette',
+    keywords: ['etiquette', 'rules', 'behavior', 'behaviour', 'manners', 'tips', 'guidelines', 'dos', 'donts', 'do', 'dont', 'polite', 'rude'],
+    phrases: ['ride etiquette', 'ride rules', 'ride tips', 'dos and donts', 'how to behave', 'first time', 'first ride', 'what to expect', 'ride guidelines', 'carpooling etiquette', 'carpooling rules', 'sharing etiquette', 'new to carpooling', 'never carpooled before'],
+    response: "📋 **Ride Etiquette — Dos & Don'ts:**\n\n✅ **DO:**\n• Be at the pickup point **on time** ⏰\n• Confirm pickup location via **chat** before the ride\n• Say hi — they're your classmates! 👋\n• Rate your ride partner fairly after the trip ⭐\n• Pay your fare promptly via UPI 💸\n• Keep the vehicle clean 🧹\n• Wear your seatbelt in cars 🔐\n\n❌ **DON'T:**\n• Don't cancel last minute without informing 🚫\n• Don't make the driver wait — respect their time ⏰\n• Don't eat messy food in someone's car 🍔\n• Don't play loud music without asking 🎵\n• Don't leave trash in the vehicle 🗑️\n• Don't be a no-show — it affects your Trust Score! 📉\n\n💡 **First time?**\n• Message the driver beforehand\n• Confirm the meeting point\n• Have UPI ready for payment\n• Be friendly and enjoy the ride! 😊\n\nGood etiquette = higher Trust Score = more ride approvals! 🏆",
+    priority: 3,
+  },
+
+  // ── Auto vs Cab vs Personal ────────────────
+  {
+    id: 'comparison',
+    keywords: ['vs', 'versus', 'compare', 'comparison', 'difference', 'better', 'best', 'which', 'choose', 'option', 'options', 'ola', 'uber', 'rapido'],
+    phrases: ['auto vs car', 'auto or car', 'which is better', 'best option', 'compare options', 'auto vs cab', 'ola vs vnr pool', 'uber vs vnr pool', 'rapido vs vnr pool', 'why not ola', 'why not uber', 'better than ola', 'better than uber', 'vnr pool vs ola', 'vnr pool vs uber', 'auto split vs personal'],
+    response: "⚖️ **VNR Pool vs Other Options:**\n\n| Feature | VNR Pool | Ola/Uber | Solo Auto |\n|---------|----------|----------|-----------|\n| 💰 Cost | ₹40-80 | ₹150-300 | ₹150-250 |\n| 🛡️ Safety | College peers only | Strangers | Strangers |\n| 🌱 Eco | Green points! | No incentive | High carbon |\n| 🕐 Wait | Scheduled | Varies | Hail on road |\n| 💸 Surge | Never! | Yes 😤 | Sometimes |\n\n📊 **Auto Split vs Personal Vehicle:**\n\n🟡 **Auto Split:**\n• Best for: Budget commuters\n• Cost: Lowest (shared auto fare)\n• Comfort: Basic\n• Flexibility: Fixed route\n\n🔵 **Personal Vehicle:**\n• Best for: Comfort seekers\n• Cost: Moderate (fractional pricing)\n• Comfort: High (car/bike)\n• Flexibility: Driver's schedule\n\n🏆 **Why VNR Pool wins:**\n• 🔒 Closed ecosystem — only VNR students\n• 💰 No surge pricing, ever\n• 🌱 Earn Eco Points\n• ⭐ Trust-based community\n• 📱 Free to use — no service charges!",
+    priority: 4,
+  },
+
+  // ── Night / Late Rides ─────────────────────
+  {
+    id: 'night_rides',
+    keywords: ['night', 'late', 'evening', 'dark', 'midnight', 'after', 'hours'],
+    phrases: ['night ride', 'late night', 'late ride', 'evening ride', 'after college', 'after class', 'late evening', 'ride at night', 'is it available at night', 'rides available late', 'after 8pm', 'after 9pm'],
+    response: "🌙 **Late / Evening Rides:**\n\n⏰ **Typical ride availability:**\n• Morning: 7:00 AM - 10:00 AM (peak! 📈)\n• Afternoon: 12:00 PM - 2:00 PM\n• Evening: 3:30 PM - 7:00 PM (peak! 📈)\n• Late evening: 7:00 PM - 9:00 PM (limited)\n\n🌃 **For late rides:**\n• Check the Dashboard for available rides\n• Post your own ride — others might be heading the same way!\n• Use **Auto Split** to share a late-night auto\n• Message your ride partner to confirm timing\n\n🛡️ **Safety tips for evening rides:**\n• Prefer **car rides** over bikes after dark\n• Share ride details with a friend/family\n• Choose well-lit pickup/drop points\n• Check the driver's Trust Score\n\n💡 **Tip:** Post a late ride the night before — others searching will find it!",
+    priority: 3,
+  },
+
+  // ── Group Rides ────────────────────────────
+  {
+    id: 'group_rides',
+    keywords: ['group', 'friends', 'together', 'batch', 'classmates', 'multiple', 'bulk', 'many', 'team', 'gang', 'squad'],
+    phrases: ['group ride', 'ride with friends', 'book for group', 'multiple people', 'all of us', 'my friends', 'book together', 'ride together', 'classmates ride', 'same class', 'bulk booking', 'team ride', 'squad ride'],
+    response: "👥 **Group Rides — Ride With Your Squad!**\n\n🎯 **How to ride with friends:**\n\n**Option 1: Share the same ride**\n1️⃣ Find a ride with enough **available seats**\n2️⃣ Each person books the **same ride** individually\n3️⃣ The driver approves all of you\n4️⃣ Ride together! 🎉\n\n**Option 2: One friend is the driver**\n1️⃣ The driver friend **posts a ride** with total seats\n2️⃣ Friends send booking requests\n3️⃣ Driver approves everyone\n4️⃣ Split the fuel cost via UPI after! 💸\n\n**Option 3: Auto Split**\n1️⃣ Post an **Auto Split** ride\n2️⃣ Share the ride link with friends\n3️⃣ Everyone joins and fare splits automatically\n\n💡 **Pro tips for group rides:**\n• Coordinate via the in-app chat\n• Set a single pickup point for the whole group\n• If 4+ people, a car ride is most economical\n• Rate your driver after — they did you all a favor! ⭐",
+    priority: 3,
+  },
+
+  // ── Emergency / Help ──────────────────────
+  {
+    id: 'emergency',
+    keywords: ['emergency', 'sos', 'accident', 'police', 'ambulance', 'help', 'danger', 'unsafe', 'threat', 'harass', 'harassment'],
+    phrases: ['emergency help', 'i need help', 'emergency contact', 'feel unsafe', 'in danger', 'accident happened', 'call police', 'sos help', 'harassed by driver', 'harassment', 'unsafe situation'],
+    response: "🚨 **Emergency Help:**\n\nIf you're in immediate danger, **call these numbers first:**\n\n📞 **Emergency Numbers:**\n• Police: **100**\n• Women Helpline: **181**\n• Ambulance: **108**\n• VNR VJIET Campus Security: Contact through college website\n\n🛑 **If you feel unsafe during a ride:**\n1️⃣ Ask the driver to **stop immediately**\n2️⃣ **Exit the vehicle** at a safe, public location\n3️⃣ Call **100** if needed\n4️⃣ **Report the user** on VNR Pool immediately\n5️⃣ Contact campus administration\n\n📱 **In the app:**\n• Report the user from their profile\n• Cancel the ride immediately\n• Message VNR Pool admins\n\n⚠️ **Remember:** Every VNR Pool user is a verified VNRVJIET student with a tracked identity. Serious violations lead to **permanent account suspension** and can be escalated to college administration.\n\nYour safety matters above everything else. 💛",
+    priority: 8,
+  },
+
+  // ── Semester / Exam Tips ───────────────────
+  {
+    id: 'semester_tips',
+    keywords: ['exam', 'exams', 'semester', 'midsem', 'endsem', 'lab', 'workshop', 'class', 'attendance'],
+    phrases: ['during exams', 'exam time rides', 'semester schedule', 'exam schedule', 'rides during exams', 'early morning exam', 'late lab', 'workshop', 'different timing'],
+    response: "📚 **Rides During Exams & Special Schedules:**\n\n🎓 **During Exam Season:**\n• Timings change — morning exams start at 9:30 AM usually\n• Post rides with **exact exam timing**\n• More students need rides → more options available!\n• Book the night before — don't risk being late!\n\n🔬 **Lab / Workshop Days:**\n• Late labs? Post an evening ride\n• Saturday workshops? Check for weekend rides\n• Different building? Set accurate pickup/drop\n\n📋 **Tips for irregular schedules:**\n1️⃣ **Post your ride** even if the timing is unusual\n2️⃣ Others with the same schedule will find you\n3️⃣ Check frequently during exam weeks — new rides appear often\n4️⃣ Use Auto Split for quick one-off trips\n\n💡 **Pro tip:** Communicate the exact timing with your driver. Exams run on strict schedules — being late is NOT an option! 📖⏰",
+    priority: 3,
+  },
+
+  // ── Vehicle Number Validation ──────────────
+  {
+    id: 'vehicle_number',
+    keywords: ['registration', 'number', 'plate', 'numberplate', 'rto', 'ts', 'ap', 'vehicle'],
+    phrases: ['vehicle number', 'number plate', 'vehicle registration', 'how to enter vehicle number', 'vehicle number format', 'what format', 'ts number', 'ap number', 'registration number'],
+    response: "🚘 **Vehicle Number Format:**\n\nWhen posting a ride, you need to enter your **vehicle registration number**.\n\n📝 **Accepted formats:**\n• **TS 09 AB 1234** (Telangana)\n• **AP 09 AB 1234** (Andhra Pradesh)\n• **MH 12 AB 1234** (Maharashtra)\n• Any valid Indian vehicle registration!\n\n✅ **Rules:**\n• Must be a valid Indian registration format\n• 2-letter state code + 2-digit district + letters + 4 digits\n• The app validates this automatically\n• Incorrect format = can't post the ride\n\n💡 **Don't worry** — for Auto Split rides, the vehicle number isn't always required since you're sharing a commercial auto!",
+    priority: 3,
+  },
+
+  // ── Seats & Capacity ──────────────────────
+  {
+    id: 'seats',
+    keywords: ['seat', 'seats', 'capacity', 'space', 'available', 'full', 'empty', 'left', 'remaining'],
+    phrases: ['available seats', 'how many seats', 'seats available', 'seats left', 'ride full', 'no seats', 'out of seats', 'maximum seats', 'seat capacity', 'how many can join', 'is there space'],
+    response: "💺 **Seats & Capacity:**\n\n🚗 **Car:** Up to **3 passenger seats** available\n🏍️ **Bike:** **1 passenger seat**\n🛺 **Auto:** Up to **3 passenger seats** (shared)\n\n📊 **How seats work:**\n• Driver sets **available seats** when posting a ride\n• Each booking takes **1 seat**\n• When all seats are booked, the ride shows as **FULL**\n• Driver can also **close bookings** early if needed\n\n🔍 **Finding rides with seats:**\n• Ride cards show **remaining seats** with a seat icon\n• Rides with 0 seats are either hidden or show \"Full\"\n• New rides appear frequently — keep checking!\n\n💡 **Tip:** If a ride is full, try messaging the driver — sometimes plans change and a seat opens up!",
+    priority: 3,
+  },
+
+  // ── Pickup & Drop Points ──────────────────
+  {
+    id: 'pickup_drop',
+    keywords: ['pickup', 'drop', 'meetup', 'meeting', 'point', 'where', 'pick', 'meet', 'stop'],
+    phrases: ['pickup point', 'drop point', 'where to meet', 'meeting point', 'pickup location', 'drop location', 'where does driver pick', 'where do i meet', 'where do i wait', 'pick me up', 'drop me off', 'best pickup point', 'convenient pickup'],
+    response: "📍 **Pickup & Drop Points:**\n\n🎯 **How to set your pickup/drop:**\n1️⃣ When searching/booking, enter your **exact location**\n2️⃣ The app suggests nearby **known landmarks**\n3️⃣ Confirm with the driver via **in-app chat** 💬\n\n📌 **Best pickup points (easy to find):**\n• Metro stations (KPHB, Miyapur, Ameerpet, etc.)\n• Major intersections & X Roads\n• Shopping malls (Nexus, Manjeera)\n• Bus stands & depots\n• College gates\n\n🏫 **Near VNR VJIET:**\n• VNR Gate 1 (Main entrance)\n• VNR Gate 2\n• VNR Bus Stop (Pragathi Nagar)\n• Bachupally Junction\n• Simhapuri Colony Kaman\n\n💡 **Tips:**\n• Choose a spot that's **easy to find on Google Maps**\n• Confirm the exact spot via chat\n• Be there **5 minutes early**\n• Share a Google Maps pin if needed!",
+    priority: 3,
+  },
+
+  // ── Logout / Sign Out ─────────────────────
+  {
+    id: 'logout',
+    keywords: ['logout', 'signout', 'log', 'out', 'sign', 'exit', 'leave'],
+    phrases: ['how to logout', 'how to log out', 'sign out', 'how to sign out', 'log out of app', 'exit account', 'leave account', 'switch account'],
+    response: "🚪 **Logging Out:**\n\n1️⃣ Click the **LogOut** button on the Dashboard\n2️⃣ You'll be redirected to the login page\n3️⃣ Your data is safe — log back in anytime!\n\n🔄 **Want to switch accounts?**\n• Log out first\n• Then log in with a different @vnrvjiet.in email\n\n💡 **Note:** Logging out clears your current session but keeps all your rides, bookings, and chat history intact!",
+    priority: 2,
+  },
+
+  // ── Dark Mode / Theme ─────────────────────
+  {
+    id: 'theme',
+    keywords: ['dark', 'light', 'theme', 'mode', 'color', 'colours', 'appearance', 'display'],
+    phrases: ['dark mode', 'light mode', 'change theme', 'switch theme', 'how to change theme', 'dark theme', 'light theme', 'night mode', 'dark background', 'change appearance'],
+    response: "🎨 **Dark Mode / Theme Toggle:**\n\nVNR Pool supports **Dark Mode, Light Mode, and System theme!**\n\n🌙 **How to switch:**\n1️⃣ Look for the **theme toggle** icon on the Dashboard (🌙/☀️)\n2️⃣ Click it to cycle between:\n   • 🌙 **Dark Mode** — Easy on the eyes, great for night\n   • ☀️ **Light Mode** — Bright and clean\n   • 🖥️ **System** — Follows your device setting\n\n💡 **Dark mode benefits:**\n• Easier on your eyes at night\n• Saves battery on OLED screens\n• Looks absolutely gorgeous! 😎",
+    priority: 2,
+  },
+
+  // ── Future Features / Roadmap ──────────────
+  {
+    id: 'future',
+    keywords: ['future', 'upcoming', 'planned', 'roadmap', 'coming', 'new', 'next', 'update', 'updates', 'feature', 'request', 'wish', 'suggestion', 'suggest'],
+    phrases: ['future features', 'upcoming features', 'new features', 'what\'s coming', 'whats next', 'any updates', 'feature request', 'suggest a feature', 'wish list', 'when will', 'planned features', 'future updates', 'next update'],
+    response: "🚀 **Future Features & Roadmap:**\n\nWe're always improving VNR Pool! Here's what's on the horizon:\n\n🔮 **Coming Soon:**\n• 💳 **In-app UPI payments** — Pay directly within the app\n• 👩 **Gender-preference filters** — Women-only ride options\n• 🔄 **Recurring rides** — Auto-post daily commute rides\n• 📊 **Ride analytics** — Track your savings over time\n• 🏆 **Achievement badges** — Gamified milestones\n\n🤔 **Under Consideration:**\n• SOS emergency button with live location sharing\n• Ride scheduling with calendar integration\n• Inter-college ride sharing (other JNTUH colleges)\n• Carbon offset certificates\n• Ride insurance integration\n\n💬 **Have a suggestion?**\nWe love hearing from users! Share your ideas with the VNR Pool team — the best features come from student feedback! 🎉",
+    priority: 3,
+  },
+
+  // ── Data & Privacy ────────────────────────
+  {
+    id: 'privacy',
+    keywords: ['privacy', 'data', 'private', 'personal', 'information', 'share', 'shared', 'secure', 'encrypted'],
+    phrases: ['is my data safe', 'data privacy', 'personal information', 'who can see', 'privacy policy', 'is it private', 'my phone number', 'who sees my data', 'data security', 'information safe', 'is data shared'],
+    response: "🔒 **Privacy & Data Security:**\n\n🛡️ **Your data is protected:**\n• All data is stored on **Supabase** with enterprise-grade security\n• Passwords are **hashed** — even we can't see them\n• Communication is encrypted via **HTTPS**\n• Row-Level Security (RLS) ensures you only see YOUR data\n\n👁️ **What others can see:**\n• Your **name, photo, trust score** — on ride cards\n• Your **phone number** — only to approved ride partners\n• Your **ride history** — only you can see this\n\n🚫 **What we DON'T do:**\n• ❌ Sell your data to third parties\n• ❌ Share your email with anyone\n• ❌ Track your location when not using the app\n• ❌ Store your DigiLocker documents — only verification status\n\n💡 VNR Pool is built BY students, FOR students. Your trust is everything to us! 🤝",
+    priority: 3,
+  },
+
+  // ── Contact / Support ─────────────────────
+  {
+    id: 'contact_support',
+    keywords: ['contact', 'support', 'team', 'developer', 'admin', 'email', 'reach', 'complaint', 'feedback', 'owner', 'built', 'made', 'creator', 'who'],
+    phrases: ['contact support', 'contact team', 'contact admin', 'who made this', 'who built this', 'developer contact', 'report issue', 'file complaint', 'give feedback', 'how to contact', 'reach out', 'support team', 'customer support', 'who is the developer'],
+    response: "📧 **Contact & Support:**\n\nVNR Pool is built with ❤️ by VNRVJIET students!\n\n📬 **How to reach us:**\n• **In-app:** Use this chatbot for instant help!\n• **Email:** Contact through the college department\n• **Report users:** From their profile page directly\n\n💬 **For different issues:**\n• 🐛 **Bug reports** → Describe the issue here, or report via email\n• 💡 **Feature suggestions** → Share your ideas with the team\n• 🚨 **Safety concerns** → Report immediately + contact campus security\n• ⭐ **Feedback** → We love hearing from you!\n\n🏫 **College involvement:**\nVNR Pool is a student project aligned with VNRVJIET's commitment to innovation and sustainability. Reach out through the CSE/IT department if needed.\n\nWe read every piece of feedback! 📖",
+    priority: 3,
+  },
+
+  // ── Hindi/Telugu Language ──────────────────
+  {
+    id: 'language',
+    keywords: ['hindi', 'telugu', 'language', 'english', 'translate', 'telangana'],
+    phrases: ['in hindi', 'in telugu', 'hindi me', 'telugu lo', 'change language', 'other language', 'which language', 'language support'],
+    response: "🌐 **Language Support:**\n\nCurrently, VNR Pool is available in **English only**.\n\nBut don't worry — I understand casual language! You can type naturally:\n• \"bro how to book\" ✅\n• \"yaar ride chahiye\" → Try \"I need a ride\" 😊\n• \"cancel cheyandi\" → Try \"How to cancel\" 😊\n\n🔮 **Coming soon:** We're considering Telugu and Hindi language support in future updates!\n\nFor now, just type your question in simple English and I'll help you out! 💬",
+    priority: 2,
+  },
+
+  // ── VNR Pool Stats ────────────────────────
+  {
+    id: 'stats',
+    keywords: ['stats', 'statistics', 'numbers', 'count', 'total', 'users', 'rides', 'members', 'active', 'registered'],
+    phrases: ['how many users', 'total users', 'total rides', 'app statistics', 'how many rides', 'how many students', 'is it popular', 'how big is vnr pool', 'active users', 'number of users'],
+    response: "📊 **VNR Pool at a Glance:**\n\n🎓 **Platform:** Exclusive to VNRVJIET students\n📍 **Coverage:** 40+ predefined routes across Hyderabad\n🗺️ **Locations:** 500+ recognized landmarks & stops\n🚗 **Vehicle Types:** Cars, Bikes, and Auto-rickshaws\n\n🌟 **Features:**\n• Smart route matching with fractional pricing\n• Dynamic auto fare splitting\n• Interactive route maps\n• Eco Points & leaderboard\n• In-app messaging\n• DigiLocker verification\n• Trust score system\n• PWA — installable on any device\n\n🌱 **Impact:**\n• Every shared ride saves ~2.5 kg CO₂\n• Reduces campus traffic congestion\n• Builds a close-knit student community\n\n💡 Invite your classmates — the more users, the more rides available for everyone! 🚀",
+    priority: 2,
+  },
+  // ── Daily Posting Limit ───────────────────
+  {
+    id: 'daily_limit',
+    keywords: ['limit', 'maximum', 'post', 'posting', 'daily', 'day', 'once', 'twice', 'multiple'],
+    phrases: ['how many rides can i post', 'daily limit', 'maximum rides', 'post multiple rides', 'can i post again', 'only one ride', 'limit per day'],
+    response: "🚦 **Daily Ride Posting Limit:**\n\nTo keep the platform fair and prevent spam, there is a **daily limit** for drivers:\n\n• You can only have **1 active or in-progress ride per calendar day**.\n• Once you complete or cancel a ride, you can post another one!\n\nThis ensures genuine carpoolers get visibility and keeps the dashboard clean for everyone searching for rides. 🚗",
+    priority: 5,
+  },
+
+  // ── Ride Start Window ─────────────────────
+  {
+    id: 'ride_start_window',
+    keywords: ['start', 'begin', 'starting', 'window', 'early', 'when', 'button'],
+    phrases: ['when can i start', 'start ride button', 'how to start ride', 'cant start ride', 'start button disabled', 'when to start', 'start ride early'],
+    response: "▶️ **Starting Your Ride (For Drivers):**\n\nYou can only start your ride when it's almost time to leave!\n\n⏰ **The 30-Minute Rule:**\n• The \"Start Ride\" button becomes active exactly **30 minutes before** your scheduled departure time.\n• Once you click it, all approved passengers get a push notification: *\"Ride Started! 🚗\"*\n\nIf you try to start it too early, the button will be disabled. Just hang tight! ⏳",
+    priority: 5,
+  },
+
+  // ── Booking/Routing Rules ─────────────────
+  {
+    id: 'booking_rules',
+    keywords: ['rule', 'rules', 'bound', 'bounds', 'origin', 'destination', 'must'],
+    phrases: ['ride rules', 'booking rules', 'why cant i post', 'origin destination rule', 'vnr rule', 'where can i go'],
+    response: "📏 **Ride Routing Rules:**\n\nVNR Pool is designed exclusively for the college commute!\n\n✅ **The Golden Rule:**\nEither your **Origin** OR your **Destination** MUST be VNR VJIET (or a recognized campus gate/stop).\n\n• You can post: KPHB → VNR VJIET (Valid ✅)\n• You can post: VNR VJIET → Secunderabad (Valid ✅)\n• You CANNOT post: KPHB → Secunderabad (Invalid ❌)\n\nThis keeps our ecosystem focused on helping students get to and from college safely!",
+    priority: 4,
+  },
+
+  // ── Women-Only Specifics ──────────────────
+  {
+    id: 'women_only_details',
+    keywords: ['female-only', 'women-only', 'girls-only', 'hidden', 'invisible'],
+    phrases: ['who can see women rides', 'cant see women rides', 'hidden rides', 'invisible rides', 'women only feature'],
+    response: "🌸 **How Women-Only Rides Work:**\n\nOur Women-Only feature is strictly enforced for safety:\n\n👩 **For Female Drivers:**\n• Turn on the \"Women Only\" toggle when posting a ride.\n• Your ride will get a special Pink Shield badge.\n\n👁️ **Visibility Rules:**\n• **Only female users** can see Women-Only rides on the dashboard and map.\n• **Male users** cannot see, search for, or book these rides at all — they are completely invisible to them.\n\nIt's a safe, closed ecosystem within VNR Pool! 🛡️",
+    priority: 6,
+  },
+
+  // ── Blocked Users ─────────────────────────
+  {
+    id: 'blocked_users',
+    keywords: ['block', 'blocked', 'blocking', 'unblock', 'ban', 'banned', 'restrict'],
+    phrases: ['how to block', 'block user', 'blocked someone', 'unblock user', 'what happens if i block', 'block driver', 'block passenger'],
+    response: "🚫 **Blocking Users:**\n\nIf someone makes you uncomfortable or violates etiquette, you can block them:\n\n🔒 **What blocking does:**\n• They can no longer see your rides on the dashboard.\n• You won't see their rides either.\n• They cannot send you ride requests or messages.\n\nTo block someone, visit their Public Profile and use the block option. We take community safety seriously, and consistent bad behavior can lead to permanent bans. Stay safe! 💛",
+    priority: 5,
+  },
 ]
 
 // ─── Follow-up Detection ──────────────────────────────────────────────
@@ -327,24 +607,55 @@ const FOLLOWUP_PATTERNS = [
 
 // ─── Context-Aware Related Topic Map ──────────────────────────────────
 const RELATED_INTENTS: Record<string, string[]> = {
-  'find_ride': ['post_ride', 'fare_split', 'route_map', 'cancel'],
-  'post_ride': ['find_ride', 'pricing', 'vehicles', 'ride_categories'],
-  'cancel': ['find_ride', 'driver_noshow', 'my_rides'],
-  'fare_split': ['dynamic_split', 'mid_route_join', 'fare_examples', 'pricing'],
+  'find_ride': ['post_ride', 'fare_split', 'route_map', 'cancel', 'popular_routes', 'timing', 'booking_rules'],
+  'post_ride': ['find_ride', 'pricing', 'vehicles', 'ride_categories', 'vehicle_number', 'seats', 'daily_limit', 'booking_rules'],
+  'cancel': ['find_ride', 'driver_noshow', 'my_rides', 'ride_approval'],
+  'fare_split': ['dynamic_split', 'mid_route_join', 'fare_examples', 'pricing', 'savings'],
   'dynamic_split': ['mid_route_join', 'fare_examples', 'fare_split', 'ride_categories'],
-  'mid_route_join': ['dynamic_split', 'fare_examples', 'fare_split', 'route_map'],
-  'fare_examples': ['fare_split', 'dynamic_split', 'mid_route_join', 'pricing'],
-  'driver_noshow': ['cancel', 'safety', 'messaging'],
-  'safety': ['eligibility', 'eco_points', 'driver_noshow'],
-  'eco_points': ['safety', 'how_it_works'],
-  'messaging': ['find_ride', 'my_rides'],
-  'signup': ['eligibility', 'profile'],
-  'pricing': ['fare_split', 'dynamic_split', 'mid_route_join', 'ride_categories'],
-  'profile': ['signup', 'safety'],
-  'vehicles': ['ride_categories', 'post_ride'],
-  'ride_categories': ['vehicles', 'pricing', 'fare_split', 'dynamic_split'],
-  'route_map': ['find_ride', 'mid_route_join'],
-  'my_rides': ['cancel', 'messaging', 'find_ride'],
+  'mid_route_join': ['dynamic_split', 'fare_examples', 'fare_split', 'route_map', 'popular_routes'],
+  'fare_examples': ['fare_split', 'dynamic_split', 'mid_route_join', 'pricing', 'savings'],
+  'driver_noshow': ['cancel', 'safety', 'messaging', 'emergency', 'blocked_users'],
+  'safety': ['women_safety', 'eligibility', 'eco_points', 'driver_noshow', 'digilocker', 'privacy', 'blocked_users'],
+  'eco_points': ['savings', 'safety', 'how_it_works'],
+  'messaging': ['find_ride', 'my_rides', 'ride_approval', 'blocked_users'],
+  'signup': ['eligibility', 'profile', 'digilocker'],
+  'pricing': ['fare_split', 'dynamic_split', 'mid_route_join', 'ride_categories', 'savings', 'comparison'],
+  'profile': ['signup', 'safety', 'digilocker', 'logout'],
+  'vehicles': ['ride_categories', 'post_ride', 'vehicle_number', 'seats'],
+  'ride_categories': ['vehicles', 'pricing', 'fare_split', 'dynamic_split', 'comparison'],
+  'route_map': ['find_ride', 'mid_route_join', 'popular_routes', 'pickup_drop'],
+  'my_rides': ['cancel', 'messaging', 'find_ride', 'ride_approval', 'ride_start_window'],
+  'popular_routes': ['route_map', 'find_ride', 'college_info', 'pickup_drop'],
+  'college_info': ['popular_routes', 'hostel', 'pickup_drop', 'booking_rules'],
+  'digilocker': ['safety', 'profile', 'signup', 'women_safety'],
+  'install_app': ['notifications', 'how_it_works', 'theme'],
+  'notifications': ['install_app', 'ride_approval', 'my_rides', 'ride_start_window'],
+  'ride_approval': ['my_rides', 'messaging', 'cancel', 'notifications'],
+  'women_safety': ['safety', 'emergency', 'digilocker', 'night_rides', 'women_only_details'],
+  'weather': ['vehicles', 'timing', 'find_ride'],
+  'hostel': ['college_info', 'popular_routes', 'savings'],
+  'savings': ['fare_split', 'comparison', 'eco_points', 'pricing'],
+  'etiquette': ['ride_approval', 'safety', 'messaging', 'blocked_users'],
+  'comparison': ['savings', 'pricing', 'ride_categories'],
+  'night_rides': ['women_safety', 'safety', 'timing'],
+  'group_rides': ['seats', 'fare_split', 'find_ride'],
+  'emergency': ['women_safety', 'safety', 'contact_support', 'blocked_users'],
+  'semester_tips': ['timing', 'find_ride', 'hostel'],
+  'vehicle_number': ['vehicles', 'post_ride'],
+  'seats': ['vehicles', 'find_ride', 'group_rides'],
+  'pickup_drop': ['popular_routes', 'route_map', 'college_info', 'booking_rules'],
+  'logout': ['profile', 'signup'],
+  'theme': ['install_app', 'how_it_works'],
+  'future': ['contact_support', 'how_it_works'],
+  'privacy': ['safety', 'digilocker', 'contact_support'],
+  'contact_support': ['emergency', 'issues', 'future'],
+  'language': ['bot_capabilities', 'how_it_works'],
+  'stats': ['eco_points', 'how_it_works', 'popular_routes'],
+  'daily_limit': ['post_ride', 'my_rides'],
+  'ride_start_window': ['my_rides', 'notifications', 'timing'],
+  'booking_rules': ['post_ride', 'find_ride', 'pickup_drop'],
+  'women_only_details': ['women_safety', 'privacy', 'post_ride'],
+  'blocked_users': ['safety', 'etiquette', 'messaging'],
 }
 
 // ─── Core Engine ──────────────────────────────────────────────────────
