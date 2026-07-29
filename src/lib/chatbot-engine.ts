@@ -101,14 +101,44 @@ const INTENTS: Intent[] = [
     priority: 5,
   },
 
-  // ── Fare Splitting ────────────────────────
+  // ── Fare Splitting (Main) ──────────────────
   {
     id: 'fare_split',
     keywords: ['fare', 'split', 'cost', 'price', 'pay', 'payment', 'money', 'charge', 'fee', 'upi', 'gpay', 'phonepe', 'paytm'],
     phrases: ['split fare', 'fare split', 'how much', 'how to pay', 'split cost', 'fare splitting', 'payment method', 'how to split', 'split the fare', 'pay the driver', 'fare calculator', 'price per seat', 'how much does it cost', 'cost of ride'],
-    response: "💰 **Fare Splitting in VNR Pool:**\n\nVNR Pool uses a smart **route-based fractional pricing** system:\n\n📊 **How pricing works:**\n• The driver sets a **total price per seat** for the full route\n• If you're only traveling **part of the route**, you pay a proportional fraction\n• The app calculates this automatically based on your pickup/drop points!\n\n💸 **How to actually pay:**\nVNR Pool doesn't process payments directly (yet!). After your ride:\n• Split costs via **UPI** — GPay, PhonePe, or Paytm\n• The driver and passengers agree on the split\n• Keep it fair and friendly! 🤝\n\n💡 **Tip:** The fare is shown on each ride card before you book, so no surprises!",
-    followUp: "Want to know about Auto Split vs Personal Vehicle pricing?",
+    response: "💰 **Fare Splitting in VNR Pool:**\n\nVNR Pool has TWO smart pricing systems depending on the ride category:\n\n🔵 **1. Personal Vehicle — Fractional Pricing:**\n• Driver sets a **total price per seat** for the full route\n• If you board **midway** or exit early, you pay only for YOUR portion\n• The app auto-calculates based on your pickup/drop waypoints on the route\n• Formula: `(your stops ÷ driver's total stops) × seat price`\n\n🟡 **2. Auto Split — Dynamic Split Pricing:**\n• Total auto fare is divided among ALL passengers proportionally\n• Each person pays based on **how far they travel** relative to others\n• More passengers = cheaper for everyone! The split adjusts dynamically\n• Formula: `(your distance ÷ total combined distance) × total trip cost`\n\n💸 **How to actually pay:**\n• Pay via **UPI** after the ride — GPay, PhonePe, or Paytm\n• The fare is shown on each ride card BEFORE you book — no surprises! 🤝\n• Minimum fare is always ₹10\n\n💡 **Tip:** Ask me about \"dynamic splitting\" or \"joining mid-route\" for detailed examples!",
+    followUp: "Want to see a real example of how mid-route pricing works?",
     priority: 5,
+  },
+
+  // ── Dynamic Split Pricing (Auto) ──────────
+  {
+    id: 'dynamic_split',
+    keywords: ['dynamic', 'proportional', 'auto', 'divide', 'divided', 'equally', 'equal', 'distribution', 'shared'],
+    phrases: ['dynamic split', 'dynamic pricing', 'dynamic splitting', 'auto split pricing', 'how auto split works', 'auto fare split', 'proportional split', 'proportional pricing', 'divide fare', 'fare divided', 'shared auto', 'share auto fare', 'auto split fare', 'how is auto fare calculated', 'auto fare calculation'],
+    response: "🛺 **Dynamic Split Pricing (Auto Split Mode):**\n\nThis is VNR Pool's smartest feature! When multiple passengers share an auto, the fare isn't just split equally — it's split **proportionally based on distance traveled.**\n\n📐 **How the algorithm works:**\n1️⃣ The route has multiple **waypoints** (stops along the way)\n2️⃣ Each passenger's **travel distance** = number of segments they ride\n3️⃣ All distances are summed up to get the **total combined distance**\n4️⃣ Your share = `(your distance ÷ total combined distance) × total trip cost`\n\n📊 **Real Example:**\nRoute: Kompally → Jeedimetla → JNTU → KPHB → VNR\nTotal auto fare: ₹200\n\n👤 Ravi: Kompally → VNR (4 segments)\n👤 Priya: Jeedimetla → KPHB (2 segments)\n👤 Amit: JNTU → VNR (2 segments)\n\nTotal combined distance = 4 + 2 + 2 = **8 segments**\n\n💰 **Ravi pays:** (4/8) × ₹200 = **₹100** (travels farthest, pays most)\n💰 **Priya pays:** (2/8) × ₹200 = **₹50**\n💰 **Amit pays:** (2/8) × ₹200 = **₹50**\n\n✅ Total: ₹100 + ₹50 + ₹50 = **₹200** ← exact match!\n\n🎯 **Why this is fair:**\n• Longer distance = higher share (but still cheaper than solo!)\n• Shorter distance = lower share\n• Everyone saves compared to riding alone! 🙌",
+    followUp: "Want to know how it works when you join mid-route?",
+    priority: 7,
+  },
+
+  // ── Joining Mid-Route ─────────────────────
+  {
+    id: 'mid_route_join',
+    keywords: ['middle', 'midway', 'halfway', 'partial', 'between', 'midroute', 'portion', 'segment', 'part', 'fraction', 'fractional'],
+    phrases: ['join mid route', 'join in middle', 'join midway', 'board midway', 'pickup midway', 'join in between', 'partial route', 'half the route', 'part of route', 'not full route', 'only part', 'travel part', 'mid route joining', 'fractional price', 'fractional pricing', 'only going half', 'shorter distance', 'partial distance', 'get off early', 'exit early', 'board late', 'pickup in between', 'drop midway', 'drop in between'],
+    response: "🚏 **Joining Mid-Route — Pay Only For Your Portion!**\n\nYou don't have to travel the FULL route to book a ride. VNR Pool's **fractional pricing** ensures you only pay for the portion you actually travel.\n\n🔧 **How it works (Personal Vehicle):**\n1️⃣ The driver posts a route, e.g., **Kompally → VNR** with ₹80/seat\n2️⃣ You only need **JNTU → VNR** (which is 2 out of 4 total stops)\n3️⃣ Your fare = (2 ÷ 4) × ₹80 = **₹40** ← half the route, half the price! 🎉\n\n📍 **Step-by-step to book a partial ride:**\n1️⃣ Search for rides on the Dashboard\n2️⃣ Find a ride whose route PASSES THROUGH your origin and destination\n3️⃣ When you book, enter YOUR actual pickup and drop locations\n4️⃣ The app automatically calculates your fractional fare!\n\n📊 **More examples:**\n• Full route has **5 stops**, you travel **3 stops** → pay **60%** of seat price\n• Full route has **6 stops**, you travel **1 stop** → pay ~**17%** (minimum ₹10)\n• Full route has **4 stops**, you travel **4 stops** → pay **100%** (full price)\n\n⚡ **Key points:**\n• Minimum fare is always **₹10** — even for tiny segments\n• The fare is calculated BEFORE you confirm — you see it on the ride card\n• Works for both **Car** and **Bike** rides\n• For **Auto Split**, mid-route joining uses dynamic proportional splitting instead\n\n💡 **Pro tip:** Use the **Route Maps** feature to visually see which rides pass through your area!",
+    followUp: "Want to see how Auto Split dynamic pricing works differently?",
+    priority: 7,
+  },
+
+  // ── Fare Examples / Calculator ────────────
+  {
+    id: 'fare_examples',
+    keywords: ['example', 'examples', 'calculate', 'calculation', 'calculator', 'scenario', 'math', 'formula', 'much', 'rupees'],
+    phrases: ['fare example', 'pricing example', 'show me example', 'give me example', 'how is it calculated', 'fare calculation', 'calculate fare', 'how much will i pay', 'what will i pay', 'show calculation', 'fare formula', 'pricing formula', 'how much for', 'calculate my fare'],
+    response: "🧮 **Fare Calculation Examples:**\n\nHere are real-world scenarios showing how VNR Pool pricing works:\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🔵 **Scenario 1: Personal Vehicle (Fractional)**\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDriver: Kompally → Jeedimetla → JNTU → KPHB → VNR\nSeat Price: ₹100\n\n👤 You board at **JNTU**, exit at **VNR** (2 out of 4 stops)\n💰 Your fare: (2/4) × ₹100 = **₹50**\n\n👤 You board at **Kompally**, exit at **KPHB** (3 out of 4 stops)\n💰 Your fare: (3/4) × ₹100 = **₹75**\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🟡 **Scenario 2: Auto Split (Dynamic)**\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSame route, Total auto fare: ₹150\n3 passengers with different trips:\n\n👤 A: Kompally → VNR (4 segments) → pays **(4/7) × ₹150 = ₹86**\n👤 B: Jeedimetla → JNTU (1 segment) → pays **(1/7) × ₹150 = ₹21**\n👤 C: JNTU → VNR (2 segments) → pays **(2/7) × ₹150 = ₹43**\n\n✅ Total: ₹86 + ₹21 + ₹43 = **₹150** ← perfect match!\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n⚡ **Key Takeaways:**\n• You NEVER pay more than the full seat price\n• Minimum fare is always ₹10\n• Shorter distance = proportionally cheaper\n• The app does ALL the math for you — just book! 🎉",
+    followUp: "Any other questions about pricing?",
+    priority: 6,
   },
 
   // ── Driver No-Show ────────────────────────
@@ -300,17 +330,20 @@ const RELATED_INTENTS: Record<string, string[]> = {
   'find_ride': ['post_ride', 'fare_split', 'route_map', 'cancel'],
   'post_ride': ['find_ride', 'pricing', 'vehicles', 'ride_categories'],
   'cancel': ['find_ride', 'driver_noshow', 'my_rides'],
-  'fare_split': ['pricing', 'ride_categories', 'find_ride'],
+  'fare_split': ['dynamic_split', 'mid_route_join', 'fare_examples', 'pricing'],
+  'dynamic_split': ['mid_route_join', 'fare_examples', 'fare_split', 'ride_categories'],
+  'mid_route_join': ['dynamic_split', 'fare_examples', 'fare_split', 'route_map'],
+  'fare_examples': ['fare_split', 'dynamic_split', 'mid_route_join', 'pricing'],
   'driver_noshow': ['cancel', 'safety', 'messaging'],
   'safety': ['eligibility', 'eco_points', 'driver_noshow'],
   'eco_points': ['safety', 'how_it_works'],
   'messaging': ['find_ride', 'my_rides'],
   'signup': ['eligibility', 'profile'],
-  'pricing': ['fare_split', 'ride_categories'],
+  'pricing': ['fare_split', 'dynamic_split', 'mid_route_join', 'ride_categories'],
   'profile': ['signup', 'safety'],
   'vehicles': ['ride_categories', 'post_ride'],
-  'ride_categories': ['vehicles', 'pricing', 'fare_split'],
-  'route_map': ['find_ride'],
+  'ride_categories': ['vehicles', 'pricing', 'fare_split', 'dynamic_split'],
+  'route_map': ['find_ride', 'mid_route_join'],
   'my_rides': ['cancel', 'messaging', 'find_ride'],
 }
 
