@@ -342,6 +342,16 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     route_id: ''
   })
 
+  const handleCategoryChange = (key: 'auto_split' | 'personal_vehicle') => {
+    setRideCategory(key)
+    setOfferData(prev => ({
+      ...prev,
+      vehicle_type: key === 'auto_split' && prev.vehicle_type === 'bike' ? 'auto' 
+                    : key === 'personal_vehicle' && prev.vehicle_type === 'auto' ? 'bike' 
+                    : prev.vehicle_type
+    }))
+  }
+
   // Pre-fill vehicle number from profile on load
   useEffect(() => {
     if (currentUserProfile && !offerData.vehicle_number) {
@@ -412,7 +422,19 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     onSuccess: () => {
       toast.success('Ride offered successfully!')
       queryClient.invalidateQueries({ queryKey: ['rides'] })
-      setActiveTab('Find a Ride')
+      queryClient.invalidateQueries({ queryKey: ['myRides'] })
+      setActiveTab('My Rides')
+      setOfferData({
+        origin: '',
+        destination: 'VNR VJIET Campus Gate 1',
+        departure_time: '',
+        vehicle_type: rideCategory === 'auto_split' ? 'auto' : 'bike',
+        vehicle_number: currentUserProfile?.vehicle_number || '',
+        total_seats: 1,
+        price_per_seat: 0,
+        is_women_only: false,
+        route_id: ''
+      })
     },
     onError: (e) => toast.error(e.message)
   })
@@ -641,10 +663,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   : "border-blue-500/50 bg-card shadow-md scale-[1.04]"
                 : "border-border bg-card/40 hover:bg-card/70 opacity-60 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm glass-card"
             )}
-            onClick={() => setRideCategory(key as 'auto_split' | 'personal_vehicle')}
+            onClick={() => handleCategoryChange(key as 'auto_split' | 'personal_vehicle')}
             role="button"
             tabIndex={0}
-            onKeyDown={e => e.key === 'Enter' && setRideCategory(key as 'auto_split' | 'personal_vehicle')}
+            onKeyDown={e => e.key === 'Enter' && handleCategoryChange(key as 'auto_split' | 'personal_vehicle')}
           >
             <div className={cn(
               "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110",
