@@ -2,9 +2,18 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import { Trophy, Leaf, Zap } from 'lucide-react'
+import { Trophy, Leaf, Zap, Shield } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import confetti from 'canvas-confetti'
+import { useEffect } from 'react'
+
+const getTier = (points: number) => {
+  if (points >= 1000) return { name: 'Platinum', color: 'text-cyan-400', bg: 'bg-cyan-500/20' }
+  if (points >= 500) return { name: 'Gold', color: 'text-amber-400', bg: 'bg-amber-500/20' }
+  if (points >= 100) return { name: 'Silver', color: 'text-slate-300', bg: 'bg-slate-500/20' }
+  return { name: 'Bronze', color: 'text-orange-400', bg: 'bg-orange-500/20' }
+}
 
 export function EcoLeaderboard({ currentUserId }: { currentUserId: string }) {
   const supabase = createClient()
@@ -39,6 +48,39 @@ export function EcoLeaderboard({ currentUserId }: { currentUserId: string }) {
   // Roughly 0.19 kg of CO2 saved per km driven in a carpool (assuming average 15km route = 2.85kg)
   // 1 eco_point = 1 successful ride.
   const co2Saved = ((userStats?.eco_points || 0) * 2.85).toFixed(1)
+  const currentTier = getTier(userStats?.eco_points || 0)
+
+  useEffect(() => {
+    if (userStats?.eco_points && userStats.eco_points >= 100) {
+      if (!sessionStorage.getItem('confettiShown')) {
+        const duration = 2000;
+        const end = Date.now() + duration;
+
+        const frame = () => {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: ['#34d399', '#3b82f6', '#fbbf24']
+          });
+          confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: ['#34d399', '#3b82f6', '#fbbf24']
+          });
+
+          if (Date.now() < end) {
+            requestAnimationFrame(frame);
+          }
+        };
+        frame();
+        sessionStorage.setItem('confettiShown', 'true');
+      }
+    }
+  }, [userStats?.eco_points])
 
   return (
     <Card className="bg-slate-900/40 backdrop-blur-xl border-emerald-500/20 overflow-hidden relative h-full">
@@ -57,10 +99,13 @@ export function EcoLeaderboard({ currentUserId }: { currentUserId: string }) {
             {/* User Impact Stat */}
             <div className="flex items-center justify-between p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
               <div>
-                <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Your CO₂ Saved</p>
-                <div className="flex items-baseline gap-1 mt-1">
-                  <span className="text-3xl font-bold text-white">{co2Saved}</span>
-                  <span className="text-sm text-slate-400">kg</span>
+                <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Your Impact & Tier</p>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-3xl font-bold text-white">{co2Saved}<span className="text-sm text-slate-400 ml-1">kg CO₂</span></span>
+                </div>
+                <div className={`inline-flex items-center gap-1 px-2 py-0.5 mt-2 rounded-full text-[10px] font-bold uppercase tracking-widest ${currentTier.bg} ${currentTier.color}`}>
+                  <Shield className="w-3 h-3" />
+                  {currentTier.name} Tier
                 </div>
               </div>
               <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">

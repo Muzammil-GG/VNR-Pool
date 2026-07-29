@@ -8,6 +8,13 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "VNR Pool - Ride Sharing for VNR VJIET",
   description: "Hyperlocal ride-pooling and carpooling platform for VNR VJIET college students.",
+  manifest: "/manifest.json",
+  themeColor: "#4f46e5",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "VNR Pool",
+  },
 };
 
 import { Footer } from "@/components/Footer";

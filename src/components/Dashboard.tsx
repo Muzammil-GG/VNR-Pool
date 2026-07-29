@@ -17,13 +17,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Skeleton } from '@/components/ui/skeleton'
 import { RideCardSkeleton } from '@/components/ui/RideCardSkeleton'
 import { toast } from 'sonner'
-import { MapPin, Users, Clock, Shield, MessageCircle, ShieldAlert, Car, Bike, Navigation, Phone, Zap, Star, LogOut, CheckCircle2, XCircle } from 'lucide-react'
+import { User as UserIcon, LogOut, CheckCircle2, Navigation, Clock, Search, MapPin, Loader2, ArrowRight, X, AlertTriangle, ShieldCheck, ShieldAlert, Check, Car, Bike, Filter, Users, Navigation2, MessageCircle, Star, Share2, Shield, Phone, XCircle, Zap } from 'lucide-react'
+import { playPop, playSuccess, playError, triggerHaptic, triggerHeavyHaptic } from '@/lib/audio'
 import { VehicleBackground } from '@/components/VehicleBackground'
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
 import { ProfileEditor } from '@/components/ProfileEditor'
 import { MyRides } from '@/components/MyRides'
+import { PullToRefresh } from '@/components/PullToRefresh'
 import { Righteous } from 'next/font/google'
 const righteous = Righteous({ weight: '400', subsets: ['latin'] })
 import Image from 'next/image'
@@ -377,6 +379,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     }))
   }
 
+  const handleRefresh = async () => {
+    triggerHaptic(50)
+    await queryClient.invalidateQueries({ queryKey: ['rides'] })
+    playPop()
+  }
+
   // Pre-fill vehicle number from profile on load
   useEffect(() => {
     if (currentUserProfile && !offerData.vehicle_number) {
@@ -486,8 +494,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     const { error } = await supabase.from('bookings').insert(bookingData)
     
     if (error) {
+      playError()
+      triggerHeavyHaptic()
       toast.error(error.message)
     } else {
+      playSuccess()
+      triggerHaptic([100, 50, 100])
       toast.success('Booking requested! Wait for approval.')
       await supabase.from('notifications').insert({
         user_id: ride.driver_id,
@@ -511,12 +523,18 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       if (!res.ok) throw new Error(json.error || 'Failed to cancel booking')
     },
     onSuccess: () => {
+      playPop()
+      triggerHaptic(50)
       toast.success('Booking cancelled successfully.')
       queryClient.invalidateQueries({ queryKey: ['rides'] })
       queryClient.invalidateQueries({ queryKey: ['my_rides'] })
       queryClient.invalidateQueries({ queryKey: ['has_active_booking'] })
     },
-    onError: (e) => toast.error(`Failed to cancel: ${e.message}`)
+    onError: (e) => {
+      playError()
+      triggerHeavyHaptic()
+      toast.error(`Failed to cancel: ${e.message}`)
+    }
   })
 
   // Obfuscator helper
@@ -832,11 +850,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           </motion.div>
 
           {/* ── Ride Feed ──────────────────────── */}
-          <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-            {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <RideCardSkeleton key={i} index={i} />
-              ))
+          <PullToRefresh onRefresh={handleRefresh}>
+            <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 pb-10">
+              {isLoading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <RideCardSkeleton key={i} index={i} />
+                ))
             ) : rides?.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.96 }}
@@ -1057,13 +1076,25 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       {/* Map Toggle & Rendering */}
                       {(ride.route_id || (ride as any).matchType === 'fractional') && (
                         <div className="pt-2">
-                          <button 
-                            onClick={() => setExpandedMaps(prev => prev.includes(ride.id) ? prev.filter(id => id !== ride.id) : [...prev, ride.id])}
-                            className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
-                          >
-                            <MapPin className="w-3 h-3" />
-                            {expandedMaps.includes(ride.id) ? 'Hide Route Map' : 'View Route Map'}
-                          </button>
+                          <div className="flex flex-wrap items-center justify-between gap-3 bg-secondary/20 p-2.5 rounded-xl border border-border/40 mb-2">
+                            <button 
+                              onClick={() => setExpandedMaps(prev => prev.includes(ride.id) ? prev.filter(id => id !== ride.id) : [...prev, ride.id])}
+                              className="text-[11px] sm:text-xs font-bold text-primary hover:underline flex items-center gap-1.5"
+                            >
+                              <MapPin className="w-3.5 h-3.5" />
+                              {expandedMaps.includes(ride.id) ? 'Hide Route Map' : 'View Route Map'}
+                            </button>
+                            
+                            <a 
+                              href={`https://wa.me/?text=${encodeURIComponent(`🚗 Ride offered on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}\n💰 ₹${ride.ride_category === 'auto_split' ? 'Auto Split' : ride.price_per_seat}\n\nBook my seat here: https://vnrpool.vercel.app`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[11px] sm:text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5 transition-colors bg-emerald-500/10 px-2.5 py-1 rounded-md"
+                            >
+                              <Share2 className="w-3.5 h-3.5" />
+                              Share on WhatsApp
+                            </a>
+                          </div>
                           
                           {(ride as any).matchType === 'fractional' && (
                             <div className="mt-1 bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1.5 rounded-md font-medium">
@@ -1211,7 +1242,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 </motion.div>
               ))
             )}
-          </div>
+            </div>
+          </PullToRefresh>
         </div>
       ) : activeTab === 'Offer a Seat' ? (
         <motion.div

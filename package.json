@@ -20,6 +20,7 @@
     "@tanstack/react-query": "^5.101.4",
     "ai": "^7.0.37",
     "animejs": "^3.2.2",
+    "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.42.2",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/animejs": "^3.1.13",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.1",

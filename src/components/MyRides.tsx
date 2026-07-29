@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, Play, Flag, Star, MessageCircle, Zap } from 'lucide-react'
+import { Users, CheckCircle, XCircle, Trash2, MapPin, Navigation, Clock, Phone, Play, Flag, Star, MessageCircle, Zap, Share2 } from 'lucide-react'
 import { calculateDynamicSplitPricing } from '@/lib/pricing'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
@@ -660,11 +660,19 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                         <Navigation className="w-4 h-4 text-muted-foreground flex-shrink-0" /> {ride.destination}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 text-xs font-bold">
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-bold">
                       <div className="flex items-center gap-1.5 text-secondary-foreground bg-blue-50 px-2 py-1 rounded-md border border-blue-100">
                         <Clock className="w-3.5 h-3.5" />
                         {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
                       </div>
+                      <a 
+                        href={`https://wa.me/?text=${encodeURIComponent(`🚗 I'm joining a ride on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}\n\nBook your seat here: https://vnrpool.vercel.app`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] sm:text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-1 rounded-md transition-colors"
+                      >
+                        <Share2 className="w-3.5 h-3.5" /> Share
+                      </a>
                     </div>
 
                     {/* Auto Split Breakdown for Joined Rides */}

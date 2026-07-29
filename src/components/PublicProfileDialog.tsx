@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { createClient } from "@/lib/supabase/client"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Loader2, Star, User, Hash, BookOpen, Car, Bike, Phone, ShieldCheck, Leaf } from "lucide-react"
+import { Loader2, Star, User, Hash, BookOpen, Car, Bike, Phone, ShieldCheck, Leaf, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 
@@ -21,6 +21,13 @@ function renderStars(score: number, count: number) {
 function obfuscatePhone(phone: string) {
   if (!phone || phone.length < 10) return phone
   return phone.slice(0, 2) + "••••••" + phone.slice(-2)
+}
+
+const getTier = (points: number) => {
+  if (points >= 1000) return { name: 'Platinum', color: 'text-cyan-400', bg: 'bg-cyan-500/20' }
+  if (points >= 500) return { name: 'Gold', color: 'text-amber-400', bg: 'bg-amber-500/20' }
+  if (points >= 100) return { name: 'Silver', color: 'text-slate-300', bg: 'bg-slate-500/20' }
+  return { name: 'Bronze', color: 'text-orange-400', bg: 'bg-orange-500/20' }
 }
 
 export function PublicProfileDialog({ 
@@ -148,12 +155,16 @@ export function PublicProfileDialog({
                     {profile.rating_count === 0 ? 'New' : (profile.total_rating_score / profile.rating_count).toFixed(1)}
                   </div>
                 </div>
-                <div className="flex-1 bg-slate-800/80 border border-emerald-500/20 rounded-2xl p-4 text-center shadow-inner relative overflow-hidden group hover:border-emerald-500/40 transition-colors">
+                <div className="flex-1 bg-slate-800/80 border border-emerald-500/20 rounded-2xl p-4 text-center shadow-inner relative overflow-hidden group hover:border-emerald-500/40 transition-colors flex flex-col items-center">
                   <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors"></div>
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1.5 flex items-center justify-center gap-1.5">
                     <Leaf className="w-3 h-3 text-emerald-400" /> Eco Points
                   </div>
                   <div className="text-2xl font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">{profile.eco_points || 0}</div>
+                  <div className={`mt-2 flex items-center gap-1 text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full ${getTier(profile.eco_points || 0).bg} ${getTier(profile.eco_points || 0).color}`}>
+                    <Shield className="w-2.5 h-2.5" />
+                    {getTier(profile.eco_points || 0).name}
+                  </div>
                 </div>
               </div>
 

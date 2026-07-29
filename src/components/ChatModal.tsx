@@ -53,6 +53,9 @@ export function ChatModal({
 }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [typingChannel, setTypingChannel] = useState<any>(null)
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
@@ -93,10 +96,21 @@ export function ChatModal({
         }
         setMessages(prev => [...prev, newMsg])
       })
+
+    // Subscribe to typing broadcast
+    const tChannel = supabase.channel(`typing_${rideId}`)
+      .on('broadcast', { event: 'typing' }, (payload) => {
+        if (payload.payload.userId !== currentUserId) {
+          setIsTyping(payload.payload.isTyping)
+        }
+      })
       .subscribe()
+      
+    setTypingChannel(tChannel)
 
     return () => {
       supabase.removeChannel(channel)
+      supabase.removeChannel(tChannel)
     }
   }, [isOpen, rideId, supabase])
 
@@ -113,6 +127,12 @@ export function ChatModal({
 
     const newMsg = inputText
     setInputText('')
+    
+    // Stop typing indicator instantly
+    if (typingChannel) {
+      typingChannel.send({ type: 'broadcast', event: 'typing', payload: { userId: currentUserId, isTyping: false } })
+    }
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
     playSound('click') // Play sound on send
 
     const res = await fetch('/api/send-message', {
@@ -210,7 +230,21 @@ export function ChatModal({
                   )
                 })
               )}
-              <div ref={messagesEndRef} />
+              {isTyping && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="flex justify-start mb-4"
+                >
+                  <div className="bg-slate-800 text-slate-300 rounded-2xl rounded-tl-sm px-4 py-2 text-[15px] flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                  </div>
+                </motion.div>
+              )}
+              <div ref={messagesEndRef} className="h-4" />
             </div>
 
             {/* Input Area */}
@@ -218,7 +252,16 @@ export function ChatModal({
               <form onSubmit={handleSend} className="relative flex items-center">
                 <Input 
                   value={inputText}
-                  onChange={e => setInputText(e.target.value)}
+                  onChange={(e) => {
+                    setInputText(e.target.value)
+                    if (typingChannel) {
+                      typingChannel.send({ type: 'broadcast', event: 'typing', payload: { userId: currentUserId, isTyping: true } })
+                      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+                      typingTimeoutRef.current = setTimeout(() => {
+                        typingChannel.send({ type: 'broadcast', event: 'typing', payload: { userId: currentUserId, isTyping: false } })
+                      }, 2000)
+                    }
+                  }}
                   placeholder="Type a message..."
                   className="w-full bg-white/5 border-white/10 text-white placeholder:text-white/30 h-12 rounded-full pl-5 pr-12 focus-visible:ring-1 focus-visible:ring-blue-500"
                   maxLength={500}
