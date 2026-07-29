@@ -592,6 +592,113 @@ const INTENTS: Intent[] = [
     response: "🚫 **Blocking Users:**\n\nIf someone makes you uncomfortable or violates etiquette, you can block them:\n\n🔒 **What blocking does:**\n• They can no longer see your rides on the dashboard.\n• You won't see their rides either.\n• They cannot send you ride requests or messages.\n\nTo block someone, visit their Public Profile and use the block option. We take community safety seriously, and consistent bad behavior can lead to permanent bans. Stay safe! 💛",
     priority: 5,
   },
+  // ── Lost & Found ──────────────────────────
+  {
+    id: 'lost_and_found',
+    keywords: ['lost', 'found', 'forgot', 'left', 'phone', 'bag', 'wallet', 'item', 'belongings'],
+    phrases: ['i lost my phone', 'i forgot my bag', 'left my wallet', 'lost item', 'lost and found', 'forgot something in car', 'driver forgot', 'left behind'],
+    response: "🔍 **Lost & Found:**\n\nDid you leave something behind in a ride?\n\n1️⃣ **Contact the Driver/Passenger immediately:** Go to **My Rides** → find the completed ride → click the Call or Chat button.\n2️⃣ **If they don't answer:** Send them an in-app message, they might see it later.\n3️⃣ **Found something?** If you're a driver and found an item, message your last passengers to let them know!\n\n💡 Try to check your seat before you exit the vehicle. We hope you get your item back! 🤞",
+    priority: 4,
+  },
+
+  // ── Luggage & Bags ────────────────────────
+  {
+    id: 'luggage',
+    keywords: ['luggage', 'bag', 'bags', 'suitcase', 'backpack', 'heavy', 'carry', 'space', 'trunk', 'boot'],
+    phrases: ['can i bring a bag', 'can i bring luggage', 'heavy luggage', 'big suitcase', 'space for bags', 'trunk space', 'carry bags', 'laptop bag'],
+    response: "🎒 **Luggage & Bags:**\n\n• **Backpacks & Laptop bags:** Always fine! Just keep them on your lap or by your feet.\n• **Big Suitcases/Heavy Luggage:** You MUST ask the driver first via chat before the ride. Not all cars have empty trunk space, and bikes definitely don't!\n• **Auto Split:** Autos have limited space, so big luggage might be uncomfortable for others.\n\n💡 **Rule of thumb:** If it doesn't fit on your lap, message the driver first to confirm! 🚗",
+    priority: 3,
+  },
+
+  // ── Traffic & Delays ──────────────────────
+  {
+    id: 'traffic',
+    keywords: ['traffic', 'jam', 'delay', 'delayed', 'late', 'stuck', 'slow', 'wait'],
+    phrases: ['heavy traffic', 'stuck in traffic', 'what if im late', 'driver is late', 'traffic jam', 'running late', 'will be late', 'route traffic'],
+    response: "🚦 **Traffic & Delays:**\n\nHyderabad traffic can be unpredictable! 😫\n\n• **If you're running late:** Message or call your ride partner immediately. Drivers usually wait 5-10 minutes, but it's up to them.\n• **If the driver is stuck in traffic:** Check the chat for updates. You can track their live location if they share a Google Maps link.\n• **Alternative routes:** If there's a huge jam (like on Kukatpally main road), drivers might take inner roads (like Pragathi Nagar). Don't panic as long as you're heading to VNR!\n\n💡 Always aim to be at the pickup point 5 mins early to account for unexpected delays! ⏰",
+    priority: 4,
+  },
+
+  // ── Music & AC in Car ─────────────────────
+  {
+    id: 'music_ac',
+    keywords: ['music', 'song', 'songs', 'ac', 'air', 'conditioning', 'aux', 'bluetooth', 'play', 'loud'],
+    phrases: ['can i play music', 'turn on ac', 'play songs', 'connect bluetooth', 'aux cable', 'is there ac', 'car ac', 'loud music'],
+    response: "🎵 **Music & AC Etiquette:**\n\n🚗 **For Car Rides:**\n• **AC:** It's usually up to the driver. If you're feeling too hot/cold, politely ask them to adjust it! ❄️\n• **Music:** The driver controls the aux/bluetooth. Don't play your own music out loud on your phone — use earphones if you want to listen to your own playlist. 🎧\n\nRemember, you're sharing the space with classmates. Keep the vibes good and the volume reasonable! 😎",
+    priority: 3,
+  },
+
+  // ── Smoking, Drinking, Vaping ─────────────
+  {
+    id: 'smoking',
+    keywords: ['smoke', 'smoking', 'cigarette', 'vape', 'vaping', 'drink', 'drinking', 'alcohol', 'drunk'],
+    phrases: ['can i smoke', 'can i vape', 'smoking allowed', 'drinking allowed', 'drunk passenger', 'driver is smoking'],
+    response: "🚫 **Strict No-Smoking & Zero Tolerance Policy:**\n\n🚭 **Smoking & Vaping:** STRICTLY PROHIBITED inside any vehicle during a VNR Pool ride. This applies to both drivers and passengers.\n🍻 **Alcohol/Intoxication:** Zero tolerance. Do not use VNR Pool if you are intoxicated. Drivers have the right to refuse service to anyone who appears drunk.\n\n🚨 **Violations:** If someone is smoking, vaping, or intoxicated, cancel the ride, leave the vehicle, and **report them immediately**. This leads to a permanent ban from VNR Pool and potential escalation to college authorities.",
+    priority: 7,
+  },
+
+  // ── Wait Times ────────────────────────────
+  {
+    id: 'wait_time',
+    keywords: ['wait', 'waiting', 'how', 'long', 'minutes', 'min', 'mins', 'leave', 'left'],
+    phrases: ['how long will driver wait', 'how long to wait', 'will they wait for me', 'waiting time', 'max wait time', 'driver left without me'],
+    response: "⏱️ **Driver Waiting Time:**\n\nDrivers are fellow students trying to get to class on time!\n\n• **Standard Courtesy:** Drivers will typically wait **max 5-10 minutes** past the agreed time.\n• If you aren't there, they have the right to cancel your seat and leave so they (and other passengers) don't get marked absent for the 1st hour! 🏃‍♂️\n\n💡 **Tip:** Be at the pickup spot 5 mins early. If you're 2 mins away, CALL the driver so they know you're coming!",
+    priority: 4,
+  },
+
+  // ── Low Ratings / Trust Score Impact ──────
+  {
+    id: 'low_rating',
+    keywords: ['rating', 'ratings', 'star', 'stars', 'score', 'trust', 'low', 'bad', 'poor'],
+    phrases: ['what happens if i get 1 star', 'bad rating', 'low trust score', 'improve rating', 'fake rating', 'someone gave me bad rating', 'how to increase score'],
+    response: "📉 **Trust Scores & Low Ratings:**\n\nYour Trust Score (⭐) is your reputation on VNR Pool.\n\n• **What lowers it:** Canceling last minute, being late, rude behavior, reckless driving, or being a no-show.\n• **Consequences of a low score (< 3.0):** Drivers will reject your booking requests. Passengers won't book your rides.\n• **Can I dispute a rating?** We don't remove ratings manually to keep the system fair. The best way to fix a low score is to do better on your next rides! \n\nConsistent 1-star ratings for safety or harassment will result in an automatic account review and potential ban. 🛡️",
+    priority: 5,
+  },
+
+  // ── ORR Tolls & Parking ───────────────────
+  {
+    id: 'tolls',
+    keywords: ['toll', 'tolls', 'orr', 'gate', 'tax', 'parking', 'fee', 'extra'],
+    phrases: ['who pays toll', 'orr toll', 'extra charges', 'parking fee', 'toll gate fee', 'is toll included', 'pay for toll'],
+    response: "🛣️ **Tolls (ORR) & Extra Fees:**\n\nSometimes a ride takes the Outer Ring Road (ORR) which has toll gates.\n\n• **Rule:** The driver is responsible for the toll fee, UNLESS agreed otherwise in the chat before the ride starts.\n• **Passengers:** You only pay the exact seat price shown on the app. No surprise extra charges! 💸\n\nIf the driver asks you to split the toll, they must discuss it in the group chat *before* you board. If you don't agree, you can cancel the ride.",
+    priority: 4,
+  },
+
+  // ── Referrals & Invites ───────────────────
+  {
+    id: 'referral',
+    keywords: ['refer', 'referral', 'invite', 'friends', 'friend', 'share', 'link'],
+    phrases: ['how to invite', 'refer a friend', 'referral code', 'share app', 'invite friends', 'do we get points for referring'],
+    response: "🤝 **Inviting Friends to VNR Pool:**\n\nVNR Pool thrives on community! The more students use it, the more rides are available for everyone.\n\n• **How to share:** Just send them the website link! They can install it as an app from their browser.\n• **Who can join?** ONLY active VNR VJIET students with a valid `@vnrvjiet.in` email address.\n• **Referral Points?** We don't have a referral code system right now, but you earn Eco Points for every ride you take! 🌱\n\nTell your classmates and help reduce campus traffic! 🚀",
+    priority: 3,
+  },
+
+  // ── Alumni & Passed Out Students ──────────
+  {
+    id: 'alumni',
+    keywords: ['alumni', 'passed', 'out', 'graduated', 'graduate', 'seniors', 'passout'],
+    phrases: ['can alumni use this', 'passed out students', 'i graduated', 'my vnrvjiet email expired', 'for alumni', 'former students'],
+    response: "🎓 **Alumni & Graduated Students:**\n\nVNR Pool requires an active, verified `@vnrvjiet.in` email address to log in.\n\n• If your college email is still active, you can use the app!\n• Once the college deactivates your email after graduation, you won't be able to log in or create a new account.\n\nThis strict rule ensures that every user is a currently enrolled student or staff member, maintaining 100% safety for the community! 🔒",
+    priority: 3,
+  },
+
+  // ── Helmets for Bike Rides ────────────────
+  {
+    id: 'helmet',
+    keywords: ['helmet', 'helmets', 'bike', 'two', 'wheeler', 'police', 'challan'],
+    phrases: ['do i need a helmet', 'bring my own helmet', 'does driver have helmet', 'bike ride helmet', 'police challan', 'two wheeler rules'],
+    response: "🏍️ **Helmets for Bike Rides:**\n\nSafety first, always! 🪖\n\n• **Passengers:** Most drivers do NOT carry a spare helmet. If you book a bike ride, you should bring your own helmet if possible.\n• **Traffic Police:** Hyderabad Traffic Police strictly enforces helmets for pillion riders (passengers). If you get caught without one, the driver gets the challan!\n• **Best practice:** Message the driver in the app to ask if they have a spare. If not, and you don't have one, consider booking a car or auto ride instead to be completely safe from fines and accidents. 🚓",
+    priority: 4,
+  },
+
+  // ── Pets in the Ride ──────────────────────
+  {
+    id: 'pets',
+    keywords: ['pet', 'pets', 'dog', 'cat', 'animal', 'puppy', 'kitten'],
+    phrases: ['can i bring my dog', 'can i bring my pet', 'are pets allowed', 'pet friendly', 'bring a cat'],
+    response: "🐶 **Pets in Rides:**\n\nBringing a furry friend? \n\n• You MUST ask the driver for explicit permission via chat *before* booking or arriving at the pickup spot.\n• Most drivers do not allow pets due to allergies, shedding, or car cleanliness.\n• If the driver says no, please respect their decision and look for another ride.\n\n(We love pets, but we gotta respect the car owner's rules! 🐾🚗)",
+    priority: 2,
+  },
 ]
 
 // ─── Follow-up Detection ──────────────────────────────────────────────
@@ -656,6 +763,18 @@ const RELATED_INTENTS: Record<string, string[]> = {
   'booking_rules': ['post_ride', 'find_ride', 'pickup_drop'],
   'women_only_details': ['women_safety', 'privacy', 'post_ride'],
   'blocked_users': ['safety', 'etiquette', 'messaging'],
+  'lost_and_found': ['messaging', 'my_rides', 'contact_support'],
+  'luggage': ['vehicles', 'etiquette', 'messaging'],
+  'traffic': ['wait_time', 'messaging', 'safety'],
+  'music_ac': ['etiquette', 'vehicles'],
+  'smoking': ['safety', 'emergency', 'blocked_users', 'etiquette'],
+  'wait_time': ['traffic', 'etiquette', 'messaging', 'driver_noshow'],
+  'low_rating': ['etiquette', 'safety', 'blocked_users'],
+  'tolls': ['pricing', 'fare_split', 'messaging'],
+  'referral': ['eco_points', 'stats', 'how_it_works'],
+  'alumni': ['eligibility', 'signup', 'privacy'],
+  'helmet': ['vehicles', 'safety', 'etiquette'],
+  'pets': ['etiquette', 'messaging'],
 }
 
 // ─── Core Engine ──────────────────────────────────────────────────────
