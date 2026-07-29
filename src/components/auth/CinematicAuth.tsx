@@ -350,10 +350,10 @@ export function CinematicAuth() {
           ref={feature1Ref}
           className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
         >
-          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-white/10 bg-black/30 backdrop-blur-xl text-center">
+          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
             <div className="text-4xl mb-4">🎓</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Exclusive Community</h2>
-            <p className="text-slate-300 text-lg md:text-xl font-light">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">Exclusive Community</h2>
+            <p className="text-slate-700 dark:text-slate-300 text-lg md:text-xl font-light">
               Built strictly for VNR VJIET. Connect with verified students and staff. No strangers allowed.
             </p>
           </div>
@@ -363,10 +363,10 @@ export function CinematicAuth() {
           ref={feature2Ref}
           className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
         >
-          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-white/10 bg-black/30 backdrop-blur-xl text-center">
+          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
             <div className="text-4xl mb-4">💰</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Dynamic Splitting</h2>
-            <p className="text-slate-300 text-lg md:text-xl font-light">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">Dynamic Splitting</h2>
+            <p className="text-slate-700 dark:text-slate-300 text-lg md:text-xl font-light">
               Join mid-route and pay less. Our smart algorithm calculates fractional fares automatically.
             </p>
           </div>
@@ -376,10 +376,10 @@ export function CinematicAuth() {
           ref={feature3Ref}
           className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16 will-change-transform will-change-opacity"
         >
-          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-white/10 bg-black/30 backdrop-blur-xl text-center">
+          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
             <div className="text-4xl mb-4">🌱</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Safe & Eco-Friendly</h2>
-            <p className="text-slate-300 text-lg md:text-xl font-light">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">Safe & Eco-Friendly</h2>
+            <p className="text-slate-700 dark:text-slate-300 text-lg md:text-xl font-light">
               Build your Trust Score, use SOS alerts, and earn Eco Points for reducing campus traffic.
             </p>
           </div>
