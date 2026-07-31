@@ -21,7 +21,7 @@ import { RideCardSkeleton } from '@/components/ui/RideCardSkeleton'
 import { toast } from 'sonner'
 import { User as UserIcon, LogOut, CheckCircle2, Navigation, Clock, Search, MapPin, Loader2, ArrowRight, X, AlertTriangle, ShieldCheck, ShieldAlert, Check, Car, Bike, Filter, Users, Navigation2, MessageCircle, Star, Share2, Shield, Phone, XCircle, Zap, Plus, List , Sparkles } from 'lucide-react'
 import { playPop, playSuccess, playError, triggerHaptic, triggerHeavyHaptic } from '@/lib/audio'
-import { VehicleBackground } from '@/components/VehicleBackground'
+
 import { ChatModal } from '@/components/ChatModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Notifications } from '@/components/Notifications'
@@ -594,7 +594,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10 pb-24 sm:pb-10 space-y-6 sm:space-y-10 text-foreground relative z-10">
-      <VehicleBackground />
+      
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-5 sm:gap-6 relative pt-1 sm:pt-2">
         <div className="absolute left-0 top-0 flex items-center gap-2 z-50">
