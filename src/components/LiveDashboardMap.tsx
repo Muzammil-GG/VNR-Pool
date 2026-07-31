@@ -9,8 +9,8 @@ import { findBestMatchLocation, VNR_COORDS } from '@/lib/locations'
 // Custom glowing dot icon
 const glowingDotHtml = `
   <div class="relative flex items-center justify-center w-6 h-6">
-    <div class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-emerald-400"></div>
-    <div class="relative inline-flex w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+    <div class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-red-500"></div>
+    <div class="relative inline-flex w-3 h-3 rounded-full bg-red-600 shadow-[0_0_12px_#ef4444] border-[1.5px] border-white"></div>
   </div>
 `
 
@@ -151,9 +151,9 @@ export default function LiveDashboardMap({
           <>
             <Polyline 
               positions={routeCoords} 
-              color="#10b981" 
-              weight={5} 
-              opacity={0.8}
+              color="#3b82f6" 
+              weight={6} 
+              opacity={0.9}
               className="animate-route-flow"
             />
             {selectedRide && (
