@@ -83,7 +83,7 @@ export function ConfirmBoardingDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md w-[95vw] rounded-[2rem] p-6 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xl">
+      <DialogContent className="max-w-md w-[95vw] rounded-[2rem] p-6 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-x-hidden">
         <DialogHeader className="mb-4">
           <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white">Confirm Boarding</DialogTitle>
         </DialogHeader>
@@ -131,10 +131,10 @@ export function ConfirmBoardingDialog({
                 Pickup Location
               </label>
               <Select value={pickup} onValueChange={handlePickupChange}>
-                <SelectTrigger className="w-full bg-white dark:bg-slate-900 border-blue-100 dark:border-blue-900/50 h-12 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-blue-500">
-                  <div className="flex items-center gap-2 truncate">
+                <SelectTrigger className="w-full bg-white dark:bg-slate-900 border-blue-100 dark:border-blue-900/50 h-12 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-blue-500 overflow-hidden">
+                  <div className="flex items-center gap-2 min-w-0 w-full pr-2">
                     <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span className="truncate">{pickup} {pickup === ride.origin ? "(Driver's Start)" : ""}</span>
+                    <span className="truncate flex-1 text-left">{pickup} {pickup === ride.origin ? "(Driver's Start)" : ""}</span>
                   </div>
                 </SelectTrigger>
                 <SelectContent className="max-h-60 rounded-xl z-[1000]">
@@ -152,9 +152,9 @@ export function ConfirmBoardingDialog({
               <label className="text-[10px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
                 Dropoff Location
               </label>
-              <div className="w-full bg-white/60 dark:bg-slate-900/60 border border-blue-100 dark:border-blue-900/50 h-12 rounded-xl flex items-center px-3 gap-2 opacity-80 cursor-not-allowed">
+              <div className="w-full bg-white/60 dark:bg-slate-900/60 border border-blue-100 dark:border-blue-900/50 h-12 rounded-xl flex items-center px-3 gap-2 opacity-80 cursor-not-allowed overflow-hidden">
                 <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
-                <span className="text-slate-900 dark:text-white font-medium truncate">{dropoff}</span>
+                <span className="text-slate-900 dark:text-white font-medium truncate flex-1 text-left">{dropoff}</span>
               </div>
               <p className="text-[10px] text-blue-500 font-medium pt-1">
                 * Dropoff is locked to {dropoff} for this route.
