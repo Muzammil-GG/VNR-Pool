@@ -4,22 +4,60 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Send, Sparkles, Loader2, Bot } from 'lucide-react'
 import { Button } from './ui/button'
-import { useChat } from '@ai-sdk/react'
+
 
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const [localInput, setLocalInput] = useState('')
-  const { messages, isLoading, append } = useChat({
-    api: '/api/ai-chat',
-  })
+  const [messages, setMessages] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!localInput.trim() || isLoading) return
-    append({ role: 'user', content: localInput })
-    setLocalInput('')
+  const onSubmit = async (e?: React.FormEvent, forceInput?: string) => {
+    if (e) e.preventDefault()
+    const textToSend = forceInput || localInput
+    if (!textToSend.trim() || isLoading) return
+    
+    const userMessage = { id: Date.now().toString(), role: 'user', content: textToSend }
+    setMessages(prev => [...prev, userMessage])
+    if (!forceInput) setLocalInput('')
+    setIsLoading(true)
+    
+    try {
+      const res = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [...messages, userMessage] })
+      })
+      
+      if (!res.ok) throw new Error('Failed to fetch')
+      
+      const reader = res.body?.getReader()
+      if (!reader) throw new Error('No reader')
+      
+      const decoder = new TextDecoder()
+      let assistantMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: '' }
+      setMessages(prev => [...prev, assistantMessage])
+      
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        
+        const chunk = decoder.decode(value, { stream: true })
+        assistantMessage.content += chunk
+        setMessages(prev => {
+          const newMessages = [...prev]
+          newMessages[newMessages.length - 1] = { ...assistantMessage }
+          return newMessages
+        })
+      }
+    } catch (error) {
+      console.error(error)
+      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: 'Sorry, I encountered an error.' }])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -87,7 +125,7 @@ export function AIChatbot() {
                       {['How do I book a ride?', 'How does fare splitting work?', 'What are Eco Points?'].map(q => (
                         <button
                           key={q}
-                          onClick={() => append({ role: 'user', content: q })}
+                          onClick={() => onSubmit(undefined, q)}
                           className="px-3 py-1.5 text-xs bg-secondary/80 hover:bg-secondary border border-border/50 rounded-full transition-colors text-muted-foreground hover:text-foreground"
                         >
                           {q}
@@ -97,30 +135,29 @@ export function AIChatbot() {
                   </div>
                 ) : (
                   <div className="space-y-4 pb-4">
-                    {messages.map((m) => (
-                      <motion.div
-                        key={m.id}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        {m.role !== 'user' && (
-                          <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center mr-2 mt-1 shrink-0">
-                            <Sparkles className="w-3 h-3 text-white" />
-                          </div>
-                        )}
-                        <div 
-                          className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
-                            m.role === 'user' 
-                              ? 'bg-blue-600 text-white rounded-br-sm shadow-md' 
-                              : 'bg-secondary text-foreground rounded-bl-sm border border-border/50'
-                          }`}
+                      {messages.map((m: any) => (
+                        <motion.div
+                          key={m.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          {m.role !== 'user' ? renderContent(m.content) : m.content}
-                        </div>
-                      </motion.div>
-                    ))}
+                          {m.role !== 'user' && (
+                            <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center mr-2 mt-1 shrink-0">
+                              <Sparkles className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                          <div 
+                            className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
+                              m.role === 'user' 
+                                ? 'bg-blue-600 text-white rounded-br-sm shadow-md' 
+                                : 'bg-secondary text-foreground rounded-bl-sm border border-border/50'
+                            }`}
+                          >
+                            {m.role !== 'user' ? renderContent(m.parts ? m.parts.filter((p:any) => p.type === 'text').map((p:any) => p.text).join('') : m.content || '') : (m.parts ? m.parts.filter((p:any) => p.type === 'text').map((p:any) => p.text).join('') : m.content || '')}
+                          </div>
+                        </motion.div>
+                      ))}
                     {isLoading && messages[messages.length - 1]?.role === 'user' && (
                       <motion.div
                         initial={{ opacity: 0, y: 8 }}

@@ -33,7 +33,7 @@ Tone: Helpful, polite, Gen-Z friendly but professional, concise. Limit responses
       temperature: 0.7,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('AI Chat Error:', error);
     return NextResponse.json({ error: 'Failed to generate response' }, { status: 500 });

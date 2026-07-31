@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import Image from 'next/image'
 
 export default function DigiLockerMock() {
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
   const [aadhaar, setAadhaar] = useState('')
   const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)

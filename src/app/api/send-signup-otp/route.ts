@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     const parseResult = signupSchema.safeParse(body)
     
     if (!parseResult.success) {
-      return NextResponse.json({ error: parseResult.error.errors[0].message }, { status: 400 })
+      return NextResponse.json({ error: parseResult.error.issues[0].message }, { status: 400 })
     }
     const { email } = parseResult.data
     if (!email) return NextResponse.json({ error: 'Email is required' }, { status: 400 })

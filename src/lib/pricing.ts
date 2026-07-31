@@ -78,10 +78,10 @@ export function calculateDynamicSplitPricing(
   // Fallback to simple equal split if no valid predefined route
   if (!route || route.waypoints.length <= 1) {
     const costPerPerson = Math.round(totalTripCost / passengers.length);
-    const result = passengers.reduce((acc, p) => ({ ...acc, [p.id]: costPerPerson }), {});
+    const result: Record<string, number> = passengers.reduce((acc, p) => ({ ...acc, [p.id]: costPerPerson }), {});
     
     // Correct rounding errors for equal split
-    const currentSum = Object.values(result).reduce((a: any, b: any) => a + b, 0);
+    const currentSum = Object.values(result).reduce((a: number, b: number) => a + b, 0);
     if (currentSum !== totalTripCost && passengers.length > 0) {
       result[passengers[0].id] += (totalTripCost - currentSum);
     }

@@ -358,7 +358,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                   label: 'Start',
                                   onClick: () => startRideMutation.mutate(ride)
                                 },
-                                cancel: { label: 'Cancel' }
+                                cancel: { label: '', onClick: () => {} }
                               })
                             }}
                             className="h-8 text-primary hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
@@ -386,7 +386,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                   label: 'Delete',
                                   onClick: () => deleteRide.mutate(ride.id)
                                 },
-                                cancel: { label: 'Cancel' }
+                                cancel: { label: '', onClick: () => {} }
                               })
                             }}
                             className="h-8 text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
@@ -408,7 +408,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 label: 'Complete',
                                 onClick: () => completeRideMutation.mutate(ride)
                               },
-                              cancel: { label: 'Cancel' }
+                              cancel: { label: '', onClick: () => {} }
                             })
                           }}
                           className="h-8 text-secondary-foreground hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
@@ -777,7 +777,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                     currentSeats: ride.available_seats 
                                   })
                                 },
-                                cancel: { label: 'Keep Seat' }
+                                cancel: { label: '', onClick: () => {} }
                               })
                             }}
                             disabled={cancelMyBooking.isPending}

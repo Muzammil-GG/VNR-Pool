@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRideReminders } from '@/hooks/useRideReminders'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ConfirmBoardingDialog } from '@/components/ConfirmBoardingDialog'
 import { Label } from '@/components/ui/label'
@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Skeleton } from '@/components/ui/skeleton'
 import { RideCardSkeleton } from '@/components/ui/RideCardSkeleton'
 import { toast } from 'sonner'
-import { User as UserIcon, LogOut, CheckCircle2, Navigation, Clock, Search, MapPin, Loader2, ArrowRight, X, AlertTriangle, ShieldCheck, ShieldAlert, Check, Car, Bike, Filter, Users, Navigation2, MessageCircle, Star, Share2, Shield, Phone, XCircle, Zap, Plus, List } from 'lucide-react'
+import { User as UserIcon, LogOut, CheckCircle2, Navigation, Clock, Search, MapPin, Loader2, ArrowRight, X, AlertTriangle, ShieldCheck, ShieldAlert, Check, Car, Bike, Filter, Users, Navigation2, MessageCircle, Star, Share2, Shield, Phone, XCircle, Zap, Plus, List , Sparkles } from 'lucide-react'
 import { playPop, playSuccess, playError, triggerHaptic, triggerHeavyHaptic } from '@/lib/audio'
 import { VehicleBackground } from '@/components/VehicleBackground'
 import { ChatModal } from '@/components/ChatModal'
@@ -1021,25 +1021,25 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         {/* Driver */}
                         <div 
                           className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => setSelectedProfileId(ride.driver.id)}
+                          onClick={() => setSelectedProfileId(ride.driver?.id || null)}
                         >
                           <div className={cn(
                             "w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
-                            !ride.driver.avatar_url && (ride.driver.gender === 'female'
+                            !ride.driver?.avatar_url && (ride.driver?.gender === 'female'
                               ? "bg-gradient-to-br from-pink-400 to-rose-500"
                               : "bg-gradient-to-br from-blue-500 to-blue-700")
                           )}>
-                            {ride.driver.avatar_url ? (
-                              <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                            {ride.driver?.avatar_url ? (
+                              <img src={ride.driver?.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
-                              ride.driver.full_name.charAt(0).toUpperCase()
+                              ride.driver?.full_name.charAt(0).toUpperCase()
                             )}
                           </div>
                           <div>
                             <p className="text-xs uppercase font-bold tracking-widest text-muted-foreground mb-0.5">Driver</p>
                             <p className="text-sm font-extrabold text-foreground leading-none flex items-center">
-                              {ride.driver.full_name} 
-                              <span className="ml-1 scale-90">{renderStars(ride.driver.total_rating_score, ride.driver.rating_count)}</span>
+                              {ride.driver?.full_name} 
+                              <span className="ml-1 scale-90">{renderStars(ride.driver?.total_rating_score || 0, ride.driver?.rating_count || 0)}</span>
                             </p>
                           </div>
                         </div>
@@ -1204,9 +1204,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                           currentSeats: ride.available_seats
                                         })
                                       },
-                                      cancel: {
-                                        label: 'Keep Seat'
-                                      }
+                                      cancel: { label: 'Keep Seat', onClick: () => {} }
                                     })
                                   }}
                                   disabled={cancelBookingMutation.isPending || ride.status === 'in_progress'}
@@ -1263,7 +1261,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         >
                           <MessageCircle className="w-4 h-4 text-primary" />
                         </Button>
-                        <a href={`tel:${ride.driver.mobile_number}`}>
+                        <a href={`tel:${ride.driver?.mobile_number}`}>
                           <Button
                             variant="outline"
                             size="icon"
@@ -1321,7 +1319,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   <div className="space-y-2">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
                     <div className="relative">
-                      <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v})}>
+                      <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v === 'none' ? '' : v})}>
                         <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 min-h-[72px] py-2 rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4 text-left">
                           <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
                         </SelectTrigger>
@@ -1559,7 +1557,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           rideId={chatRide.id}
           currentUserId={currentUserId}
           otherUserId={chatRide.driver_id}
-          otherUserName={chatRide.driver.full_name}
+          otherUserName={chatRide.driver?.full_name || 'Driver'}
         />
       )}
 

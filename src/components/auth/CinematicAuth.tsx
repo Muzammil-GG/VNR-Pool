@@ -48,7 +48,7 @@ const EnvironmentScenery = () => {
 
 export function CinematicAuth() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera>(null!);
   const carGroupRef = useRef<THREE.Group>(null);
   const roadRef = useRef<THREE.Mesh>(null);
   const textOverlayRef = useRef<HTMLDivElement>(null);

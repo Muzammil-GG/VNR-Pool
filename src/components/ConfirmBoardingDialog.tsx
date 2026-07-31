@@ -130,7 +130,7 @@ export function ConfirmBoardingDialog({
               <label className="text-[9px] sm:text-[10px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase block truncate">
                 Pickup Location
               </label>
-              <Select value={pickup} onValueChange={handlePickupChange}>
+              <Select value={pickup} onValueChange={(val) => handlePickupChange(val as string)}>
                 <SelectTrigger className="w-full bg-white dark:bg-slate-900 border-blue-100 dark:border-blue-900/50 h-12 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-blue-500 overflow-hidden">
                   <div className="flex items-center gap-2 min-w-0 w-full pr-2">
                     <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
