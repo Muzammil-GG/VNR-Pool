@@ -908,7 +908,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     }
                     className={cn(
                       "bg-card text-card-foreground rounded-2xl overflow-hidden relative group float-hover shadow-xl border-none",
-                      ride.is_women_only ? "ring-2 ring-pink-500/20 hover:ring-pink-500/50" : "ring-1 ring-border/50 hover:ring-indigo-500/30 transition-all duration-300"
+                      ride.is_women_only ? "ring-2 ring-pink-500/20 hover:ring-pink-500/50" : "ring-1 ring-border/50 hover:ring-blue-500/30 transition-all duration-300"
                     )}
                   >
                     {/* Subtle top gradient stripe */}
@@ -918,7 +918,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         ? "bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500"
                         : ride.ride_category === 'auto_split'
                           ? "bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400"
-                          : "bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-400"
+                          : "bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-400"
                     )} />
 
                     {ride.is_women_only && (
@@ -936,7 +936,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           </p>
                           <div className="text-xl sm:text-2xl font-black text-foreground leading-tight tracking-tight">
                             {ride.origin} <br />
-                            <span className="text-indigo-500">→</span> {ride.destination}
+                            <span className="text-blue-500">→</span> {ride.destination}
                           </div>
                         </div>
                         
@@ -959,7 +959,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide",
                           ride.ride_category === 'auto_split'
                             ? "text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/40"
-                            : "text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/40"
+                            : "text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/40"
                         )}>
                           {ride.ride_category === 'auto_split' ? 'Auto Split' : 'Student Pool'}
                         </span>
@@ -999,7 +999,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             "w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
                             !ride.driver.avatar_url && (ride.driver.gender === 'female'
                               ? "bg-gradient-to-br from-pink-400 to-rose-500"
-                              : "bg-gradient-to-br from-indigo-500 to-indigo-700")
+                              : "bg-gradient-to-br from-blue-500 to-blue-700")
                           )}>
                             {ride.driver.avatar_url ? (
                               <img src={ride.driver.avatar_url} alt="Profile" className="w-full h-full object-cover" />
@@ -1032,9 +1032,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             </>
                           ) : (
                             <>
-                              <div className="text-3xl font-black text-indigo-500 dark:text-indigo-400 flex items-end justify-end gap-1 leading-none">
+                              <div className="text-3xl font-black text-blue-600 dark:text-blue-400 flex items-end justify-end gap-1 leading-none">
                                 {(ride as any).matchType === 'fractional' && (
-                                  <span className="text-[12px] text-indigo-300 dark:text-indigo-700 line-through mb-1">₹{ride.price_per_seat}</span>
+                                  <span className="text-[12px] text-blue-300 dark:text-blue-700 line-through mb-1">₹{ride.price_per_seat}</span>
                                 )}
                                 ₹{(ride as any).fractional_price}
                               </div>
@@ -1211,7 +1211,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                       ? "bg-muted text-muted-foreground cursor-not-allowed"
                                       : hasActiveBooking
                                         ? "bg-muted text-muted-foreground cursor-not-allowed border border-border/50 shadow-inner"
-                                        : "shiny-btn bg-indigo-600 hover:bg-indigo-700 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] border-none"
+                                        : "shiny-btn bg-blue-600 hover:bg-blue-700 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] border-none"
                                 )}
                               >
                                 {ride.driver_id === currentUserId 
@@ -1229,7 +1229,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="bg-transparent border-border hover:bg-indigo-100 dark:hover:bg-indigo-950/30 hover:border-indigo-300 flex-shrink-0 transition-colors"
+                          className="bg-transparent border-border hover:bg-blue-100 dark:hover:bg-blue-950/30 hover:border-blue-300 flex-shrink-0 transition-colors"
                           onClick={() => setChatRide(ride)}
                           title="Chat with Rider"
                         >
