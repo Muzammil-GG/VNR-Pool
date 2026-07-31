@@ -1317,41 +1317,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 
                 {/* Row 2: Route & Vehicle Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
-                    <div className="relative">
-                      <Select value={offerData.route_id ?? 'none'} onValueChange={v => setOfferData({...offerData, route_id: v === 'none' ? '' : v})}>
-                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 min-h-[72px] py-2 rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4 text-left">
-                          <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700 shadow-xl max-h-[300px]">
-                          <SelectItem value="none">
-                            <div className="font-bold">Custom Route</div>
-                            <div className="text-xs text-muted-foreground">No intermediate pickups</div>
-                          </SelectItem>
-                          {COLLEGE_ROUTES.filter(route => {
-                            if (!offerData.origin && !offerData.destination) return true;
-                            const clean = (s: string) => s.toLowerCase().trim();
-                            const o = offerData.origin ? clean(offerData.origin) : '';
-                            const d = offerData.destination ? clean(offerData.destination) : '';
-                            
-                            const oIdx = o ? route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w))) : -1;
-                            const dIdx = d ? route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w))) : -1;
-                            
-                            if (o && !d) return oIdx !== -1;
-                            if (!o && d) return dIdx !== -1;
-                            return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
-                          }).map((route, idx) => (
-                            <SelectItem key={route.id} value={route.id}>
-                              <div className="font-bold">Option {idx + 1}</div>
-                              <div className="text-xs text-slate-500">Via {route.waypoints.join(' → ')}</div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
                   <div className={cn("grid gap-4", rideCategory === 'personal_vehicle' ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1")}>
                     <div className="space-y-2 flex flex-col justify-end">
                       <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2 mb-2">
@@ -1432,6 +1397,41 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         )}
                       </div>
                     )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
+                    <div className="relative">
+                      <Select value={offerData.route_id ?? 'none'} onValueChange={v => setOfferData({...offerData, route_id: v === 'none' ? '' : v})}>
+                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 min-h-[72px] py-2 rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4 text-left">
+                          <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700 shadow-xl max-h-[300px]">
+                          <SelectItem value="none">
+                            <div className="font-bold">Custom Route</div>
+                            <div className="text-xs text-muted-foreground">No intermediate pickups</div>
+                          </SelectItem>
+                          {COLLEGE_ROUTES.filter(route => {
+                            if (!offerData.origin && !offerData.destination) return true;
+                            const clean = (s: string) => s.toLowerCase().trim();
+                            const o = offerData.origin ? clean(offerData.origin) : '';
+                            const d = offerData.destination ? clean(offerData.destination) : '';
+                            
+                            const oIdx = o ? route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w))) : -1;
+                            const dIdx = d ? route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w))) : -1;
+                            
+                            if (o && !d) return oIdx !== -1;
+                            if (!o && d) return dIdx !== -1;
+                            return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
+                          }).map((route, idx) => (
+                            <SelectItem key={route.id} value={route.id}>
+                              <div className="font-bold">Option {idx + 1}</div>
+                              <div className="text-xs text-slate-500">Via {route.waypoints.join(' → ')}</div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
