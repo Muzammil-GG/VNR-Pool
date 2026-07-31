@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Send, Sparkles, Loader2, Bot } from 'lucide-react'
 import { Button } from './ui/button'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 
 export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
