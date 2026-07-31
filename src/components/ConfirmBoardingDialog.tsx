@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getSlicedWaypoints } from '@/lib/routes'
 import { calculateFractionalPrice } from '@/lib/pricing'
-import { AlertCircle, MapPin } from 'lucide-react'
+import { AlertCircle, MapPin, Car, Users } from 'lucide-react'
 
 interface ConfirmBoardingDialogProps {
   isOpen: boolean
@@ -89,35 +89,55 @@ export function ConfirmBoardingDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Driver Info & Time */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex justify-between items-center shadow-sm">
-            <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Driver</span>
-            <span className="font-bold text-slate-900 dark:text-white">{ride.driver_profiles?.full_name || 'Unknown'}</span>
-          </div>
-          
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex justify-between items-center shadow-sm">
-            <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Departure</span>
-            <span className="font-bold text-slate-900 dark:text-white">
-              {new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit', month: 'short', day: 'numeric' })}
-            </span>
+          {/* Driver & Ride Info Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm">
+              <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">Driver</span>
+              <span className="font-bold text-slate-900 dark:text-white truncate block">{ride.driver_profiles?.full_name || 'Unknown'}</span>
+            </div>
+            
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm">
+              <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">Departure</span>
+              <span className="font-bold text-slate-900 dark:text-white truncate block">
+                {new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit', month: 'short', day: 'numeric' })}
+              </span>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm">
+              <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1 flex items-center gap-1">
+                <Car className="w-3 h-3" /> Vehicle
+              </span>
+              <span className="font-bold text-slate-900 dark:text-white truncate block capitalize">
+                {ride.vehicle_type} • {ride.vehicle_number || 'N/A'}
+              </span>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm">
+              <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1 flex items-center gap-1">
+                <Users className="w-3 h-3" /> Seats
+              </span>
+              <span className="font-bold text-slate-900 dark:text-white truncate block">
+                {ride.available_seats} Available
+              </span>
+            </div>
           </div>
 
           {/* Location Selection */}
-          <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/50 rounded-2xl p-4 space-y-4">
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-2xl p-4 space-y-4">
             
             {/* Pickup Location */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold tracking-wider text-purple-600 dark:text-purple-400 uppercase">
+              <label className="text-[10px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
                 Pickup Location
               </label>
               <Select value={pickup} onValueChange={handlePickupChange}>
-                <SelectTrigger className="w-full bg-white dark:bg-slate-900 border-purple-100 dark:border-purple-900/50 h-12 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-purple-500">
+                <SelectTrigger className="w-full bg-white dark:bg-slate-900 border-blue-100 dark:border-blue-900/50 h-12 rounded-xl text-slate-900 dark:text-white font-medium focus:ring-blue-500">
                   <div className="flex items-center gap-2 truncate">
-                    <MapPin className="w-4 h-4 text-purple-500 shrink-0" />
+                    <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
                     <span className="truncate">{pickup} {pickup === ride.origin ? "(Driver's Start)" : ""}</span>
                   </div>
                 </SelectTrigger>
-                <SelectContent className="max-h-60 rounded-xl">
+                <SelectContent className="max-h-60 rounded-xl z-[1000]">
                   {waypoints.map((wp, idx) => (
                     <SelectItem key={idx} value={wp} className="rounded-lg py-3">
                       {wp} {wp === ride.origin ? "(Driver's Start)" : ""}
@@ -129,14 +149,14 @@ export function ConfirmBoardingDialog({
 
             {/* Dropoff Location (Read-only) */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold tracking-wider text-purple-600 dark:text-purple-400 uppercase">
+              <label className="text-[10px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase">
                 Dropoff Location
               </label>
-              <div className="w-full bg-white/60 dark:bg-slate-900/60 border border-purple-100 dark:border-purple-900/50 h-12 rounded-xl flex items-center px-3 gap-2 opacity-80 cursor-not-allowed">
-                <MapPin className="w-4 h-4 text-purple-500 shrink-0" />
+              <div className="w-full bg-white/60 dark:bg-slate-900/60 border border-blue-100 dark:border-blue-900/50 h-12 rounded-xl flex items-center px-3 gap-2 opacity-80 cursor-not-allowed">
+                <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
                 <span className="text-slate-900 dark:text-white font-medium truncate">{dropoff}</span>
               </div>
-              <p className="text-[10px] text-purple-500 font-medium pt-1">
+              <p className="text-[10px] text-blue-500 font-medium pt-1">
                 * Dropoff is locked to {dropoff} for this route.
               </p>
             </div>
@@ -148,7 +168,7 @@ export function ConfirmBoardingDialog({
               <div className="font-bold text-slate-900 dark:text-white">Dynamic Split Price</div>
               <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Based on your route segment</div>
             </div>
-            <div className="text-2xl font-black text-purple-500">
+            <div className="text-2xl font-black text-blue-600 dark:text-blue-400">
               ₹{dynamicPrice}
             </div>
           </div>
@@ -167,7 +187,7 @@ export function ConfirmBoardingDialog({
             onConfirm(pickup, dropoff, dynamicPrice)
             onClose()
           }}
-          className="w-full mt-6 bg-[#A855F7] hover:bg-[#9333EA] text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgba(168,85,247,0.39)] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
         >
           Request Seat
         </button>
