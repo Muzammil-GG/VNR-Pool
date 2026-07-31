@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Skeleton } from '@/components/ui/skeleton'
 import { RideCardSkeleton } from '@/components/ui/RideCardSkeleton'
 import { toast } from 'sonner'
-import { User as UserIcon, LogOut, CheckCircle2, Navigation, Clock, Search, MapPin, Loader2, ArrowRight, X, AlertTriangle, ShieldCheck, ShieldAlert, Check, Car, Bike, Filter, Users, Navigation2, MessageCircle, Star, Share2, Shield, Phone, XCircle, Zap } from 'lucide-react'
+import { User as UserIcon, LogOut, CheckCircle2, Navigation, Clock, Search, MapPin, Loader2, ArrowRight, X, AlertTriangle, ShieldCheck, ShieldAlert, Check, Car, Bike, Filter, Users, Navigation2, MessageCircle, Star, Share2, Shield, Phone, XCircle, Zap, Plus, List } from 'lucide-react'
 import { playPop, playSuccess, playError, triggerHaptic, triggerHeavyHaptic } from '@/lib/audio'
 import { VehicleBackground } from '@/components/VehicleBackground'
 import { ChatModal } from '@/components/ChatModal'
@@ -554,7 +554,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-10 text-foreground relative z-10">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10 pb-24 sm:pb-10 space-y-6 sm:space-y-10 text-foreground relative z-10">
       <VehicleBackground />
       {/* ── Header ────────────────────────────── */}
       <div className="flex flex-col items-center gap-5 sm:gap-6 relative pt-1 sm:pt-2">
@@ -666,7 +666,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           initial={{ opacity: 0, scale: 0.93 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.15, duration: 0.5, ease: [0.22,1,0.36,1] }}
-          className="flex p-1 bg-muted/60 rounded-full border border-border w-full backdrop-blur-md shadow-sm"
+          className="hidden sm:flex p-1 bg-muted/60 rounded-full border border-border w-full backdrop-blur-md shadow-sm"
         >
           {TABS.map((tab) => (
             <button
@@ -1527,6 +1527,50 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         defaultPickup={originFilter || undefined}
         defaultDropoff={destinationFilter || undefined}
       />
+
+      {/* ── Mobile Bottom Navigation ────────────────────────────── */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-50 flex items-center justify-around px-2 pb-safe">
+        <button
+          onClick={() => setActiveTab('Find a Ride')}
+          className={cn(
+            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors",
+            activeTab === 'Find a Ride' ? "text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-300"
+          )}
+        >
+          <Search className={cn("w-5 h-5 transition-transform", activeTab === 'Find a Ride' && "scale-110")} />
+          <span className="text-[10px] font-medium tracking-wide">Search</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('Offer a Seat')}
+          className={cn(
+            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors relative",
+            activeTab === 'Offer a Seat' ? "text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-300"
+          )}
+        >
+          <div className={cn(
+            "absolute -top-4 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform",
+            activeTab === 'Offer a Seat' 
+              ? "bg-blue-600 text-white scale-110" 
+              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+          )}>
+            <Plus className="w-6 h-6" />
+          </div>
+          <span className="text-[10px] font-medium tracking-wide mt-6">Offer</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('My Rides')}
+          className={cn(
+            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors",
+            activeTab === 'My Rides' ? "text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-300"
+          )}
+        >
+          <List className={cn("w-5 h-5 transition-transform", activeTab === 'My Rides' && "scale-110")} />
+          <span className="text-[10px] font-medium tracking-wide">Rides</span>
+        </button>
+      </div>
+
     </div>
   )
 }
