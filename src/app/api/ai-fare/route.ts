@@ -30,8 +30,11 @@ Vehicle Type: ${vehicle_type || 'Car'}
 Number of Passengers: ${passengers || 1}
 
 Rules:
-- Give a brief, one-sentence reasoning for the fare considering traffic, distance, and standard Hyderabad fuel/auto rates.
-- Suggest a TOTAL fair fare in Indian Rupees (₹) as a number.
+- The reasoning MUST state that you compared prices across Rapido, Uber, and Ola.
+- If the vehicle is an auto, base it on standard auto prices. If it's a bike, base it on bike taxi prices. If it's a car, base it on cab prices.
+- In the reasoning, mention the standard commercial fare (from Uber/Ola/Rapido) and then state the highly discounted student pool price per seat.
+- Keep the reasoning brief (1-2 sentences).
+- Suggest a TOTAL fair pool fare (for all passengers combined) in Indian Rupees (₹) as a number.
 - Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks. Just the raw JSON.`;
 
     const { text } = await generateText({
