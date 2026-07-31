@@ -1481,8 +1481,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300">
+                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2">
                         {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
+                        <span className="hidden sm:flex text-[10px] bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800 items-center gap-1">
+                          <Sparkles className="w-3 h-3" />
+                          Powered by Featherless AI
+                        </span>
                       </Label>
                       <Button
                         type="button"
