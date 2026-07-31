@@ -13,8 +13,8 @@ export function RideCardSkeleton({ index = 0 }: { index?: number }) {
       transition={{ delay: index * 0.1, duration: 0.4, ease: "easeOut" }}
     >
       <SpotlightCard
-        spotlightColor="oklch(0.58 0.22 255 / 0.15)"
-        className="bg-card text-card-foreground rounded-2xl overflow-hidden relative shadow-xl border-none ring-1 ring-border/50"
+        spotlightColor="oklch(0.58 0.22 255 / 0.08)"
+        className="bg-card text-card-foreground rounded-none overflow-hidden relative shadow-xl border-none ring-1 ring-border/50"
       >
         <div className="absolute top-0 inset-x-0 h-1.5 skeleton-shimmer bg-muted" />
         

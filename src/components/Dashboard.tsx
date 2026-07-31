@@ -905,7 +905,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         : 'oklch(0.58 0.22 255 / 0.15)' /* Indigo */
                     }
                     className={cn(
-                      "bg-card text-card-foreground rounded-2xl overflow-hidden relative group float-hover shadow-xl border-none",
+                      "bg-card text-card-foreground rounded-none overflow-hidden relative group float-hover shadow-xl border-none",
                       ride.is_women_only ? "ring-2 ring-pink-500/20 hover:ring-pink-500/50" : "ring-1 ring-border/50 hover:ring-blue-500/30 transition-all duration-300"
                     )}
                   >

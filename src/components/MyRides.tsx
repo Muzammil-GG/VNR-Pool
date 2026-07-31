@@ -312,7 +312,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
         ) : (
           <div className="space-y-6">
             {offeredRides.map(ride => (
-              <Card key={ride.id} className="glass-card overflow-hidden">
+              <Card key={ride.id} className="glass-card overflow-hidden rounded-none">
                 <CardHeader className="bg-secondary/30 pb-4 border-b border-border/40">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="space-y-2">
@@ -582,7 +582,7 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
               const isApproved = b.status === 'approved'
               
               return (
-                <Card key={b.id} className="glass-card overflow-hidden">
+                <Card key={b.id} className="glass-card overflow-hidden rounded-none">
                   <div className={cn(
                     "h-1 w-full",
                     ride.status === 'completed' ? "bg-muted-foreground" :
