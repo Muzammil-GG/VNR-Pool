@@ -17,21 +17,25 @@ export async function POST(req: Request) {
 
     const isCommercialSplit = ride_category === 'auto_split';
     
-    const prompt = `Calculate a fair trip fare for a trip in Hyderabad, India.
+    const prompt = `Calculate a highly accurate trip fare for a trip in Hyderabad, India.
 Details:
 Origin: ${origin}
 Destination: ${destination}
-Vehicle Type: ${vehicle_type || 'Car'}
+Vehicle Type: ${vehicle_type || 'car'}
+Number of Passengers: ${passengers || 1}
 
-Rules:
-- The reasoning MUST state that you compared prices across Rapido, Uber, and Ola.
-- If the vehicle is an auto, base it on standard auto prices. If it's a bike, base it on bike taxi prices. If it's a car, base it on cab prices.
-${isCommercialSplit 
-  ? '- Since this is a commercial ride split (Auto Split/Cab), suggest the FULL estimated commercial meter fare for the entire trip.' 
-  : '- Since this is a personal vehicle carpool between students, suggest a highly discounted student pool price PER SEAT.'}
-- Keep the reasoning brief (1-2 sentences).
-- Suggest the final fare in Indian Rupees (₹) as a number.
-- Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks. Just the raw JSON.`;
+Pricing Logic Rules (MANDATORY):
+1. First, estimate the real-world driving distance in kilometers between the Origin and Destination in Hyderabad.
+2. Calculate the standard commercial meter fare (Rapido/Uber/Ola) using these strict rates:
+   - Car/Cab: Base ₹50 + ₹18 per km
+   - Auto Rickshaw: Base ₹30 + ₹12 per km
+   - Bike Taxi: Base ₹20 + ₹7 per km
+3. ${isCommercialSplit 
+  ? 'Since this is a commercial ride split (Auto Split), your final suggested_total_fare MUST be the FULL commercial meter fare.' 
+  : 'Since this is a personal vehicle student pool, take the commercial fare, divide it by the number of passengers to get the per-seat commercial price, and apply a strict discount of EXACTLY ₹30 to ₹35. Your final suggested_total_fare MUST be this discounted per-seat price.'}
+4. Ensure the final fare is a realistic, rounded integer.
+5. In your reasoning, briefly state the estimated distance, the standard commercial rate, and how you derived the final suggested fare (mentioning the max ₹35 discount if applicable).
+6. Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks.`;
 
     const response = await fetch('https://api.featherless.ai/v1/chat/completions', {
       method: 'POST',
