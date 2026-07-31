@@ -32,9 +32,9 @@ Pricing Logic Rules (MANDATORY):
    - Bike Taxi: Base ₹20 + ₹7 per km
 3. ${isCommercialSplit 
   ? 'Since this is a commercial ride split (Auto Split), your final suggested_total_fare MUST be the FULL commercial meter fare.' 
-  : 'Since this is a personal vehicle student pool, take the commercial fare, divide it by the number of passengers to get the per-seat commercial price, and apply a strict discount of EXACTLY ₹30 to ₹35. Your final suggested_total_fare MUST be this discounted per-seat price.'}
+  : 'Since this is a personal vehicle student pool, calculate the total commercial meter fare, and simply divide it by the number of passengers to get the per-seat price. Your final suggested_total_fare MUST be this exact per-seat commercial price. DO NOT apply any further discounts.'}
 4. Ensure the final fare is a realistic, rounded integer.
-5. In your reasoning, briefly state the estimated distance, the standard commercial rate, and how you derived the final suggested fare (mentioning the max ₹35 discount if applicable).
+5. In your reasoning, briefly state the estimated distance, the standard commercial rate, and how you derived the final suggested fare.
 6. Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks.`;
 
     const response = await fetch('https://api.featherless.ai/v1/chat/completions', {
