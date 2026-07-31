@@ -72,10 +72,13 @@ export async function POST(req: Request) {
       }
     });
 
+    if (!response.body) {
+      throw new Error('No response body returned from Featherless API.');
+    }
     return new Response(response.body.pipeThrough(stream), {
       headers: {
-        'Content-Type': 'text/plain',
-        'Cache-Control': 'no-cache',
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
         'Connection': 'keep-alive',
       }
     });

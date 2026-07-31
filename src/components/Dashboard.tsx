@@ -1320,7 +1320,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   <div className="space-y-2">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
                     <div className="relative">
-                      <Select value={(offerData.route_id as string) || 'none'} onValueChange={v => setOfferData({...offerData, route_id: v === 'none' ? '' : v})}>
+                      <Select value={offerData.route_id ?? 'none'} onValueChange={v => setOfferData({...offerData, route_id: v === 'none' ? '' : v})}>
                         <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 min-h-[72px] py-2 rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4 text-left">
                           <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
                         </SelectTrigger>
