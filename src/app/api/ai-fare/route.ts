@@ -1,18 +1,11 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { generateText } from 'ai';
 import { NextResponse } from 'next/server';
-
-const featherless = createOpenAI({
-  name: 'featherless',
-  apiKey: process.env.FEATHERLESS_API_KEY,
-  baseURL: 'https://api.featherless.ai/v1',
-});
 
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    if (!process.env.FEATHERLESS_API_KEY || process.env.FEATHERLESS_API_KEY.includes('your_featherless_api_key_here')) {
+    const apiKey = process.env.FEATHERLESS_API_KEY;
+    if (!apiKey || apiKey.includes('your_featherless_api_key_here')) {
       return NextResponse.json({ error: 'Featherless API key is missing or invalid' }, { status: 401 });
     }
 
@@ -37,12 +30,36 @@ Rules:
 - Suggest a TOTAL fair pool fare (for all passengers combined) in Indian Rupees (₹) as a number.
 - Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks. Just the raw JSON.`;
 
-    const { text } = await generateText({
-      model: featherless('meta-llama/Meta-Llama-3-8B-Instruct'),
-      system: `You are a hyper-local Hyderabad transport pricing expert. Output ONLY valid JSON in this format: {"reasoning": "string", "suggested_total_fare": number}`,
-      prompt,
-      temperature: 0.1,
+    const response = await fetch('https://api.featherless.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'Qwen/Qwen2.5-72B-Instruct',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a hyper-local Hyderabad transport pricing expert. Output ONLY valid JSON in this format: {"reasoning": "string", "suggested_total_fare": number}'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.1,
+        stream: false
+      })
     });
+
+    if (!response.ok) {
+      console.error('Featherless API error:', response.statusText);
+      return NextResponse.json({ error: 'Failed to fetch from AI provider' }, { status: response.status });
+    }
+
+    const data = await response.json();
+    const text = data.choices[0]?.message?.content || '';
 
     try {
       // Sometimes LLMs wrap JSON in markdown blocks even when told not to. Clean it up.
