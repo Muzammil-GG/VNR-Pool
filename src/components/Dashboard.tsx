@@ -10,7 +10,9 @@ import { createClient } from '@/lib/supabase/client'
 import { useRideReminders } from '@/hooks/useRideReminders'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ConfirmBoardingDialog } from '@/components/ConfirmBoardingDialog'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'
@@ -74,6 +76,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   
   const [activeTab, setActiveTab] = useState(TABS[0])
   const [rideCategory, setRideCategory] = useState<'auto_split' | 'personal_vehicle'>('personal_vehicle')
+  const [selectedRideForBooking, setSelectedRideForBooking] = useState<any>(null)
   const [expandedMaps, setExpandedMaps] = useState<string[]>([])
   
   // Filters
@@ -478,18 +481,24 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       return
     }
     
+    // Open the confirmation dialog instead of booking immediately
+    setSelectedRideForBooking(ride)
+  }
+
+  const executeBooking = async (pickupLocation: string, dropoffLocation: string, fractionalPrice: number) => {
+    if (!selectedRideForBooking) return;
+    const ride = selectedRideForBooking;
+
     let bookingData: any = {
       ride_id: ride.id,
       passenger_id: currentUserId,
       status: 'pending'
     }
 
-    // Save locations and price for every booking request so the driver has full context
-    bookingData.pickup_location = originFilter || ride.origin
-    bookingData.dropoff_location = destinationFilter || ride.destination
-    bookingData.fractional_price = ride.matchType === 'fractional' 
-      ? ride.fractional_price 
-      : ride.price_per_seat;
+    // Save customized locations and price
+    bookingData.pickup_location = pickupLocation
+    bookingData.dropoff_location = dropoffLocation
+    bookingData.fractional_price = fractionalPrice
 
     const { error } = await supabase.from('bookings').insert(bookingData)
     
@@ -1043,7 +1052,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border",
                           ride.available_seats === 0
                             ? "text-red-600 bg-red-100 dark:bg-red-950/40 border-red-200 dark:border-red-900/40"
-                            : "text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/40"
+                            : "text-emerald-700 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/40"
                         )}>
                           <Users className="w-3.5 h-3.5" />
                           {ride.available_seats === 0 ? 'Full' : (
@@ -1509,7 +1518,15 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         isOpen={!!selectedProfileId}
         onClose={() => setSelectedProfileId(null)}
       />
+
+      <ConfirmBoardingDialog 
+        isOpen={!!selectedRideForBooking}
+        onClose={() => setSelectedRideForBooking(null)}
+        ride={selectedRideForBooking}
+        onConfirm={executeBooking}
+        defaultPickup={originFilter || undefined}
+        defaultDropoff={destinationFilter || undefined}
+      />
     </div>
   )
 }
-
