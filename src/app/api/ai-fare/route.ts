@@ -9,25 +9,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Featherless API key is missing or invalid' }, { status: 401 });
     }
 
-    const { origin, destination, vehicle_type, passengers } = await req.json();
+    const { origin, destination, vehicle_type, passengers, ride_category } = await req.json();
 
     if (!origin || !destination) {
       return NextResponse.json({ error: 'Origin and destination are required' }, { status: 400 });
     }
 
-    const prompt = `Calculate a fair carpool fare for a trip in Hyderabad, India.
+    const isCommercialSplit = ride_category === 'auto_split';
+    
+    const prompt = `Calculate a fair trip fare for a trip in Hyderabad, India.
 Details:
 Origin: ${origin}
 Destination: ${destination}
 Vehicle Type: ${vehicle_type || 'Car'}
-Number of Passengers: ${passengers || 1}
 
 Rules:
 - The reasoning MUST state that you compared prices across Rapido, Uber, and Ola.
 - If the vehicle is an auto, base it on standard auto prices. If it's a bike, base it on bike taxi prices. If it's a car, base it on cab prices.
-- In the reasoning, mention the standard commercial fare (from Uber/Ola/Rapido) and then state the highly discounted student pool price per seat.
+${isCommercialSplit 
+  ? '- Since this is a commercial ride split (Auto Split/Cab), suggest the FULL estimated commercial meter fare for the entire trip.' 
+  : '- Since this is a personal vehicle carpool between students, suggest a highly discounted student pool price PER SEAT.'}
 - Keep the reasoning brief (1-2 sentences).
-- Suggest a TOTAL fair pool fare (for all passengers combined) in Indian Rupees (₹) as a number.
+- Suggest the final fare in Indian Rupees (₹) as a number.
 - Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks. Just the raw JSON.`;
 
     const response = await fetch('https://api.featherless.ai/v1/chat/completions', {

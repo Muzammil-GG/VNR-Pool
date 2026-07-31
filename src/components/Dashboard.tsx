@@ -424,6 +424,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           destination: offerData.destination,
           vehicle_type: offerData.vehicle_type,
           passengers: offerData.total_seats,
+          ride_category: rideCategory,
         })
       })
       const data = await res.json()
