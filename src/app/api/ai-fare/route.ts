@@ -35,7 +35,7 @@ ${isCommercialSplit
   ? '   - You are calculating for an AUTO SPLIT / CAB SPLIT. You MUST return the FULL TOTAL TRIP FARE in `suggested_total_fare`. Do not divide it by passengers.' 
   : `   - You are calculating for a STUDENT POOL. You MUST return the PRICE PER SEAT in \`suggested_total_fare\`. To find the price per seat, divide the full commercial fare by the number of passengers (${passengers}).`}
 4. Ensure the final fare is a realistic, rounded integer.
-5. In your reasoning, briefly state the estimated distance, the standard commercial rate, and how you derived the final suggested fare.
+5. In your reasoning, provide a VERY SHORT summary (MAX 10 WORDS) of the calculation (e.g. "15km trip. Standard ₹320. Applied discount").
 6. Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks.`;
 
     const response = await fetch('https://api.featherless.ai/v1/chat/completions', {
@@ -45,7 +45,7 @@ ${isCommercialSplit
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'Qwen/Qwen2.5-72B-Instruct',
+        model: 'Qwen/Qwen2.5-7B-Instruct',
         messages: [
           {
             role: 'system',

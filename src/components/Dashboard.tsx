@@ -832,7 +832,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="relative z-50 bg-background/60 dark:bg-slate-900/40 backdrop-blur-3xl rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row flex-wrap gap-5 items-start sm:items-end border border-indigo-500/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(79,70,229,0.1)]"
+            className="relative z-50 bg-background/60 dark:bg-slate-900/40 backdrop-blur-3xl rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row flex-wrap gap-5 items-start sm:items-end border border-blue-500/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(59,130,246,0.1)]"
           >
             <div className="space-y-2 w-full sm:flex-1 min-w-[140px]">
               <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
@@ -842,7 +842,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. JNTU Metro"
                 value={originFilter}
                 onChange={setOriginFilter}
-                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-indigo-500 focus-visible:border-indigo-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
+                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
               />
             </div>
             <div className="space-y-2 w-full sm:flex-1 min-w-[140px]">
@@ -853,7 +853,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 placeholder="e.g. VNR VJIET"
                 value={destinationFilter}
                 onChange={setDestinationFilter}
-                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-indigo-500 focus-visible:border-indigo-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
+                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
               />
             </div>
             <div className="space-y-2 w-full sm:flex-[0.5] min-w-[120px]">
@@ -876,7 +876,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   value={dateFilter}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={e => setDateFilter(e.target.value)}
-                  className="h-[46px] bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-indigo-500 focus-visible:border-indigo-500 rounded-xl font-medium px-3 w-full shadow-sm"
+                  className="h-[46px] bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-xl font-medium px-3 w-full shadow-sm"
                 />
               </div>
             </div>
@@ -910,9 +910,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 className="col-span-full flex flex-col items-center justify-center py-16 sm:py-24 text-muted-foreground gap-5"
               >
                 <div className="relative w-24 h-24 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-indigo-500/10 rounded-full animate-ping opacity-50" />
+                  <div className="absolute inset-0 bg-blue-500/10 rounded-full animate-ping opacity-50" />
                   <div className="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-muted to-muted/30 flex items-center justify-center border border-border shadow-inner">
-                    <Car className="w-10 h-10 text-indigo-500/50" />
+                    <Car className="w-10 h-10 text-blue-500/50" />
                   </div>
                 </div>
                 <div className="text-center space-y-2 max-w-sm">
@@ -921,7 +921,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 </div>
                 <Button 
                   onClick={() => setActiveTab('Offer a Seat')}
-                  className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-500/30 px-6 py-6"
+                  className="mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-500/30 px-6 py-6"
                 >
                   <Car className="w-5 h-5 mr-2" />
                   Be the first to offer a seat!
@@ -1212,7 +1212,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                   className={cn(
                                     "w-full font-bold transition-all duration-300",
                                     ride.status === 'in_progress'
-                                      ? "bg-indigo-500 text-white opacity-100"
+                                      ? "bg-blue-500 text-white opacity-100"
                                       : isApproved
                                         ? "bg-primary hover:bg-red-500 text-primary-foreground hover:text-white shadow-md hover:shadow-red-500/30"
                                         : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
@@ -1482,7 +1482,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     <div className="flex justify-between items-center">
                       <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2">
                         {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
-                        <span className="hidden sm:flex text-[10px] bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800 items-center gap-1">
+                        <span className="hidden sm:flex text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800 items-center gap-1">
                           <Sparkles className="w-3 h-3" />
                           Powered by Featherless AI
                         </span>
@@ -1493,7 +1493,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         size="sm"
                         onClick={handleAIFareSuggestion}
                         disabled={isAIFareLoading || !offerData.origin || !offerData.destination}
-                        className="h-7 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                        className="h-7 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                       >
                         {isAIFareLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
                         AI Suggestion
@@ -1506,7 +1506,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 font-black text-xl"
                     />
                     {aiFareReasoning && (
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium animate-in slide-in-from-top-1 fade-in">
+                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium animate-in slide-in-from-top-1 fade-in">
                         <Sparkles className="w-3 h-3 inline mr-1" /> {aiFareReasoning}
                       </p>
                     )}
