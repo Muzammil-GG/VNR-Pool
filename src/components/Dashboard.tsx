@@ -706,14 +706,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         ].map(({ key, label, icon: Icon, color }) => (
           <SpotlightCard
             key={key}
-            spotlightColor={color === 'yellow' ? 'oklch(0.70 0.18 80 / 0.18)' : 'oklch(0.58 0.22 255 / 0.18)'}
+            spotlightColor='oklch(0.58 0.22 255 / 0.10)'
             className={cn(
               "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale select-none",
               rideCategory === key
-                ? color === 'yellow'
-                  ? "border-yellow-500/50 bg-card shadow-md scale-[1.04]"
-                  : "border-blue-500/50 bg-card shadow-md scale-[1.04]"
-                : "border-border bg-card/40 hover:bg-card/70 opacity-60 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm glass-card"
+                ? "border-blue-500/50 bg-card shadow-md scale-[1.04]"
+                : "border-border bg-card/40 hover:bg-card/70 opacity-60 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm"
             )}
             onClick={() => handleCategoryChange(key as 'auto_split' | 'personal_vehicle')}
             role="button"
@@ -723,13 +721,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             <div className={cn(
               "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110",
               rideCategory === key
-                ? color === 'yellow' ? 'bg-yellow-400/20' : 'bg-blue-400/20'
-                : 'bg-muted/60'
+                ? 'bg-blue-500/10'
+                : 'bg-muted'
             )}>
               <Icon className={cn(
                 "w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300",
                 rideCategory === key
-                  ? color === 'yellow' ? 'text-yellow-500' : 'text-blue-500'
+                  ? 'text-blue-500'
                   : 'text-muted-foreground'
               )} />
             </div>
@@ -911,15 +909,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       ride.is_women_only ? "ring-2 ring-pink-500/20 hover:ring-pink-500/50" : "ring-1 ring-border/50 hover:ring-blue-500/30 transition-all duration-300"
                     )}
                   >
-                    {/* Subtle top gradient stripe */}
-                    <div className={cn(
-                      "absolute top-0 inset-x-0 h-1.5",
-                      ride.is_women_only
-                        ? "bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500"
-                        : ride.ride_category === 'auto_split'
-                          ? "bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400"
-                          : "bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-400"
-                    )} />
+                    {/* Subtle top stripe removed for cleaner UI */}
 
                     {ride.is_women_only && (
                       <div className="absolute top-1 right-0 bg-pink-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl flex items-center gap-1 shadow-md z-10">

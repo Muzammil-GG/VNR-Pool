@@ -86,19 +86,7 @@ export function VehicleBackground() {
         }}
       />
       
-      {/* Ambient Glowing Orbs */}
-      <div 
-        className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/15 blur-[120px] mix-blend-normal dark:mix-blend-screen animate-pulse" 
-        style={{ animationDuration: '8s' }} 
-      />
-      <div 
-        className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-500/10 blur-[120px] mix-blend-normal dark:mix-blend-screen animate-pulse" 
-        style={{ animationDuration: '10s', animationDelay: '2s' }} 
-      />
-      <div 
-        className="absolute bottom-[-10%] left-[20%] w-[60%] h-[40%] rounded-full bg-blue-500/10 blur-[120px] mix-blend-normal dark:mix-blend-screen animate-pulse" 
-        style={{ animationDuration: '12s', animationDelay: '1s' }} 
-      />
+      {/* Ambient Glowing Orbs Removed for cleaner UI */}
 
       {/* Floating Vehicles */}
       {vehicles.map((v, i) => {
