@@ -10,7 +10,7 @@ export function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
+  const { messages, input, setInput, handleSubmit, isLoading, append } = useChat({
     api: '/api/ai-chat',
   })
 
@@ -139,7 +139,7 @@ export function AIChatbot() {
                   <input
                     type="text"
                     value={input || ''}
-                    onChange={handleInputChange}
+                    onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask me anything..."
                     className="flex-1 bg-secondary/50 border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none rounded-full h-10 px-4 text-sm transition-all"
                   />
