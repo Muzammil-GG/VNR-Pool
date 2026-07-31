@@ -354,9 +354,13 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     }
   }, [rides])
 
+  const [isAIFareLoading, setIsAIFareLoading] = useState(false)
+  const [aiFareReasoning, setAiFareReasoning] = useState<string | null>(null)
+
   // Reset animation flag if tab changes
   useEffect(() => {
     hasAnimatedFeed.current = false
+    setAiFareReasoning(null)
   }, [activeTab])
 
   // Offer Ride Form State
@@ -388,6 +392,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
     playPop()
   }
 
+  useEffect(() => {
+    setAiFareReasoning(null)
+  }, [offerData.origin, offerData.destination, offerData.vehicle_type])
+
   // Pre-fill vehicle number from profile on load
   useEffect(() => {
     if (currentUserProfile && !offerData.vehicle_number) {
@@ -399,6 +407,36 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       }))
     }
   }, [currentUserProfile])
+
+  const handleAIFareSuggestion = async () => {
+    if (!offerData.origin || !offerData.destination) {
+      toast.error("Please enter origin and destination first.")
+      return
+    }
+    setIsAIFareLoading(true)
+    setAiFareReasoning(null)
+    try {
+      const res = await fetch('/api/ai-fare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          origin: offerData.origin,
+          destination: offerData.destination,
+          vehicle_type: offerData.vehicle_type,
+          passengers: offerData.total_seats,
+        })
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setOfferData(prev => ({ ...prev, price_per_seat: data.suggested_total_fare }))
+      setAiFareReasoning(data.reasoning)
+      toast.success("AI calculated a fair fare!")
+    } catch (err: any) {
+      toast.error(err.message || "Failed to get AI suggestion")
+    } finally {
+      setIsAIFareLoading(false)
+    }
+  }
 
   const offerMutation = useMutation({
     mutationFn: async () => {
@@ -1442,15 +1480,33 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 {/* Row 5: Pricing */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">
-                      {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
-                    </Label>
+                    <div className="flex justify-between items-center">
+                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300">
+                        {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
+                      </Label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleAIFareSuggestion}
+                        disabled={isAIFareLoading || !offerData.origin || !offerData.destination}
+                        className="h-7 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                      >
+                        {isAIFareLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                        AI Suggestion
+                      </Button>
+                    </div>
                     <Input 
                       type="number" min="0"
                       value={offerData.price_per_seat || ''}
                       onChange={e => setOfferData({...offerData, price_per_seat: parseInt(e.target.value) || 0})}
-                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500"
+                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 font-black text-xl"
                     />
+                    {aiFareReasoning && (
+                      <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium animate-in slide-in-from-top-1 fade-in">
+                        <Sparkles className="w-3 h-3 inline mr-1" /> {aiFareReasoning}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2 flex flex-col">
                     <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Pricing Method</Label>
