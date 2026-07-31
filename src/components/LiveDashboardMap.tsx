@@ -104,7 +104,6 @@ export default function LiveDashboardMap({
         zoom={12} 
         style={{ height: '100%', width: '100%', background: '#0f172a' }}
         zoomControl={false}
-        scrollWheelZoom={false}
       >
         {/* Google Maps standard tiles for precise and readable detailing */}
         <TileLayer

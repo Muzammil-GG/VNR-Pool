@@ -95,7 +95,6 @@ export default function RouteMap({ waypoints, className = "h-48 w-full rounded-x
         center={center} 
         zoom={11} 
         style={{ height: '100%', width: '100%' }}
-        scrollWheelZoom={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.google.com/maps">Google Maps</a>'
