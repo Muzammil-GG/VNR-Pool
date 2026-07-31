@@ -138,7 +138,7 @@ export function AIChatbot() {
                 <form onSubmit={handleSubmit} className="flex items-center gap-2">
                   <input
                     type="text"
-                    value={input}
+                    value={input || ''}
                     onChange={handleInputChange}
                     placeholder="Ask me anything..."
                     className="flex-1 bg-secondary/50 border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none rounded-full h-10 px-4 text-sm transition-all"
@@ -146,7 +146,7 @@ export function AIChatbot() {
                   <Button 
                     type="submit" 
                     size="icon" 
-                    disabled={!input.trim() || isLoading}
+                    disabled={!(input || '').trim() || isLoading}
                     className="rounded-full h-10 w-10 bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-transform active:scale-95"
                   >
                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
