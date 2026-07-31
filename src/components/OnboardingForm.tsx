@@ -16,19 +16,19 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 
 const branches = ["CSE", "ECE", "IT", "EEE", "MECH", "CIVIL", "AIML", "DS", "CSBS"]
 
-export function OnboardingForm({ userEmail, userId }: { userEmail: string, userId: string }) {
+export function OnboardingForm({ userEmail, userId, userMetadata }: { userEmail: string, userId: string, userMetadata?: any }) {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const extractedRollNo = userEmail.split('@')[0].toUpperCase()
   const [formData, setFormData] = useState({
-    full_name: '',
+    full_name: userMetadata?.full_name || userMetadata?.name || '',
     roll_no: extractedRollNo,
     branch: '',
     mobile_number: '',
     gender: '',
     car_number: '',
     bike_number: '',
-    avatar_url: '' as string | null
+    avatar_url: (userMetadata?.avatar_url || userMetadata?.picture || '') as string | null
   })
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const router = useRouter()
@@ -243,16 +243,24 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="full_name" className="font-semibold text-foreground">Full Name</Label>
-                    <Input
-                      id="full_name"
-                      placeholder="John Doe"
-                      className="bg-background border-border focus-visible:ring-blue-500 h-11"
-                      value={formData.full_name}
-                      onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                    />
-                  </div>
+                    {!(userMetadata?.full_name || userMetadata?.name) && (
+                      <div className="space-y-2">
+                        <Label htmlFor="full_name" className="font-semibold text-foreground">Full Name</Label>
+                        <Input
+                          id="full_name"
+                          placeholder="John Doe"
+                          className="bg-background border-border focus-visible:ring-blue-500 h-11"
+                          value={formData.full_name}
+                          onChange={e => setFormData({ ...formData, full_name: e.target.value })}
+                        />
+                      </div>
+                    )}
+                    {(userMetadata?.full_name || userMetadata?.name) && (
+                      <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 text-center space-y-1">
+                        <p className="text-sm text-muted-foreground">Welcome back,</p>
+                        <p className="font-bold text-lg text-foreground">{formData.full_name}</p>
+                      </div>
+                    )}
                   <Button className="w-full h-11 font-semibold bg-blue-600 hover:bg-blue-700 text-white mt-4 rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all" onClick={handleNext}>
                     Next
                   </Button>

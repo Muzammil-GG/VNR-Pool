@@ -20,7 +20,7 @@ export default async function Home() {
     .single()
 
   if (!userProfile?.profile_completed) {
-    return <OnboardingForm userEmail={user.email!} userId={user.id} />
+    return <OnboardingForm userEmail={user.email!} userId={user.id} userMetadata={user.user_metadata} />
   }
 
   return (
