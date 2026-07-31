@@ -27,12 +27,13 @@ Number of Passengers: ${passengers || 1}
 Pricing Logic Rules (MANDATORY):
 1. First, estimate the real-world driving distance in kilometers between the Origin and Destination in Hyderabad.
 2. Calculate the standard commercial meter fare (Rapido/Uber/Ola) using these strict rates:
-   - Car/Cab: Base ₹50 + ₹18 per km
-   - Auto Rickshaw: Base ₹30 + ₹12 per km
-   - Bike Taxi: Base ₹20 + ₹7 per km
-3. ${isCommercialSplit 
-  ? 'Since this is a commercial ride split (Auto Split), your final suggested_total_fare MUST be the FULL commercial meter fare.' 
-  : 'Since this is a personal vehicle student pool, calculate the total commercial meter fare, and simply divide it by the number of passengers to get the per-seat price. Your final suggested_total_fare MUST be this exact per-seat commercial price. DO NOT apply any further discounts.'}
+   - Car/Cab: Base ₹60 + ₹20 per km
+   - Auto Rickshaw: Base ₹40 + ₹15 per km
+   - Bike Taxi: Base ₹30 + ₹10 per km
+3. CRITICAL OUTPUT RULE:
+${isCommercialSplit 
+  ? '   - You are calculating for an AUTO SPLIT / CAB SPLIT. You MUST return the FULL TOTAL TRIP FARE in `suggested_total_fare`. Do not divide it by passengers.' 
+  : `   - You are calculating for a STUDENT POOL. You MUST return the PRICE PER SEAT in \`suggested_total_fare\`. To find the price per seat, divide the full commercial fare by the number of passengers (${passengers}).`}
 4. Ensure the final fare is a realistic, rounded integer.
 5. In your reasoning, briefly state the estimated distance, the standard commercial rate, and how you derived the final suggested fare.
 6. Output MUST be strictly valid JSON containing "reasoning" (string) and "suggested_total_fare" (number). Do not wrap in markdown blocks.`;
