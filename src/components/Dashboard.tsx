@@ -1482,22 +1482,26 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     <div className="flex justify-between items-center">
                       <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2">
                         {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
-                        <span className="hidden sm:flex text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800 items-center gap-1">
-                          <Sparkles className="w-3 h-3" />
-                          Powered by Featherless AI
-                        </span>
+                        {rideCategory === 'personal_vehicle' && (
+                          <span className="hidden sm:flex text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800 items-center gap-1">
+                            <Sparkles className="w-3 h-3" />
+                            Powered by Featherless AI
+                          </span>
+                        )}
                       </Label>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleAIFareSuggestion}
-                        disabled={isAIFareLoading || !offerData.origin || !offerData.destination}
-                        className="h-7 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                      >
-                        {isAIFareLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                        AI Suggestion
-                      </Button>
+                      {rideCategory === 'personal_vehicle' && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleAIFareSuggestion}
+                          disabled={isAIFareLoading || !offerData.origin || !offerData.destination}
+                          className="h-7 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        >
+                          {isAIFareLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                          AI Suggestion
+                        </Button>
+                      )}
                     </div>
                     <Input 
                       type="number" min="0"
