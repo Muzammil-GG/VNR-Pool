@@ -312,39 +312,69 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
         ) : (
           <div className="space-y-6">
             {offeredRides.map(ride => (
-              <Card key={ride.id} className="glass-card overflow-hidden rounded-none">
-                <CardHeader className="bg-secondary/30 pb-4 border-b border-border/40">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div className="space-y-2">
-                      <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-primary" /> {ride.origin}
-                      </CardTitle>
-                      <CardTitle className="text-lg font-bold text-foreground/80 flex items-center gap-2">
-                        <Navigation className="w-4 h-4 text-muted-foreground" /> {ride.destination}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground font-medium flex items-center gap-2 mt-2">
-                        <Clock className="w-4 h-4 text-secondary-foreground" /> {new Date(ride.departure_time).toLocaleString()}
-                        <span className="mx-2 opacity-30">|</span>
-                        Seats: {ride.available_seats}/{ride.total_seats}
-                      </p>
+              <Card key={ride.id} className="relative overflow-hidden rounded-3xl border border-blue-500/10 bg-background/60 backdrop-blur-3xl shadow-xl shadow-blue-500/5 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300">
+                
+                {/* Status Header Bar */}
+                <div className={cn(
+                  "px-5 py-2.5 flex justify-between items-center border-b border-border/40 backdrop-blur-md relative z-10",
+                  ride.status === 'completed' ? "bg-muted/80" :
+                  ride.status === 'in_progress' ? "bg-blue-500/10 border-blue-500/20" : "bg-primary/5 border-primary/10"
+                )}>
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      "text-xs font-black uppercase tracking-widest flex items-center gap-1.5",
+                      ride.status === 'completed' ? "text-muted-foreground" :
+                      ride.status === 'in_progress' ? "text-blue-600 dark:text-blue-400" : "text-primary"
+                    )}>
+                      {ride.status === 'in_progress' && (
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                        </span>
+                      )}
+                      {ride.status === 'in_progress' ? 'RIDE IN PROGRESS' : ride.status === 'completed' ? 'COMPLETED' : 'ACTIVE RIDE'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                     <span className="text-xs font-bold text-muted-foreground bg-background/80 px-2 py-1 rounded-md shadow-sm border border-border/50">
+                       SEATS: {ride.available_seats}/{ride.total_seats}
+                     </span>
+                  </div>
+                </div>
+
+                <CardHeader className="relative pt-6 pb-6 z-10">
+                  <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                    <Car className="w-32 h-32" />
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-6 relative">
+                    <div className="space-y-5 flex-1">
+                      {/* Route Timeline */}
+                      <div className="relative pl-6 space-y-5">
+                        {/* Timeline line */}
+                        <div className="absolute left-2 top-2.5 bottom-2.5 w-0.5 bg-gradient-to-b from-blue-500 via-blue-300 to-emerald-500 dark:from-blue-500 dark:via-blue-800 dark:to-emerald-500 rounded-full" />
+                        
+                        <div className="relative">
+                          <div className="absolute -left-[27px] top-1.5 w-3 h-3 bg-background border-2 border-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                          <h3 className="text-xl font-black text-foreground leading-none">{ride.origin}</h3>
+                        </div>
+                        
+                        <div className="relative">
+                          <div className="absolute -left-[27px] top-1.5 w-3 h-3 bg-background border-2 border-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                          <h3 className="text-xl font-bold text-muted-foreground leading-none">{ride.destination}</h3>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-sm font-semibold text-primary bg-primary/5 inline-flex px-3 py-1.5 rounded-lg border border-primary/10">
+                        <Clock className="w-4 h-4" /> {new Date(ride.departure_time).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </div>
                     </div>
-                    <div className="flex flex-col sm:items-end items-start gap-3 w-full sm:w-auto mt-2 sm:mt-0 border-t sm:border-0 border-border pt-4 sm:pt-0">
-                      <span className={cn(
-                        "text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5",
-                        ride.status === 'completed'
-                          ? "bg-muted text-muted-foreground"
-                          : ride.status === 'in_progress' 
-                          ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 animate-pulse border border-blue-200" 
-                          : "bg-primary/20 text-primary"
-                      )}>
-                        {ride.status === 'in_progress' && <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span></span>}
-                        {ride.status.replace('_', ' ')}
-                      </span>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:items-end w-full sm:w-auto gap-2 z-20">
                       {ride.status === 'active' && (
-                        <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
+                        <>
                           <Button 
-                            variant="ghost" 
-                            size="sm" 
                             onClick={() => {
                               const timeToDeparture = new Date(ride.departure_time).getTime() - Date.now();
                               const thirtyMins = 30 * 60 * 1000;
@@ -358,49 +388,48 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                   label: 'Start',
                                   onClick: () => startRideMutation.mutate(ride)
                                 },
-                                cancel: { label: '', onClick: () => {} }
+                                cancel: { label: 'Cancel', onClick: () => {} }
                               })
                             }}
-                            className="h-8 text-primary hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
+                            className="w-full sm:w-auto h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-500/25 font-bold transition-all"
                             disabled={startRideMutation.isPending}
                           >
-                            <Play className="w-4 h-4 mr-1.5" /> Start Ride
+                            <Play className="w-4 h-4 mr-2" fill="currentColor" /> Start Ride
                           </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => {
-                              window.dispatchEvent(new CustomEvent('openChat', { detail: { rideId: ride.id } }));
-                            }}
-                            className="h-8 text-primary hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
-                          >
-                            <MessageCircle className="w-4 h-4 mr-1.5" /> Chat
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => {
-                              toast('Delete Ride?', {
-                                description: 'Are you sure you want to delete this ride? This will notify all approved passengers.',
-                                action: {
-                                  label: 'Delete',
-                                  onClick: () => deleteRide.mutate(ride.id)
-                                },
-                                cancel: { label: '', onClick: () => {} }
-                              })
-                            }}
-                            className="h-8 text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
-                            disabled={deleteRide.isPending}
-                          >
-                            <Trash2 className="w-4 h-4 mr-1.5" /> Cancel Ride
-                          </Button>
-                        </div>
+                          
+                          <div className="flex gap-2 w-full sm:w-auto">
+                            <Button 
+                              variant="secondary" 
+                              onClick={() => {
+                                window.dispatchEvent(new CustomEvent('openChat', { detail: { rideId: ride.id } }));
+                              }}
+                              className="flex-1 sm:w-auto h-11 rounded-xl font-bold bg-secondary hover:bg-secondary/80 border border-border shadow-sm"
+                            >
+                              <MessageCircle className="w-4 h-4 mr-2" /> Chat
+                            </Button>
+                            <Button 
+                              variant="outline"
+                              onClick={() => {
+                                toast('Delete Ride?', {
+                                  description: 'Are you sure you want to delete this ride? This will notify all approved passengers.',
+                                  action: {
+                                    label: 'Delete',
+                                    onClick: () => deleteRide.mutate(ride.id)
+                                  },
+                                  cancel: { label: 'Keep', onClick: () => {} }
+                                })
+                              }}
+                              className="flex-1 sm:w-auto h-11 rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/30 dark:border-red-900/50"
+                              disabled={deleteRide.isPending}
+                            >
+                              <Trash2 className="w-4 h-4 sm:mr-0 md:mr-2" /> <span className="sm:hidden md:inline">Cancel</span>
+                            </Button>
+                          </div>
+                        </>
                       )}
 
                       {ride.status === 'in_progress' && (
                         <Button 
-                          variant="ghost" 
-                          size="sm" 
                           onClick={() => {
                             toast('Complete Ride?', {
                               description: 'Are you sure you want to complete this ride?',
@@ -408,21 +437,23 @@ export function MyRides({ currentUserId }: { currentUserId: string }) {
                                 label: 'Complete',
                                 onClick: () => completeRideMutation.mutate(ride)
                               },
-                              cancel: { label: '', onClick: () => {} }
+                              cancel: { label: 'Cancel', onClick: () => {} }
                             })
                           }}
-                          className="h-8 text-secondary-foreground hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-colors"
+                          className="w-full sm:w-auto h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-500/25 font-bold"
                           disabled={completeRideMutation.isPending}
                         >
-                          <Flag className="w-4 h-4 mr-1.5" /> Complete
+                          <Flag className="w-4 h-4 mr-2" fill="currentColor" /> Complete Ride
                         </Button>
                       )}
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="pt-5">
-                  <h4 className="text-sm font-black flex items-center gap-2 mb-4 text-foreground uppercase tracking-wider">
-                    <Users className="w-4 h-4" /> Passenger Requests
+
+                <CardContent className="pt-0 pb-6 relative z-10">
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent mb-6" />
+                  <h4 className="text-xs font-black flex items-center gap-2 mb-4 text-muted-foreground uppercase tracking-widest">
+                    <Users className="w-4 h-4 text-primary" /> Passenger Requests
                   </h4>
                   
                   {!ride.bookings || ride.bookings.length === 0 ? (
