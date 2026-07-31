@@ -21,6 +21,27 @@ const glowingIcon = new L.DivIcon({
   iconAnchor: [12, 12],
 })
 
+const startIcon = new L.DivIcon({
+  html: `<div class="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-md"></div>`,
+  className: '',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+})
+
+const endIcon = new L.DivIcon({
+  html: `<div class="w-4 h-4 rounded-full bg-red-500 border-2 border-white shadow-md"></div>`,
+  className: '',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+})
+
+const searchPointIcon = new L.DivIcon({
+  html: `<div class="w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow-md animate-bounce"></div>`,
+  className: '',
+  iconSize: [16, 16],
+  iconAnchor: [8, 8],
+})
+
 // Automatically resizes the map when its container stretches in the CSS Grid
 function MapResizer() {
   const map = useMap()
@@ -85,10 +106,10 @@ export default function LiveDashboardMap({
         zoomControl={false}
         scrollWheelZoom={false}
       >
-        {/* CartoDB Dark Matter TileLayer for stunning neon look */}
+        {/* Google Maps standard tiles for precise and readable detailing */}
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+          attribution='&copy; <a href="https://www.google.com/maps">Google Maps</a>'
         />
         
         <MapResizer />
@@ -128,13 +149,36 @@ export default function LiveDashboardMap({
 
         {/* Animate the route if a ride is selected */}
         {routeCoords.length > 0 && (
-          <Polyline 
-            positions={routeCoords} 
-            color="#10b981" 
-            weight={4} 
-            opacity={0.8}
-            className="animate-route-flow"
-          />
+          <>
+            <Polyline 
+              positions={routeCoords} 
+              color="#10b981" 
+              weight={5} 
+              opacity={0.8}
+              className="animate-route-flow"
+            />
+            {selectedRide && (
+              <>
+                <Marker position={routeCoords[0]} icon={startIcon}>
+                  <Popup className="dark-popup">
+                    <div className="font-semibold text-slate-800">Start: {selectedRide.origin}</div>
+                  </Popup>
+                </Marker>
+                <Marker position={routeCoords[routeCoords.length - 1]} icon={endIcon}>
+                  <Popup className="dark-popup">
+                    <div className="font-semibold text-slate-800">End: {selectedRide.destination}</div>
+                  </Popup>
+                </Marker>
+                {searchOrigin && findBestMatchLocation(searchOrigin) && (
+                  <Marker position={[findBestMatchLocation(searchOrigin)!.lat, findBestMatchLocation(searchOrigin)!.lng]} icon={searchPointIcon}>
+                    <Popup className="dark-popup">
+                      <div className="font-semibold text-purple-400">Searched: {searchOrigin}</div>
+                    </Popup>
+                  </Marker>
+                )}
+              </>
+            )}
+          </>
         )}
       </MapContainer>
       
