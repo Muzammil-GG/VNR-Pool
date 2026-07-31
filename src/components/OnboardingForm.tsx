@@ -19,9 +19,10 @@ const branches = ["CSE", "ECE", "IT", "EEE", "MECH", "CIVIL", "AIML", "DS", "CSB
 export function OnboardingForm({ userEmail, userId }: { userEmail: string, userId: string }) {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const extractedRollNo = userEmail.split('@')[0].toUpperCase()
   const [formData, setFormData] = useState({
     full_name: '',
-    roll_no: '',
+    roll_no: extractedRollNo,
     branch: '',
     mobile_number: '',
     gender: '',
@@ -51,8 +52,8 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
   }
 
   const handleNext = () => {
-    if (step === 1 && (!formData.full_name || !formData.roll_no)) {
-      toast.error("Please fill all fields")
+    if (step === 1 && !formData.full_name) {
+      toast.error("Please enter your full name")
       return
     }
     if (step === 2 && (!formData.branch || !formData.gender)) {
@@ -250,16 +251,6 @@ export function OnboardingForm({ userEmail, userId }: { userEmail: string, userI
                       className="bg-background border-border focus-visible:ring-blue-500 h-11"
                       value={formData.full_name}
                       onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="roll_no" className="font-semibold text-foreground">Roll Number</Label>
-                    <Input
-                      id="roll_no"
-                      placeholder="21071A05XX"
-                      className="bg-background border-border focus-visible:ring-blue-500 uppercase h-11"
-                      value={formData.roll_no}
-                      onChange={e => setFormData({ ...formData, roll_no: e.target.value.toUpperCase() })}
                     />
                   </div>
                   <Button className="w-full h-11 font-semibold bg-blue-600 hover:bg-blue-700 text-white mt-4 rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all" onClick={handleNext}>
