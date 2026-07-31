@@ -699,6 +699,14 @@ const INTENTS: Intent[] = [
     response: "🐶 **Pets in Rides:**\n\nBringing a furry friend? \n\n• You MUST ask the driver for explicit permission via chat *before* booking or arriving at the pickup spot.\n• Most drivers do not allow pets due to allergies, shedding, or car cleanliness.\n• If the driver says no, please respect their decision and look for another ride.\n\n(We love pets, but we gotta respect the car owner's rules! 🐾🚗)",
     priority: 2,
   },
+  // ── Missing Location / Suggest Location ───────────
+  {
+    id: 'location_missing',
+    keywords: ['missing', 'location', 'not', 'found', 'add', 'suggest', 'landmark', 'stop', 'area', 'village'],
+    phrases: ['location not found', 'cant find my location', 'my location is missing', 'add a location', 'add my area', 'how to add location', 'my stop is not there', 'suggest a location', 'support team location', 'cant see my area', 'my route is not there', 'where is my location'],
+    response: "📍 **Can't find your location?**\n\nVNR Pool currently supports 40+ predefined routes and 500+ landmarks across Hyderabad.\n\nIf your specific area, village, or landmark isn't listed:\n1️⃣ **Try a nearby major landmark:** Search for the closest main road, X-roads, or Metro station.\n2️⃣ **Request a new location:** If a major student area is completely missing, please contact the **Support Team** or drop an email to get it added!\n\nWe regularly add new routes and stops based on student requests. Just let us know where you're commuting from! 🗺️",
+    priority: 5,
+  },
 ]
 
 // ─── Follow-up Detection ──────────────────────────────────────────────
@@ -775,6 +783,7 @@ const RELATED_INTENTS: Record<string, string[]> = {
   'alumni': ['eligibility', 'signup', 'privacy'],
   'helmet': ['vehicles', 'safety', 'etiquette'],
   'pets': ['etiquette', 'messaging'],
+  'location_missing': ['contact_support', 'route_map', 'popular_routes', 'pickup_drop'],
 }
 
 // ─── Core Engine ──────────────────────────────────────────────────────
