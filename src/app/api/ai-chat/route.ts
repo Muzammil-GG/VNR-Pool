@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
 
     const result = await streamText({
-      model: featherless('meta-llama/Meta-Llama-3-8B-Instruct'),
+      model: featherless('Qwen/Qwen2.5-72B-Instruct'),
       system: `You are a helpful, friendly, and concise support assistant for VNR Pool, a carpooling platform exclusively for students and staff of VNR VJIET (Vignana Jyothi Institute of Engineering and Technology) in Hyderabad. 
 
 Key details about VNR Pool:
