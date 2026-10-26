@@ -138,7 +138,7 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   AURORA / MESH GRADIENT BACKGROUND (Award-Winning UI style)
+   CLEAN MINIMAL BACKGROUND (Professional & Mobile Optimized)
    ═══════════════════════════════════════════════════════════ */
 .aurora-bg {
   position: fixed;
@@ -146,98 +146,57 @@ body::after {
   z-index: -4;
   overflow: hidden;
   pointer-events: none;
-  background: oklch(0.97 0.01 240);
+  background: oklch(0.98 0.002 240);
 }
 .dark .aurora-bg {
-  background: oklch(0.09 0.015 245);
-}
-.aurora-bg::before, .aurora-bg::after {
-  content: '';
-  position: absolute;
-  width: 65vw;
-  height: 65vw;
-  border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.22;
-  animation: auroraMove 18s ease-in-out infinite alternate;
-}
-.aurora-bg::before {
-  top: -20%;
-  left: -10%;
-  background: linear-gradient(135deg, oklch(0.58 0.22 255), oklch(0.70 0.18 220));
-}
-.aurora-bg::after {
-  bottom: -20%;
-  right: -10%;
-  background: linear-gradient(135deg, oklch(0.65 0.20 280), oklch(0.60 0.22 245));
-  animation-delay: -9s;
-}
-
-@keyframes auroraMove {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  50% { transform: translate(60px, 40px) scale(1.15) rotate(45deg); }
-  100% { transform: translate(-40px, -30px) scale(0.9) rotate(90deg); }
+  background: oklch(0.08 0.008 245);
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PREMIUM GLASS CARD (Enhanced Glassmorphism)
+   REFINED GLASS CARD (Clean & Minimal)
    ═══════════════════════════════════════════════════════════ */
 .glass-card {
   position: relative;
-  background: linear-gradient(145deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%);
-  backdrop-filter: blur(40px) saturate(2.2);
-  -webkit-backdrop-filter: blur(40px) saturate(2.2);
-  border: 1px solid rgba(255,255,255,0.80);
+  background: var(--card);
+  backdrop-blur: 24px;
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border);
   box-shadow:
-    0 4px 24px -1px rgba(0,0,0,0.06),
-    0 16px 48px -4px rgba(0,0,0,0.08),
-    inset 0 1px 0 rgba(255,255,255,1),
-    inset 0 -1px 0 rgba(0,0,0,0.04);
-  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
-              box-shadow 0.4s ease,
-              border-color 0.4s ease;
+    0 4px 20px -2px rgba(0,0,0,0.04),
+    0 1px 3px 0 rgba(0,0,0,0.02);
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
   will-change: transform;
 }
 .dark .glass-card {
-  background: linear-gradient(145deg, rgba(18,24,40,0.85) 0%, rgba(10,14,24,0.75) 100%);
-  border: 1px solid rgba(255,255,255,0.09);
+  background: var(--card);
+  border: 1px solid var(--border);
   box-shadow:
-    0 4px 24px -1px rgba(0,0,0,0.30),
-    0 16px 48px -4px rgba(0,0,0,0.50),
-    inset 0 1px 0 rgba(255,255,255,0.1),
-    inset 0 -1px 0 rgba(0,0,0,0.40);
+    0 4px 20px -2px rgba(0,0,0,0.30),
+    0 1px 3px 0 rgba(0,0,0,0.20);
 }
 .glass-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
   box-shadow:
-    0 8px 32px rgba(0,0,0,0.08),
-    0 24px 64px rgba(0,0,0,0.12),
-    inset 0 1px 0 rgba(255,255,255,1),
-    0 0 0 1.5px oklch(0.58 0.22 255 / 0.3);
-  border-color: rgba(255,255,255,0.95);
+    0 8px 30px -4px rgba(0,0,0,0.08),
+    0 2px 6px 0 rgba(0,0,0,0.04);
+  border-color: oklch(0.60 0.22 255 / 0.3);
 }
 .dark .glass-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
   box-shadow:
-    0 8px 32px rgba(0,0,0,0.40),
-    0 24px 64px rgba(0,0,0,0.70),
-    inset 0 1px 0 rgba(255,255,255,0.15),
-    0 0 0 1.5px oklch(0.58 0.22 255 / 0.4);
-  border-color: rgba(255,255,255,0.18);
+    0 8px 30px -4px rgba(0,0,0,0.50),
+    0 2px 6px 0 rgba(0,0,0,0.30);
+  border-color: oklch(0.60 0.22 255 / 0.4);
 }
 
 /* ═══════════════════════════════════════════════════════════
-   GRADIENT TEXT SHINE
+   CLEAN TEXT (No overdone gradients)
    ═══════════════════════════════════════════════════════════ */
 .gradient-text-shine {
-  background: linear-gradient(135deg, oklch(0.58 0.22 255) 0%, oklch(0.70 0.18 220) 50%, oklch(0.62 0.20 280) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% auto;
-  animation: textShine 6s linear infinite;
-}
-@keyframes textShine {
-  to { background-position: 200% center; }
+  color: var(--foreground);
+  font-weight: 900;
 }
 
 /* ═══════════════════════════════════════════════════════════
