@@ -94,8 +94,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+    window.location.href = '/'
   }
   const queryClient = useQueryClient()
   const feedRef = useRef<HTMLDivElement>(null)
@@ -1232,9 +1231,47 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           className="max-w-3xl mx-auto"
         >
           <div className="bg-card dark:bg-[#0e1320] text-foreground rounded-3xl border border-border dark:border-slate-800 shadow-xl overflow-hidden transition-colors">
-            <div className="p-6 md:p-8 border-b border-border/40">
-              <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-1">Offer a Campus Ride</h2>
-              <p className="text-muted-foreground text-xs sm:text-sm">Register your journey along Hyderabad corridors for verified peer carpool.</p>
+            <div className="p-5 sm:p-7 border-b border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black text-foreground mb-1">
+                  {rideCategory === 'personal_vehicle' ? 'Offer a Student Ride' : 'Start an Auto / Cab Split'}
+                </h2>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  {rideCategory === 'personal_vehicle'
+                    ? 'Register your journey with your personal car or bike for verified peer carpool.'
+                    : 'Create a shared auto or cab group to split meter or cab fare equally.'}
+                </p>
+              </div>
+
+              {/* Mode Switcher: Student Pool vs Cab Split */}
+              <div className="inline-flex p-1 bg-secondary/80 dark:bg-slate-900/80 rounded-xl border border-border/70 text-xs font-bold shrink-0 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => handleCategoryChange('personal_vehicle')}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-xs",
+                    rideCategory === 'personal_vehicle'
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Car className="w-3.5 h-3.5 shrink-0" />
+                  <span>Student Pool</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryChange('auto_split')}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer text-xs",
+                    rideCategory === 'auto_split'
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Navigation className="w-3.5 h-3.5 shrink-0" />
+                  <span>Cab / Auto Split</span>
+                </button>
+              </div>
             </div>
             
               <div className="p-6 md:p-8 space-y-6">
@@ -1489,7 +1526,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
                   className="w-full h-13 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-base rounded-xl shadow-md transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  {offerMutation.isPending ? 'Publishing Ride to Campus Feed…' : 'Publish Campus Ride'}
+                  {offerMutation.isPending 
+                    ? 'Publishing to Campus Feed…' 
+                    : rideCategory === 'auto_split' 
+                      ? 'Publish Cab / Auto Split' 
+                      : 'Publish Student Pool Ride'}
                 </Button>
               </div>
 

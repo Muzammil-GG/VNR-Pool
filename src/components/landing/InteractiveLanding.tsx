@@ -27,6 +27,7 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 import { InteractiveRoute } from "./InteractiveRoute"
 import { HowItWorksModal } from "./HowItWorksModal"
 import { AuthModal } from "./AuthModal"
+import { createClient } from "@/lib/supabase/client"
 
 const righteous = Righteous({ weight: "400", subsets: ["latin"] })
 
@@ -207,6 +208,18 @@ export function InteractiveLanding({
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
 
   useEffect(() => {
+    // If the client has a valid session already, navigate directly to dashboard
+    try {
+      const supabase = createClient()
+      supabase.auth.getUser().then(({ data }) => {
+        if (data?.user) {
+          window.location.href = "/"
+        }
+      })
+    } catch {
+      // Ignore
+    }
+
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search)
       if (params.get("auth") === "login" || params.get("mode") === "login") {
