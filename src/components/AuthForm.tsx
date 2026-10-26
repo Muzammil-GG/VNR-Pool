@@ -84,12 +84,18 @@ export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
           queryParams: {
             hd: 'vnrvjiet.in'
           },
-          redirectTo: `${window.location.origin}/`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       })
       if (error) throw error
     } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in with Google')
+      console.error('Google auth error:', error)
+      const msg = error.message || ''
+      if (msg.includes('fetch failed') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        toast.error("Database Connection Error: If your Supabase database is paused, please unpause it in the Supabase Dashboard.", { duration: 7000 })
+      } else {
+        toast.error(error.message || 'Failed to sign in with Google')
+      }
       setLoading(false)
     }
   }
@@ -108,7 +114,8 @@ export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
       if (mode === 'login') {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
-        router.refresh()
+        toast.success("Signed in successfully!")
+        window.location.href = '/'
       } else if (mode === 'signup') {
         const res = await fetch('/api/send-signup-otp', {
           method: 'POST',
@@ -134,6 +141,7 @@ export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
         if (signInError) throw signInError
 
         toast.success("Email verified and account created!")
+        window.location.href = '/'
       } else if (mode === 'forgot_password') {
         const res = await fetch('/api/forgot-password', {
           method: 'POST',
@@ -159,9 +167,14 @@ export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
         setPassword('')
         setOtp('')
       }
-      router.refresh()
     } catch (error: any) {
-      toast.error(error.message)
+      console.error('Auth handler error:', error)
+      const msg = error.message || ''
+      if (msg.includes('fetch failed') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        toast.error("Database Connection Error: If your Supabase database is paused, please unpause it in the Supabase Dashboard.", { duration: 7000 })
+      } else {
+        toast.error(error.message || 'Authentication error')
+      }
     } finally {
       setLoading(false)
     }
@@ -213,14 +226,18 @@ export function AuthForm({ isCinematic = false }: { isCinematic?: boolean }) {
               <div className="w-24 h-24 mx-auto rounded-3xl flex items-center justify-center shadow-[0_8px_32px_rgba(29,78,216,0.3)] mb-4 hover:scale-105 transition-transform duration-300 overflow-hidden relative border-2 border-blue-500/20 bg-[#1e3a8a]">
                 <Image src="/vnr-logo.png" alt="VNR VJIET" fill className="object-contain p-1.5" />
               </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 mb-2 mx-auto w-fit shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                VNR VJIET Campus Network
+              </div>
               <CardTitle className={`hero-title text-4xl gradient-text mb-2 ${righteous.className}`}>
                 VNR Pool
               </CardTitle>
-              <CardDescription className="text-muted-foreground mt-2 font-medium">
-                {mode === 'login' ? "Sign in to continue" :
-               mode === 'signup' ? "Create a new student account" :
-               mode === 'forgot_password' ? "Reset your password" :
-               "Enter OTP and New Password"}
+              <CardDescription className="text-muted-foreground mt-1 font-medium text-xs sm:text-sm">
+                {mode === 'login' ? "Sign in to continue your commute" :
+               mode === 'signup' ? "Create your verified student account" :
+               mode === 'forgot_password' ? "Reset your password via campus email" :
+               "Enter OTP and set your new password"}
             </CardDescription>
           </CardHeader>
           <CardContent className="relative z-10 pb-8 px-6">

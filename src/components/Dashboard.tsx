@@ -675,27 +675,29 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22,1,0.36,1] }}
-          className="text-center space-y-2 mt-3 sm:mt-4"
+          className="text-center space-y-3 mt-3 sm:mt-4"
         >
           {/* Live pulse */}
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="relative flex h-2 w-2">
-              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-80" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-80" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
             </span>
-            <span className="retro-badge text-blue-500 border-blue-500/30 px-2 py-0.5">Live Rides</span>
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm">
+              Live VNR VJIET Campus Network
+            </span>
           </div>
 
           <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center shadow-[0_8px_32px_rgba(29,78,216,0.2)] hover:scale-105 transition-transform duration-300 overflow-hidden relative border-2 border-blue-500/20 bg-[#1e3a8a]">
-              <Image src="/vnr-logo.png" alt="VNR VJIET" fill className="object-contain p-1.5" />
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center shadow-[0_12px_40px_rgba(37,99,235,0.3)] hover:scale-105 transition-transform duration-300 overflow-hidden relative border-2 border-blue-500/30 bg-gradient-to-br from-blue-700 to-indigo-900">
+              <Image src="/vnr-logo.png" alt="VNR VJIET" fill className="object-contain p-2" />
             </div>
           </div>
 
-          <h1 className={`hero-title gradient-text ${righteous.className}`}>
+          <h1 className={`hero-title gradient-text-shine ${righteous.className}`}>
             VNR Pool
           </h1>
-          <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-xs sm:max-w-md mx-auto leading-relaxed mt-3">
+          <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-xs sm:max-w-md mx-auto leading-relaxed mt-2">
             Share rides &middot; Split costs &middot; Commute smarter 🚗
           </p>
         </motion.div>
@@ -935,23 +937,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: i * 0.05, duration: 0.42, ease: [0.22,1,0.36,1] }}
                 >
-                  <SpotlightCard
-                    spotlightColor={
-                      ride.is_women_only
-                        ? 'oklch(0.65 0.20 340 / 0.15)'
-                        : ride.ride_category === 'auto_split'
-                        ? 'oklch(0.70 0.18 80 / 0.15)'
-                        : 'oklch(0.58 0.22 255 / 0.15)' /* Indigo */
-                    }
-                    className={cn(
-                      "bg-card text-card-foreground rounded-none overflow-hidden relative group float-hover shadow-xl border-none",
-                      ride.is_women_only ? "ring-2 ring-pink-500/20 hover:ring-pink-500/50" : "ring-1 ring-border/50 hover:ring-blue-500/30 transition-all duration-300"
-                    )}
-                  >
-                    {/* Subtle top stripe removed for cleaner UI */}
-
+                  <div className="ticket-card overflow-hidden relative group">
+                    <div className="ticket-notch-left" />
+                    <div className="ticket-notch-right" />
+                    
                     {ride.is_women_only && (
-                      <div className="absolute top-1 right-0 bg-pink-500 text-white text-[10px] px-3 py-1 font-bold rounded-bl-xl flex items-center gap-1 shadow-md z-10">
+                      <div className="absolute top-0 right-0 bg-gradient-to-l from-pink-600 to-rose-500 text-white text-[10px] px-4 py-1.5 font-black tracking-wider uppercase rounded-bl-2xl flex items-center gap-1.5 shadow-md z-20">
                         <Shield className="w-3 h-3" /> Women Only
                       </div>
                     )}
@@ -1274,7 +1265,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         </a>
                       </div>
                     </div>
-                  </SpotlightCard>
+                  </div>
                 </motion.div>
               ))
             )}

@@ -12,6 +12,9 @@ import { AuthForm } from "../AuthForm";
 import { VehicleBackground } from '@/components/VehicleBackground';
 import { useTheme } from "next-themes";
 import { Righteous } from 'next/font/google';
+import Image from "next/image";
+import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const righteous = Righteous({ weight: '400', subsets: ['latin'] });
 
@@ -277,15 +280,49 @@ export function CinematicAuth() {
         </Canvas>
       </div>
 
+      {/* Top Floating Navigation Bar */}
+      <header className="fixed top-4 left-4 right-4 sm:left-8 sm:right-8 z-30 flex items-center justify-between px-5 sm:px-8 py-3.5 pointer-events-auto bg-background/80 dark:bg-slate-950/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] rounded-3xl max-w-5xl mx-auto transition-all">
+        <div className="flex items-center gap-3">
+          <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-blue-500/40 bg-gradient-to-br from-blue-600 to-indigo-700 shrink-0 shadow-md">
+            <Image src="/vnr-logo.png" alt="VNR Pool" fill className="object-contain p-1" />
+          </div>
+          <span className={`text-xl font-black tracking-tight gradient-text-shine ${righteous.className}`}>
+            VNR Pool
+          </span>
+          <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 ml-2 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            VNR VJIET Exclusive
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <Link
+            href="/login"
+            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold btn-glow-primary text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.03] active:scale-[0.98]"
+          >
+            Sign In
+          </Link>
+        </div>
+      </header>
+
       {/* HTML Overlay Layer */}
       <div className="fixed inset-0 z-10 pointer-events-none flex flex-col items-center justify-center overflow-hidden">
         
         {/* Phase 1 Text */}
-        <div ref={textOverlayRef} className="absolute bottom-12 text-center will-change-transform will-change-opacity">
-          <p className="text-sm md:text-lg font-medium tracking-widest uppercase text-slate-800 dark:text-slate-300 opacity-70">
+        <div ref={textOverlayRef} className="absolute bottom-12 text-center will-change-transform will-change-opacity pointer-events-auto flex flex-col items-center">
+          <p className="text-sm md:text-lg font-medium tracking-widest uppercase text-slate-800 dark:text-slate-300 opacity-70 mb-3">
             Scroll to begin your journey
           </p>
-          <div className="w-px h-12 bg-slate-800 dark:bg-slate-300 mx-auto mt-4 animate-pulse opacity-50" />
+          <button
+            type="button"
+            onClick={() => {
+              authFormRef.current?.scrollIntoView({ behavior: 'smooth' })
+            }}
+            className="text-xs font-semibold px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 transition-all cursor-pointer"
+          >
+            or skip directly to Sign In ↓
+          </button>
+          <div className="w-px h-8 bg-slate-800 dark:bg-slate-300 mx-auto mt-4 animate-pulse opacity-50" />
         </div>
 
         {/* Phase 3 Brand Text */}
@@ -303,11 +340,14 @@ export function CinematicAuth() {
           ref={feature1Ref}
           className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16"
         >
-          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
-            <div className="text-4xl mb-4">🎓</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">Exclusive Community</h2>
-            <p className="text-slate-700 dark:text-slate-300 text-lg md:text-xl font-light">
-              Built strictly for VNR VJIET. Connect with verified students and staff. No strangers allowed.
+          <div className="w-full max-w-[520px] p-8 md:p-10 mx-4 glass-card rounded-[2.5rem] shadow-2xl border border-white/20 dark:border-white/10 bg-white/70 dark:bg-slate-900/80 backdrop-blur-3xl text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-3xl mb-6 shadow-inner">
+              🎓
+            </div>
+            <h2 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Exclusive Community</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg font-medium leading-relaxed">
+              Built strictly for VNR VJIET. Connect with verified students and staff with institutional email security.
             </p>
           </div>
         </div>
@@ -316,11 +356,14 @@ export function CinematicAuth() {
           ref={feature2Ref}
           className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16"
         >
-          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
-            <div className="text-4xl mb-4">💰</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">Dynamic Splitting</h2>
-            <p className="text-slate-700 dark:text-slate-300 text-lg md:text-xl font-light">
-              Join mid-route and pay less. Our smart algorithm calculates fractional fares automatically.
+          <div className="w-full max-w-[520px] p-8 md:p-10 mx-4 glass-card rounded-[2.5rem] shadow-2xl border border-white/20 dark:border-white/10 bg-white/70 dark:bg-slate-900/80 backdrop-blur-3xl text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl mb-6 shadow-inner">
+              💰
+            </div>
+            <h2 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Dynamic Splitting</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg font-medium leading-relaxed">
+              Join mid-route and pay less. Our smart fractional route algorithm calculates precise fares automatically.
             </p>
           </div>
         </div>
@@ -329,11 +372,14 @@ export function CinematicAuth() {
           ref={feature3Ref}
           className="absolute inset-0 flex items-center justify-center opacity-0 translate-y-16"
         >
-          <div className="w-full max-w-[500px] p-8 mx-4 glass-card rounded-[2rem] shadow-2xl border border-slate-200/50 dark:border-white/10 bg-white/20 dark:bg-black/30 backdrop-blur-xl text-center">
-            <div className="text-4xl mb-4">🌱</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3">Safe & Eco-Friendly</h2>
-            <p className="text-slate-700 dark:text-slate-300 text-lg md:text-xl font-light">
-              Build your Trust Score, use SOS alerts, and earn Eco Points for reducing campus traffic.
+          <div className="w-full max-w-[520px] p-8 md:p-10 mx-4 glass-card rounded-[2.5rem] shadow-2xl border border-white/20 dark:border-white/10 bg-white/70 dark:bg-slate-900/80 backdrop-blur-3xl text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-3xl mb-6 shadow-inner">
+              🌱
+            </div>
+            <h2 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">Safe & Eco-Friendly</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg font-medium leading-relaxed">
+              Build your Trust Score, use SOS emergency alerts, and earn Eco Points for reducing campus carbon emissions.
             </p>
           </div>
         </div>
