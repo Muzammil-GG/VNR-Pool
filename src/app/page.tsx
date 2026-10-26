@@ -1,10 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
 import { CinematicAuth } from '@/components/auth/CinematicAuth'
+import { InteractiveLanding } from '@/components/landing/InteractiveLanding'
 import { OnboardingForm } from '@/components/OnboardingForm'
 import { Dashboard } from '@/components/Dashboard'
 
 export default async function Home(props: {
-  searchParams?: Promise<{ code?: string; error?: string }>
+  searchParams?: Promise<{
+    code?: string
+    error?: string
+    preview?: string
+    auth?: 'login' | 'signup'
+    mode?: 'login' | 'signup'
+  }>
 }) {
   const searchParams = props.searchParams ? await props.searchParams : undefined
   const supabase = await createClient()
@@ -17,7 +24,7 @@ export default async function Home(props: {
       console.error('Failed to exchange code for session:', e)
     }
   }
-  
+
   let user = null
   try {
     const { data } = await supabase.auth.getUser()
@@ -26,8 +33,23 @@ export default async function Home(props: {
     console.error('Failed to fetch user session:', err)
   }
 
-  if (!user || searchParams?.preview === '3d' || searchParams?.preview === 'true') {
+  // Explicit 3D preview fallback if desired
+  if (searchParams?.preview === '3d') {
     return <CinematicAuth />
+  }
+
+  // If not logged in, render the interactive landing experience
+  if (!user) {
+    const defaultAuthOpen = searchParams?.auth === 'login' || searchParams?.auth === 'signup' || searchParams?.mode === 'login' || searchParams?.mode === 'signup'
+    const defaultAuthMode = (searchParams?.auth === 'signup' || searchParams?.mode === 'signup') ? 'signup' : 'login'
+    return (
+      <main id="landing-container" className="min-h-screen">
+        <InteractiveLanding
+          defaultAuthOpen={defaultAuthOpen}
+          defaultAuthMode={defaultAuthMode}
+        />
+      </main>
+    )
   }
 
   // Check if profile is completed
@@ -55,4 +77,3 @@ export default async function Home(props: {
     </main>
   )
 }
-

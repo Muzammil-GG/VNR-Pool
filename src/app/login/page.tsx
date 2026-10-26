@@ -1,9 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { CinematicAuth } from '@/components/auth/CinematicAuth'
+import { InteractiveLanding } from '@/components/landing/InteractiveLanding'
 
 export default async function LoginPage(props: {
-  searchParams?: Promise<{ preview?: string }>
+  searchParams?: Promise<{ mode?: 'login' | 'signup'; auth?: 'login' | 'signup' }>
 }) {
   const searchParams = props.searchParams ? await props.searchParams : undefined
   const supabase = await createClient()
@@ -15,11 +15,19 @@ export default async function LoginPage(props: {
     // Graceful fallback if supabase is unreachable
   }
 
-  // If user is logged in and not explicitly previewing, redirect to home
-  if (user && searchParams?.preview !== '3d' && searchParams?.preview !== 'true') {
+  // If user is logged in, redirect to home
+  if (user) {
     redirect('/')
   }
 
-  // Render CinematicAuth on /login so the scroll-driven 3D car animation appears here as well
-  return <CinematicAuth />
+  const isSignup = searchParams?.mode === 'signup' || searchParams?.auth === 'signup'
+
+  return (
+    <main id="landing-container" className="min-h-screen">
+      <InteractiveLanding
+        defaultAuthOpen={true}
+        defaultAuthMode={isSignup ? 'signup' : 'login'}
+      />
+    </main>
+  )
 }

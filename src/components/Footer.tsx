@@ -5,7 +5,7 @@ const righteous = Righteous({ weight: '400', subsets: ['latin'] })
 
 export function Footer() {
   return (
-    <footer className="w-full bg-card/60 backdrop-blur-2xl border-t border-border/60 mt-16 md:mt-24 py-12 relative z-20">
+    <footer className="global-layout-footer w-full bg-card/60 backdrop-blur-2xl border-t border-border/60 mt-16 md:mt-24 py-12 relative z-20">
       <div className="max-w-5xl mx-auto px-6 md:px-8 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4">
         
         {/* Brand Section */}

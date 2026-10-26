@@ -570,3 +570,13 @@ input:focus, textarea:focus {
   animation: wiggle 1s ease-in-out infinite;
   display: inline-block;
 }
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+body:has(#landing-container) .global-layout-footer {
+  display: none !important;
+}

@@ -104,7 +104,7 @@ export function AIChatbot() {
                     <h3 className="font-bold text-sm text-foreground">VNR Pool Assistant</h3>
                     <div className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      <p className="text-[10px] text-emerald-500 font-medium">Powered by Featherless AI</p>
+                      <p className="text-[10px] text-emerald-500 font-semibold tracking-wide">VNR Campus AI · Online</p>
                     </div>
                   </div>
                 </div>

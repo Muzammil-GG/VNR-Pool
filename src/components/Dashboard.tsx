@@ -593,28 +593,101 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-6 sm:pt-10 pb-24 sm:pb-10 space-y-6 sm:space-y-10 text-foreground relative z-10">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-3 sm:pt-6 pb-24 sm:pb-12 space-y-4 sm:space-y-6 text-foreground relative z-10">
       
-      {/* ── Header ────────────────────────────── */}
-      <div className="flex flex-col items-center gap-5 sm:gap-6 relative pt-1 sm:pt-2">
-        <div className="absolute left-0 top-0 flex items-center gap-2 z-50">
+      {/* ── Executive Campus App Bar ────────────────────── */}
+      <motion.header
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="w-full rounded-2xl bg-card/90 dark:bg-card/75 backdrop-blur-xl border border-border shadow-xs px-3.5 sm:px-5 py-2.5 flex items-center justify-between gap-3 sticky top-3 z-40"
+      >
+        {/* Left: Brand Identity */}
+        <div className="flex items-center gap-2.5 select-none">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-900 border border-blue-500/30 flex items-center justify-center overflow-hidden p-1 shadow-xs shrink-0">
+            <Image src="/vnr-logo.png" alt="VNR VJIET" width={24} height={24} className="object-contain" priority />
+          </div>
+          <span className={`text-base sm:text-lg font-bold tracking-tight text-foreground leading-none ${righteous.className}`}>
+            VNR <span className="text-blue-600 dark:text-blue-400">Pool</span>
+          </span>
+        </div>
+
+        {/* Center: Desktop Navigation Tabs */}
+        <div className="hidden md:flex items-center p-1 bg-secondary/60 dark:bg-slate-900/60 rounded-xl border border-border/80 shadow-xs">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "relative px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 z-10 text-center whitespace-nowrap cursor-pointer flex items-center gap-1.5",
+                activeTab === tab
+                  ? "text-white"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {activeTab === tab && (
+                <motion.div
+                  layoutId="active-header-tab"
+                  className="absolute inset-0 rounded-lg bg-blue-600 shadow-xs"
+                  transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-1.5">
+                {tab === 'Find a Ride' && <Search className="w-3.5 h-3.5" />}
+                {tab === 'Offer a Seat' && <Plus className="w-3.5 h-3.5" />}
+                {tab === 'My Rides' && <List className="w-3.5 h-3.5" />}
+                <span>{tab}</span>
+                {tab === 'Find a Ride' && rides && rides.length > 0 && (
+                  <span className={cn(
+                    "px-1.5 py-0.2 rounded-md text-[9px] font-bold",
+                    activeTab === tab ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
+                  )}>
+                    {rides.length}
+                  </span>
+                )}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Right: Notifications & User Profile (Theme & Logout are inside Profile) */}
+        <div className="flex items-center gap-2">
+          <Notifications currentUserId={currentUserId} />
+
+          {/* Profile Menu Sheet */}
           <Sheet>
             <SheetTrigger 
               render={
-                <button className="inline-flex items-center justify-center whitespace-nowrap bg-transparent w-12 h-12 rounded-full p-0 overflow-hidden border-2 border-border shadow-sm hover:ring-2 hover:ring-blue-500 hover:bg-accent hover:text-accent-foreground transition-all cursor-pointer">
-                  {currentUserProfile?.avatar_url ? (
-                    <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-lg">
-                      {currentUserProfile?.full_name ? currentUserProfile.full_name.charAt(0).toUpperCase() : 'U'}
+                <button className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-xl bg-secondary/50 hover:bg-secondary border border-border/70 transition-colors cursor-pointer group">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-border shadow-xs relative shrink-0">
+                    {currentUserProfile?.avatar_url ? (
+                      <img src={currentUserProfile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-xs">
+                        {currentUserProfile?.full_name ? currentUserProfile.full_name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
+                    <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-background" />
+                  </div>
+                  <div className="text-left hidden sm:block">
+                    <div className="text-xs font-bold leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate max-w-[80px]">
+                      {currentUserProfile?.full_name ? currentUserProfile.full_name.split(' ')[0] : 'Profile'}
                     </div>
-                  )}
+                    <div className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                      <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
+                      <span>
+                        {currentUserProfile?.rating_count > 0 
+                          ? (currentUserProfile.total_rating_score / currentUserProfile.rating_count).toFixed(1)
+                          : "New"}
+                      </span>
+                    </div>
+                  </div>
                 </button>
               }
             />
-            <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col gap-6">
+            <SheetContent side="right" className="w-[300px] sm:w-[380px] flex flex-col gap-6">
               <SheetHeader className="text-left mt-6">
-                <SheetTitle className="text-2xl font-black">Menu</SheetTitle>
+                <SheetTitle className="text-2xl font-black">Account & Profile</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-2 mt-4">
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
@@ -635,6 +708,11 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         ? (currentUserProfile.total_rating_score / currentUserProfile.rating_count).toFixed(1)
                         : "New"}
                     </p>
+                    {currentUserProfile?.is_verified_driver && (
+                      <span className="inline-block mt-1 text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-800">
+                        Verified Student Driver
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -643,18 +721,14 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm">
                       <Zap className="w-4 h-4 text-blue-500" />
                     </div>
-                    <span className="font-medium">Theme</span>
+                    <span className="font-medium text-sm">Theme</span>
                   </div>
                   <ThemeToggle />
                 </div>
 
-
-
                 <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                   <ProfileEditor currentUserId={currentUserId} />
                 </div>
-
-
 
                 <Button 
                   variant="destructive" 
@@ -667,237 +741,203 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             </SheetContent>
           </Sheet>
         </div>
-        <div className="absolute right-0 top-0 flex items-center gap-2 z-50">
-          <Notifications currentUserId={currentUserId} />
-        </div>
-        {/* Logo + tagline */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22,1,0.36,1] }}
-          className="text-center space-y-3 mt-3 sm:mt-4"
-        >
-          {/* Live pulse */}
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-80" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-            </span>
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm">
-              Live VNR VJIET Campus Network
-            </span>
-          </div>
+      </motion.header>
 
-          <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center shadow-[0_12px_40px_rgba(37,99,235,0.3)] hover:scale-105 transition-transform duration-300 overflow-hidden relative border-2 border-blue-500/30 bg-gradient-to-br from-blue-700 to-indigo-900">
-              <Image src="/vnr-logo.png" alt="VNR VJIET" fill className="object-contain p-2" />
-            </div>
-          </div>
-
-          <h1 className={`hero-title gradient-text-shine ${righteous.className}`}>
-            VNR Pool
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-xs sm:max-w-md mx-auto leading-relaxed mt-2">
-            Share rides &middot; Split costs &middot; Commute smarter 🚗
-          </p>
-        </motion.div>
-
-        {/* Tabs */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.93 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.15, duration: 0.5, ease: [0.22,1,0.36,1] }}
-          className="hidden sm:flex p-1 bg-muted/60 rounded-full border border-border w-full backdrop-blur-md shadow-sm"
-        >
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={cn(
-                "relative flex-1 px-2 py-2.5 rounded-full text-sm font-bold transition-all duration-300 z-10 text-center whitespace-nowrap",
-                activeTab === tab
-                  ? "text-white"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {activeTab === tab && (
-                <motion.div
-                  layoutId="active-tab"
-                  className="absolute inset-0 rounded-full -z-10 tab-active-glow"
-                  style={{ background: 'linear-gradient(135deg, oklch(0.58 0.22 250), oklch(0.65 0.2 260))' }}
-                  transition={{ type: 'spring', bounce: 0.2, duration: 0.55 }}
-                />
-              )}
-              {tab}
-            </button>
-          ))}
-        </motion.div>
+      {/* ── Mobile/Tablet Secondary Tabs ────────────────────────── */}
+      <div className="md:hidden flex p-1 bg-secondary/70 dark:bg-slate-900/70 rounded-xl border border-border shadow-xs w-full">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={cn(
+              "flex-1 py-2 rounded-lg text-xs font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5",
+              activeTab === tab
+                ? "bg-blue-600 text-white shadow-xs"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {tab === 'Find a Ride' && <Search className="w-3.5 h-3.5" />}
+            {tab === 'Offer a Seat' && <Plus className="w-3.5 h-3.5" />}
+            {tab === 'My Rides' && <List className="w-3.5 h-3.5" />}
+            <span>{tab}</span>
+          </button>
+        ))}
       </div>
 
-      {/* ── Category Toggle ────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25, duration: 0.5 }}
-        className="flex justify-center gap-3 sm:gap-5"
-      >
-        {[
-          { key: 'auto_split',       label: 'Auto / Cab Split', icon: Navigation, color: 'yellow' },
-          { key: 'personal_vehicle', label: 'Student Pool',     icon: Car,        color: 'blue' },
-        ].map(({ key, label, icon: Icon, color }) => (
-          <SpotlightCard
-            key={key}
-            spotlightColor='oklch(0.58 0.22 255 / 0.10)'
-            className={cn(
-              "flex flex-col items-center py-4 px-3 sm:p-5 rounded-2xl border transition-all duration-300 w-36 sm:w-44 group cursor-pointer press-scale select-none",
-              rideCategory === key
-                ? "border-blue-500/50 bg-card shadow-md scale-[1.04]"
-                : "border-border bg-card/40 hover:bg-card/70 opacity-60 hover:opacity-100 hover:scale-[1.02] backdrop-blur-sm"
-            )}
-            onClick={() => handleCategoryChange(key as 'auto_split' | 'personal_vehicle')}
-            role="button"
-            tabIndex={0}
-            onKeyDown={e => e.key === 'Enter' && handleCategoryChange(key as 'auto_split' | 'personal_vehicle')}
-          >
-            <div className={cn(
-              "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110",
-              rideCategory === key
-                ? 'bg-blue-500/10'
-                : 'bg-muted'
-            )}>
-              <Icon className={cn(
-                "w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300",
-                rideCategory === key
-                  ? 'text-blue-500'
-                  : 'text-muted-foreground'
-              )} />
-            </div>
-            <span className={cn(
-              "text-xs sm:text-sm font-bold transition-colors duration-300",
-              rideCategory === key ? 'text-foreground' : 'text-muted-foreground'
-            )}>{label}</span>
-          </SpotlightCard>
-        ))}
-      </motion.div>
-
-      {/* Content Area */}
+      {/* ── Primary Content Area ─────────────────────────────────── */}
       {activeTab === 'Find a Ride' ? (
-        <div className="space-y-6">
-          {/* Feature Buttons (Map & Leaderboard) */}
-          <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-6 relative z-30">
-            <div className="flex-1 flex">
-              <Dialog>
-                <DialogTrigger render={
-                  <Button className="w-full glass-card retro-noise border border-blue-500/20 hover:border-blue-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] transition-all flex items-center justify-center gap-2">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 shrink-0" />
-                    <span className="font-bold text-sm sm:text-base tracking-wide">Route Maps</span>
-                    
-                    {/* Notification Badge */}
-                    {(rides?.length || 0) > 0 && (
-                      <div className="flex h-5 sm:h-6 min-w-[20px] sm:min-w-[24px] items-center justify-center rounded-full bg-red-500 px-1.5 sm:px-2 text-[10px] sm:text-xs font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)] shrink-0">
-                        {rides?.length}
-                      </div>
-                    )}
-                  </Button>
-                } />
-                <DialogContent className="max-w-5xl w-[95vw] h-[85vh] p-0 overflow-hidden bg-slate-900 border-slate-700/50 rounded-3xl shadow-2xl">
-                  <LiveDashboardMap 
-                    rides={rides || []} 
-                    selectedRide={selectedMapRide} 
-                    onRideSelect={setSelectedMapRide} 
-                    searchOrigin={originFilter}
-                    searchDestination={destinationFilter}
-                  />
-                </DialogContent>
-              </Dialog>
-            </div>
-
-            <div className="flex-1 flex">
-              <Dialog>
-                <DialogTrigger render={
-                  <Button className="w-full glass-card retro-noise border border-emerald-500/20 hover:border-emerald-500/40 text-foreground rounded-2xl h-14 sm:h-16 relative group overflow-hidden shadow-md hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)] transition-all flex items-center justify-center gap-2">
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
-                    <span className="font-bold text-sm sm:text-base tracking-wide">Eco Impacts Leaderboard</span>
-                  </Button>
-                } />
-                <DialogContent className="max-w-lg w-[95vw] p-0 overflow-hidden bg-transparent border-none shadow-none">
-                  <EcoLeaderboard currentUserId={currentUserId} />
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-
-          {/* ── Search bar ─────────────────────── */}
+        <div className="space-y-4 sm:space-y-5">
+          {/* ── Transit Command & Search Bar ────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-            className="relative z-50 bg-background/60 dark:bg-slate-900/40 backdrop-blur-3xl rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row flex-wrap gap-5 items-start sm:items-end border border-blue-500/20 shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(59,130,246,0.1)]"
+            transition={{ duration: 0.3 }}
+            className="rounded-2xl bg-card border border-border shadow-xs p-3.5 sm:p-4 space-y-3 transition-colors"
           >
-            <div className="space-y-2 w-full sm:flex-1 min-w-[140px]">
-              <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-primary" /> From
-              </Label>
-              <LocationAutocomplete
-                placeholder="e.g. JNTU Metro"
-                value={originFilter}
-                onChange={setOriginFilter}
-                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
-              />
-            </div>
-            <div className="space-y-2 w-full sm:flex-1 min-w-[140px]">
-              <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
-                <Navigation className="w-3.5 h-3.5 text-muted-foreground" /> To
-              </Label>
-              <LocationAutocomplete
-                placeholder="e.g. VNR VJIET"
-                value={destinationFilter}
-                onChange={setDestinationFilter}
-                className="bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-xl font-medium w-full h-[46px] shadow-sm"
-              />
-            </div>
-            <div className="space-y-2 w-full sm:flex-[0.5] min-w-[120px]">
-              <div className="flex items-center justify-between">
-                <Label className="text-foreground font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-muted-foreground" /> Date
-                </Label>
-                {dateFilter && (
-                  <button 
-                    onClick={() => setDateFilter('')}
-                    className="text-xs text-rose-500 hover:text-rose-400 font-medium transition-colors"
-                  >
-                    Clear
-                  </button>
-                )}
+            {/* Top Row: Mode Switcher + Quick Dialogs */}
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              {/* Category Segmented Control */}
+              <div className="inline-flex p-1 bg-secondary/80 dark:bg-slate-900/80 rounded-xl border border-border/70 text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => handleCategoryChange('personal_vehicle')}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
+                    rideCategory === 'personal_vehicle'
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Car className="w-3.5 h-3.5" />
+                  <span>Pool (Car/Bike)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryChange('auto_split')}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
+                    rideCategory === 'auto_split'
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Navigation className="w-3.5 h-3.5" />
+                  <span>Auto / Cab Split</span>
+                </button>
               </div>
-              <div className="relative">
+
+              {/* Utility Triggers: Map & Leaderboard */}
+              <div className="flex items-center gap-1.5 ml-auto">
+                <Dialog>
+                  <DialogTrigger render={
+                    <Button variant="outline" size="sm" className="h-8 px-2.5 rounded-xl border-border bg-background hover:bg-secondary text-xs font-bold gap-1.5 cursor-pointer shadow-xs">
+                      <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                      <span>Map View</span>
+                      {(rides?.length || 0) > 0 && (
+                        <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">
+                          {rides?.length}
+                        </span>
+                      )}
+                    </Button>
+                  } />
+                  <DialogContent className="max-w-5xl w-[95vw] h-[85vh] p-0 overflow-hidden bg-slate-900 border-slate-700/50 rounded-3xl shadow-2xl">
+                    <LiveDashboardMap 
+                      rides={rides || []} 
+                      selectedRide={selectedMapRide} 
+                      onRideSelect={setSelectedMapRide} 
+                      searchOrigin={originFilter}
+                      searchDestination={destinationFilter}
+                    />
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog>
+                  <DialogTrigger render={
+                    <Button variant="outline" size="sm" className="h-8 px-2.5 rounded-xl border-border bg-background hover:bg-secondary text-xs font-bold gap-1.5 cursor-pointer shadow-xs">
+                      <Zap className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>Leaderboard</span>
+                    </Button>
+                  } />
+                  <DialogContent className="max-w-lg w-[95vw] p-0 overflow-hidden bg-transparent border-none shadow-none">
+                    <EcoLeaderboard currentUserId={currentUserId} />
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            {/* Inputs Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
+              <div className="md:col-span-5">
+                <LocationAutocomplete
+                  placeholder="Pickup location..."
+                  value={originFilter}
+                  onChange={setOriginFilter}
+                  className="h-10 bg-secondary/40 dark:bg-slate-950/60 border-border/80 rounded-xl text-xs sm:text-sm font-semibold"
+                />
+              </div>
+
+              <div className="md:col-span-5">
+                <LocationAutocomplete
+                  placeholder="Dropoff destination..."
+                  value={destinationFilter}
+                  onChange={setDestinationFilter}
+                  className="h-10 bg-secondary/40 dark:bg-slate-950/60 border-border/80 rounded-xl text-xs sm:text-sm font-semibold"
+                />
+              </div>
+
+              <div className="md:col-span-2 flex items-center gap-1.5">
                 <Input
                   type="date"
                   value={dateFilter}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={e => setDateFilter(e.target.value)}
-                  className="h-[46px] bg-background/90 dark:bg-background/50 border-border/50 text-foreground focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-xl font-medium px-3 w-full shadow-sm"
+                  className="h-10 bg-secondary/40 dark:bg-slate-950/60 border-border/80 rounded-xl text-xs font-medium"
                 />
+                {(originFilter || destinationFilter || dateFilter) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setOriginFilter('')
+                      setDestinationFilter('')
+                      setDateFilter('')
+                    }}
+                    title="Reset filters"
+                    className="h-10 w-10 rounded-xl shrink-0 text-muted-foreground hover:text-rose-500 cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
               </div>
             </div>
-            {currentUserProfile?.gender === 'female' && (
-              <div className="flex items-center gap-2 pb-2 w-full sm:w-auto">
-                <Switch
-                  id="women-only"
-                  checked={womenOnlyFilter}
-                  onCheckedChange={setWomenOnlyFilter}
-                  className="data-[state=checked]:bg-foreground"
-                />
-                <Label htmlFor="women-only" className="text-foreground flex items-center gap-1.5 cursor-pointer font-semibold text-sm">
-                  <Shield className="w-4 h-4" /> Women Only
-                </Label>
+
+            {/* Quick Corridor Filter Pills + Women-only toggle */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/40 text-xs">
+              <div className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5">
+                {["JNTU Metro", "Miyapur Metro", "Pragathi Nagar", "Secunderabad", "Gandi Maisamma"].map((corridor) => (
+                  <button
+                    key={corridor}
+                    onClick={() => setOriginFilter(originFilter === corridor ? '' : corridor)}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 cursor-pointer border",
+                      originFilter === corridor
+                        ? "bg-blue-600 text-white border-blue-600 font-semibold"
+                        : "bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground border-border/60"
+                    )}
+                  >
+                    {corridor}
+                  </button>
+                ))}
               </div>
-            )}
+
+              {currentUserProfile?.gender === 'female' && (
+                <div className="flex items-center gap-2 shrink-0 ml-auto">
+                  <Switch
+                    id="women-only"
+                    checked={womenOnlyFilter}
+                    onCheckedChange={setWomenOnlyFilter}
+                  />
+                  <Label htmlFor="women-only" className="text-xs font-bold text-pink-600 dark:text-pink-400 flex items-center gap-1 cursor-pointer">
+                    <Shield className="w-3.5 h-3.5" /> Women Only
+                  </Label>
+                </div>
+              )}
+            </div>
           </motion.div>
 
-          {/* ── Ride Feed ──────────────────────── */}
+          {/* ── Live Departures Section Header ──────────────────── */}
+          <div className="flex items-center justify-between pt-1 px-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-foreground">Available Rides</h2>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
+
+            <span className="text-xs font-semibold text-muted-foreground">
+              {rides?.length || 0} active ride{(rides?.length || 0) === 1 ? '' : 's'}
+            </span>
+          </div>
+
+          {/* ── Ride Feed ────────────────────────────────────────── */}
           <PullToRefresh onRefresh={handleRefresh}>
             <div ref={feedRef} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 pb-10">
               {isLoading ? (
@@ -930,344 +970,264 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 </Button>
               </motion.div>
             ) : (
-              rides?.map((ride, i) => (
-                <motion.div
-                  key={ride.id}
-                  initial={{ opacity: 0, y: 22, scale: 0.975 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: i * 0.05, duration: 0.42, ease: [0.22,1,0.36,1] }}
-                >
-                  <div className="ticket-card overflow-hidden relative group">
-                    <div className="ticket-notch-left" />
-                    <div className="ticket-notch-right" />
-                    
-                    {ride.is_women_only && (
-                      <div className="absolute top-0 right-0 bg-gradient-to-l from-pink-600 to-rose-500 text-white text-[10px] px-4 py-1.5 font-black tracking-wider uppercase rounded-bl-2xl flex items-center gap-1.5 shadow-md z-20">
-                        <Shield className="w-3 h-3" /> Women Only
+              rides?.map((ride, i) => {
+                const myBooking = ride.bookings?.find(b => b.passenger.id === currentUserId && (b.status === 'pending' || b.status === 'approved'))
+                const isPending = myBooking?.status === 'pending'
+                const isApproved = myBooking?.status === 'approved'
+                const isFull = ride.available_seats === 0
+                const isMyRide = ride.driver_id === currentUserId
+
+                const displayPrice = ride.ride_category === 'auto_split'
+                  ? (ride as any).dynamic_price
+                  : (ride as any).fractional_price
+
+                const timeStr = new Date(ride.departure_time).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+                const dateStr = new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric' })
+
+                return (
+                  <motion.div
+                    key={ride.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04, duration: 0.3 }}
+                    className="rounded-2xl bg-card border border-border/80 hover:border-blue-500/40 shadow-xs hover:shadow-sm transition-all p-4 sm:p-5 space-y-3.5 relative overflow-hidden flex flex-col justify-between"
+                  >
+                    {/* Top Row: Departure Time & Badges */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
+                        <Clock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                        <span className="text-foreground font-bold">{timeStr}</span>
+                        <span>•</span>
+                        <span>{dateStr}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {ride.is_women_only && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-pink-50 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300 border border-pink-200 dark:border-pink-800 flex items-center gap-1">
+                            <Shield className="w-3 h-3" /> Women Only
+                          </span>
+                        )}
+                        <span className="text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide bg-secondary text-muted-foreground border border-border/60">
+                          {ride.vehicle_type === 'bike' ? '🏍️ Bike' : 
+                           ride.vehicle_type === 'auto' ? '🛺 Auto Split' : 
+                           (ride.ride_category === 'auto_split' ? '🚕 Cab Split' : '🚗 Car')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Route Visualizer */}
+                    <div className="space-y-2 relative pl-4 py-0.5">
+                      <div className="absolute left-1.5 top-2.5 bottom-2.5 w-[1.5px] bg-border" />
+                      
+                      {/* Origin */}
+                      <div className="relative">
+                        <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-background" />
+                        <span className="text-sm font-semibold text-foreground block truncate">
+                          {ride.origin}
+                        </span>
+                      </div>
+
+                      {/* Destination */}
+                      <div className="relative">
+                        <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-background" />
+                        <span className="text-sm font-bold text-foreground block truncate">
+                          {ride.destination}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Driver, Available Seats & Price */}
+                    <div className="flex items-center justify-between pt-2.5 border-t border-border/50">
+                      {/* Driver */}
+                      <div 
+                        className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => setSelectedProfileId(ride.driver?.id || null)}
+                      >
+                        <div className="w-8 h-8 rounded-full overflow-hidden border border-border shadow-xs shrink-0 flex items-center justify-center font-bold text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                          {ride.driver?.avatar_url ? (
+                            <img src={ride.driver.avatar_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            ride.driver?.full_name?.charAt(0).toUpperCase() || 'U'
+                          )}
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-foreground flex items-center gap-1 leading-tight">
+                            <span>{ride.driver?.full_name}</span>
+                            <span className="text-[10px] text-amber-500 font-semibold flex items-center">
+                              ★ {ride.driver?.rating_count && ride.driver.rating_count > 0 
+                                ? ((ride.driver.total_rating_score || 0) / ride.driver.rating_count).toFixed(1) 
+                                : 'New'}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-muted-foreground mt-0.5">
+                            {isFull ? (
+                              <span className="text-rose-500 font-semibold">Fully booked</span>
+                            ) : (
+                              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                                {ride.available_seats} seat{ride.available_seats > 1 ? 's' : ''} left
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Price */}
+                      <div className="text-right">
+                        <div className="text-xl sm:text-2xl font-black text-foreground leading-none">
+                          ₹{displayPrice}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground font-medium block mt-0.5">
+                          {ride.ride_category === 'auto_split' ? 'your share' : 'per seat'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Fractional match or route map button */}
+                    {(ride.route_id || (ride as any).matchType === 'fractional') && (
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center justify-between gap-2 text-xs">
+                          <button
+                            onClick={() => setExpandedMaps(prev => prev.includes(ride.id) ? prev.filter(id => id !== ride.id) : [...prev, ride.id])}
+                            className="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <MapPin className="w-3 h-3" />
+                            <span>{expandedMaps.includes(ride.id) ? 'Hide Map' : 'View Route'}</span>
+                          </button>
+
+                          <a 
+                            href={`https://wa.me/?text=${encodeURIComponent(`🚗 Ride offered on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${timeStr}\n💰 ₹${displayPrice}\n\nBook my seat here: https://vnr-pool-psi.vercel.app/?ride=${ride.id}`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                          >
+                            <Share2 className="w-3 h-3" />
+                            <span>Share</span>
+                          </a>
+                        </div>
+
+                        {(ride as any).matchType === 'fractional' && (
+                          <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/40 text-blue-700 dark:text-blue-300 text-[11px] px-2.5 py-1 rounded-lg font-medium">
+                            ✨ En-Route Match (Discounted rate)
+                          </div>
+                        )}
+
+                        {expandedMaps.includes(ride.id) && ride.route_id && (
+                          <div className="mt-2">
+                            <RouteMap waypoints={
+                              (ride as any).matchType === 'fractional'
+                                ? getSlicedWaypoints(ride.route_id, originFilter || ride.origin, destinationFilter || ride.destination)
+                                : getRouteById(ride.route_id)?.waypoints || []
+                            } />
+                          </div>
+                        )}
                       </div>
                     )}
 
-                    {/* TOP SECTION: ROUTE & TIME (Boarding Pass Style) */}
-                    <div className="p-5 pb-4 space-y-4">
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-1">
-                          <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground flex items-center gap-1">
-                            <Navigation className="w-3 h-3" /> Route
-                          </p>
-                          <div className="text-xl sm:text-2xl font-black text-foreground leading-tight tracking-tight">
-                            {ride.origin} <br />
-                            <span className="text-blue-500">→</span> {ride.destination}
-                          </div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground flex items-center justify-end gap-1">
-                            <Clock className="w-3 h-3" /> Departure
-                          </p>
-                          <div className="text-base sm:text-lg font-black text-foreground">
-                            {new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}
-                          </div>
-                          <div className="text-xs font-semibold text-muted-foreground">
-                            {new Date(ride.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric' })}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Vehicle & Category Badges */}
-                      <div className="flex flex-wrap gap-1.5">
-                        <span className={cn(
-                          "text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide",
-                          ride.ride_category === 'auto_split'
-                            ? "text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/40"
-                            : "text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/40"
-                        )}>
-                          {ride.ride_category === 'auto_split' ? 'Auto Split' : 'Student Pool'}
-                        </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full font-bold capitalize text-foreground/80 bg-secondary/80 flex items-center gap-1">
-                        <span className="text-sm mr-1">
-                          {ride.vehicle_type === 'bike' ? '🏍️' : 
-                           ride.vehicle_type === 'auto' ? '🛺' : 
-                           (ride.ride_category === 'auto_split' ? '🚕' : '🚗')}
-                        </span>
-                          {ride.vehicle_type}
-                          {ride.vehicle_number && (
-                            <>
-                              <span className="mx-1 h-3 border-l border-foreground/20" />
-                              <span className="uppercase text-muted-foreground">{ride.vehicle_number}</span>
-                            </>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* PERFORATED DIVIDER */}
-                    <div className="relative w-full h-4 flex items-center justify-center my-1 overflow-hidden">
-                      <div className="absolute inset-x-0 h-[2px] border-t-2 border-dashed border-border/80"></div>
-                      <div className="absolute -left-2 w-4 h-4 rounded-full bg-background shadow-inner"></div>
-                      <div className="absolute -right-2 w-4 h-4 rounded-full bg-background shadow-inner"></div>
-                    </div>
-
-                    {/* BOTTOM SECTION: DRIVER & PRICE */}
-                    <div className="p-5 pt-3 space-y-4">
-                      <div className="flex justify-between items-end">
-                        {/* Driver */}
-                        <div 
-                          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => setSelectedProfileId(ride.driver?.id || null)}
-                        >
-                          <div className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md flex-shrink-0 overflow-hidden",
-                            !ride.driver?.avatar_url && (ride.driver?.gender === 'female'
-                              ? "bg-gradient-to-br from-pink-400 to-rose-500"
-                              : "bg-gradient-to-br from-blue-500 to-blue-700")
-                          )}>
-                            {ride.driver?.avatar_url ? (
-                              <img src={ride.driver?.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                            ) : (
-                              ride.driver?.full_name.charAt(0).toUpperCase()
-                            )}
-                          </div>
-                          <div>
-                            <p className="text-xs uppercase font-bold tracking-widest text-muted-foreground mb-0.5">Driver</p>
-                            <p className="text-sm font-extrabold text-foreground leading-none flex items-center">
-                              {ride.driver?.full_name} 
-                              <span className="ml-1 scale-90">{renderStars(ride.driver?.total_rating_score || 0, ride.driver?.rating_count || 0)}</span>
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Price */}
-                        <div className="text-right">
-                          {ride.ride_category === 'auto_split' ? (
-                            <>
-                              <div className="text-[10px] text-muted-foreground font-bold mb-0.5 uppercase tracking-wide">
-                                Total Trip: ₹{ride.price_per_seat}
-                              </div>
-                              <div className="text-3xl font-black text-amber-600 dark:text-amber-500 leading-none">
-                                ₹{(ride as any).dynamic_price}
-                              </div>
-                              <div className="text-[9px] text-amber-600 dark:text-amber-400 font-black uppercase tracking-widest mt-1">
-                                Your Share
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div className="text-3xl font-black text-blue-600 dark:text-blue-400 flex items-end justify-end gap-1 leading-none">
-                                {(ride as any).matchType === 'fractional' && (
-                                  <span className="text-[12px] text-blue-300 dark:text-blue-700 line-through mb-1">₹{ride.price_per_seat}</span>
-                                )}
-                                ₹{(ride as any).fractional_price}
-                              </div>
-                              <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide mt-1">
-                                {(ride as any).matchType === 'fractional' ? 'your fraction' : 'per seat'}
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Time + Seats (Moved below driver info) */}
-                      <div className="flex items-center gap-3 text-xs font-bold pt-2">
-                        <div className={cn(
-                          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border",
-                          ride.available_seats === 0
-                            ? "text-red-600 bg-red-100 dark:bg-red-950/40 border-red-200 dark:border-red-900/40"
-                            : "text-emerald-700 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/40"
-                        )}>
-                          <Users className="w-3.5 h-3.5" />
-                          {ride.available_seats === 0 ? 'Full' : (
-                            <span className="flex items-center">
-                              <AnimatePresence mode="popLayout">
-                                <motion.span
-                                  key={ride.available_seats}
-                                  initial={{ y: -10, opacity: 0 }}
-                                  animate={{ y: 0, opacity: 1 }}
-                                  exit={{ y: 10, opacity: 0 }}
-                                  transition={{ duration: 0.3 }}
-                                  className="inline-block mr-1 text-center"
-                                >
-                                  {ride.available_seats}
-                                </motion.span>
-                              </AnimatePresence>
-                              Seats Left
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Seat dots */}
-                        <div className="flex gap-1 ml-auto">
-                          {Array.from({ length: ride.total_seats }).map((_, si) => (
-                            <span key={si} className={cn('seat-dot', si < (ride.total_seats - ride.available_seats) ? 'filled' : 'empty')} />
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Map Toggle & Rendering */}
-                      {(ride.route_id || (ride as any).matchType === 'fractional') && (
-                        <div className="pt-2">
-                          <div className="flex flex-wrap items-center justify-between gap-3 bg-secondary/20 p-2.5 rounded-xl border border-border/40 mb-2">
-                            <button 
-                              onClick={() => setExpandedMaps(prev => prev.includes(ride.id) ? prev.filter(id => id !== ride.id) : [...prev, ride.id])}
-                              className="text-[11px] sm:text-xs font-bold text-primary hover:underline flex items-center gap-1.5"
-                            >
-                              <MapPin className="w-3.5 h-3.5" />
-                              {expandedMaps.includes(ride.id) ? 'Hide Route Map' : 'View Route Map'}
-                            </button>
-                            
-                            <a 
-                              href={`https://wa.me/?text=${encodeURIComponent(`🚗 Ride offered on VNR Pool!\n📍 ${ride.origin} ➡️ ${ride.destination}\n⏰ ${new Date(ride.departure_time).toLocaleString('en-US', { hour: '2-digit', minute:'2-digit' })}\n💰 ₹${ride.ride_category === 'auto_split' ? 'Auto Split' : ride.price_per_seat}\n\nBook my seat here: https://vnr-pool-psi.vercel.app/?ride=${ride.id}`)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[11px] sm:text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5 transition-colors bg-emerald-500/10 px-2.5 py-1 rounded-md"
-                            >
-                              <Share2 className="w-3.5 h-3.5" />
-                              Share on WhatsApp
-                            </a>
-                          </div>
-                          
-                          {(ride as any).matchType === 'fractional' && (
-                            <div className="mt-1 bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1.5 rounded-md font-medium">
-                              <span className="font-bold">✨ En-Route Match!</span> You are boarding halfway through the route, so you only pay a fraction of the cost.
+                    {/* Co-passengers */}
+                    {ride.bookings && ride.bookings.filter(b => b.status === 'approved').length > 0 && (
+                      <div className="pt-2 border-t border-border/40 flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] text-muted-foreground font-semibold">Riders:</span>
+                        {ride.bookings.filter(b => b.status === 'approved').map((b, idx) => (
+                          <div 
+                            key={`${b.passenger.id}-${idx}`} 
+                            className="flex items-center gap-1 bg-secondary px-2 py-0.5 rounded-full text-[11px] font-semibold text-foreground cursor-pointer hover:bg-secondary/80"
+                            onClick={() => setSelectedProfileId(b.passenger.id)}
+                          >
+                            <div className="w-3.5 h-3.5 rounded-full overflow-hidden bg-blue-600 text-[8px] text-white flex items-center justify-center font-bold">
+                              {b.passenger.avatar_url ? (
+                                <img src={b.passenger.avatar_url} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                b.passenger.full_name?.charAt(0) || 'U'
+                              )}
                             </div>
-                          )}
-
-                          {expandedMaps.includes(ride.id) && ride.route_id && (
-                            <div className="mt-3">
-                              <RouteMap waypoints={
-                                (ride as any).matchType === 'fractional'
-                                  ? getSlicedWaypoints(ride.route_id, originFilter || ride.origin, destinationFilter || ride.destination)
-                                  : getRouteById(ride.route_id)?.waypoints || []
-                              } />
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Co-passengers */}
-                      {ride.bookings && ride.bookings.filter(b => b.status === 'approved').length > 0 && (
-                        <div className="pt-2 border-t border-border/40">
-                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                            <Users className="w-3 h-3" /> Co-Passengers
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {ride.bookings.filter(b => b.status === 'approved').map((b, idx) => (
-                              <div 
-                                key={`${b.passenger.id}-${idx}`} 
-                                className="flex items-center gap-1.5 bg-secondary/60 hover:bg-secondary border border-border/60 px-2.5 py-1 rounded-full text-xs font-semibold text-foreground cursor-pointer transition-colors"
-                                onClick={() => setSelectedProfileId(b.passenger.id)}
-                              >
-                                <div className={cn(
-                                  "w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white font-black overflow-hidden",
-                                  !b.passenger.avatar_url && (b.passenger.gender === 'female' ? "bg-foreground" : "bg-blue-500")
-                                )}>
-                                  {b.passenger.avatar_url ? (
-                                    <img src={b.passenger.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                                  ) : (
-                                    b.passenger.full_name.charAt(0)
-                                  )}
-                                </div>
-                                {b.passenger.full_name.split(' ')[0]}
-                              </div>
-                            ))}
+                            <span>{b.passenger.full_name.split(' ')[0]}</span>
                           </div>
-                        </div>
-                      )}
+                        ))}
+                      </div>
+                    )}
 
-                      {/* Action buttons */}
-                      <div className="flex gap-2 pt-1">
-                        {(() => {
-                          const myBooking = ride.bookings?.find(b => b.passenger.id === currentUserId && (b.status === 'pending' || b.status === 'approved'))
-                          const isPending = myBooking?.status === 'pending'
-                          const isApproved = myBooking?.status === 'approved'
-
-                          if (myBooking) {
-                            return (
-                              <motion.div className="flex-1" whileTap={{ scale: 0.97 }}>
-                                <Button
-                                  onClick={() => {
-                                    toast('Cancel Seat Request?', {
-                                      description: 'Are you sure you want to cancel your seat request?',
-                                      action: {
-                                        label: 'Yes, Cancel',
-                                        onClick: () => cancelBookingMutation.mutate({
-                                          bookingId: myBooking.id,
-                                          rideId: ride.id,
-                                          wasApproved: isApproved,
-                                          currentSeats: ride.available_seats
-                                        })
-                                      },
-                                      cancel: { label: 'Keep Seat', onClick: () => {} }
-                                    })
-                                  }}
-                                  disabled={cancelBookingMutation.isPending || ride.status === 'in_progress'}
-                                  className={cn(
-                                    "w-full font-bold transition-all duration-300",
-                                    ride.status === 'in_progress'
-                                      ? "bg-blue-500 text-white opacity-100"
-                                      : isApproved
-                                        ? "bg-primary hover:bg-red-500 text-primary-foreground hover:text-white shadow-md hover:shadow-red-500/30"
-                                        : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
-                                  )}
-                                >
-                                  {ride.status === 'in_progress' ? '🚗 Ride in Progress (Cannot Cancel)' : cancelBookingMutation.isPending ? 'Cancelling…' : isApproved ? '✓ Approved — Click to Cancel' : '⏳ Pending — Click to Cancel'}
-                                </Button>
-                              </motion.div>
-                            )
-                          }
-
-                          const isFull = ride.available_seats === 0
-                          return (
-                            <motion.div className="flex-1" whileTap={{ scale: 0.97 }}>
-                              <Button
-                                onClick={() => handleBook(ride)}
-                                disabled={ride.driver_id === currentUserId || isFull || hasActiveBooking}
-                                className={cn(
-                                  "w-full font-bold  transition-all duration-300",
-                                  ride.driver_id === currentUserId
-                                    ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                    : isFull
-                                      ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                      : hasActiveBooking
-                                        ? "bg-muted text-muted-foreground cursor-not-allowed border border-border/50 shadow-inner"
-                                        : "shiny-btn bg-blue-600 hover:bg-blue-700 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] border-none"
-                                )}
-                              >
-                                {ride.driver_id === currentUserId 
-                                  ? 'Your Ride' 
-                                  : isFull 
-                                    ? '🔒 Fully Booked' 
-                                    : hasActiveBooking 
-                                      ? 'Already Booked a Ride' 
-                                      : '🚗 Request Seat'}
-                              </Button>
-                            </motion.div>
-                          )
-                        })()}
-
+                    {/* Actions Row */}
+                    <div className="flex items-center gap-2 pt-1 mt-auto">
+                      {myBooking ? (
                         <Button
-                          variant="outline"
-                          size="icon"
-                          className="bg-transparent border-border hover:bg-blue-100 dark:hover:bg-blue-950/30 hover:border-blue-300 flex-shrink-0 transition-colors"
-                          onClick={() => setChatRide(ride)}
-                          title="Chat with Rider"
+                          onClick={() => {
+                            toast('Cancel Seat Request?', {
+                              description: 'Are you sure you want to cancel your seat request?',
+                              action: {
+                                label: 'Yes, Cancel',
+                                onClick: () => cancelBookingMutation.mutate({
+                                  bookingId: myBooking.id,
+                                  rideId: ride.id,
+                                  wasApproved: isApproved,
+                                  currentSeats: ride.available_seats
+                                })
+                              },
+                              cancel: { label: 'Keep Seat', onClick: () => {} }
+                            })
+                          }}
+                          disabled={cancelBookingMutation.isPending || ride.status === 'in_progress'}
+                          className={cn(
+                            "flex-1 h-10 font-bold text-xs rounded-xl transition-all cursor-pointer",
+                            ride.status === 'in_progress'
+                              ? "bg-blue-500 text-white opacity-100"
+                              : isApproved
+                                ? "bg-primary hover:bg-red-500 text-primary-foreground hover:text-white"
+                                : "bg-secondary text-secondary-foreground hover:bg-red-500 hover:text-white"
+                          )}
                         >
-                          <MessageCircle className="w-4 h-4 text-primary" />
+                          {ride.status === 'in_progress' ? '🚗 In Progress' : cancelBookingMutation.isPending ? 'Cancelling…' : isApproved ? '✓ Approved — Cancel' : '⏳ Pending — Cancel'}
                         </Button>
-                        <a href={`tel:${ride.driver?.mobile_number}`}>
+                      ) : (
+                        <Button
+                          onClick={() => handleBook(ride)}
+                          disabled={isMyRide || isFull || hasActiveBooking}
+                          className={cn(
+                            "flex-1 h-10 font-bold text-xs rounded-xl transition-all cursor-pointer",
+                            isMyRide
+                              ? "bg-muted text-muted-foreground cursor-not-allowed"
+                              : isFull
+                                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                : hasActiveBooking
+                                  ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                  : "bg-blue-600 hover:bg-blue-700 text-white shadow-xs"
+                          )}
+                        >
+                          {isMyRide 
+                            ? 'Your Ride' 
+                            : isFull 
+                              ? 'Fully Booked' 
+                              : hasActiveBooking 
+                                ? 'Active Ride Booked' 
+                                : 'Request Seat'}
+                        </Button>
+                      )}
+
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-10 w-10 rounded-xl border-border hover:bg-secondary shrink-0 cursor-pointer"
+                        onClick={() => setChatRide(ride)}
+                        title="Chat"
+                      >
+                        <MessageCircle className="w-4 h-4 text-primary" />
+                      </Button>
+
+                      {ride.driver?.mobile_number && (
+                        <a href={`tel:${ride.driver.mobile_number}`}>
                           <Button
                             variant="outline"
                             size="icon"
-                            className="border-border hover:bg-secondary flex-shrink-0"
-                            title="Call Rider"
+                            className="h-10 w-10 rounded-xl border-border hover:bg-secondary shrink-0 cursor-pointer"
+                            title="Call"
                           >
                             <Phone className="w-4 h-4 text-primary" />
                           </Button>
                         </a>
-                      </div>
+                      )}
                     </div>
-                  </div>
-                </motion.div>
-              ))
+                  </motion.div>
+                )
+              })
             )}
             </div>
           </PullToRefresh>
@@ -1278,10 +1238,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-3xl mx-auto"
         >
-          <div className="bg-white dark:bg-[#1f2937] text-slate-900 dark:text-slate-100 rounded-3xl border border-border/50 shadow-xl overflow-hidden">
-            <div className="p-6 md:p-8 border-b border-border/10">
-              <h2 className="text-3xl font-black text-foreground dark:text-white mb-1">Offer a Ride</h2>
-              <p className="text-muted-foreground dark:text-slate-400 text-sm">Fill in the details to share your journey with campus peers.</p>
+          <div className="bg-card dark:bg-[#0e1320] text-foreground rounded-3xl border border-border dark:border-slate-800 shadow-xl overflow-hidden transition-colors">
+            <div className="p-6 md:p-8 border-b border-border/40">
+              <h2 className="text-2xl sm:text-3xl font-black text-foreground mb-1">Offer a Campus Ride</h2>
+              <p className="text-muted-foreground text-xs sm:text-sm">Register your journey along Hyderabad corridors for verified peer carpool.</p>
             </div>
             
               <div className="p-6 md:p-8 space-y-6">
@@ -1289,19 +1249,19 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 {/* Row 1: Locations */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Origin</Label>
+                    <Label className="font-semibold text-sm text-foreground">Origin (Pickup Hub)</Label>
                     <LocationAutocomplete 
                       value={offerData.origin}
                       onChange={(v) => setOfferData({...offerData, origin: v})}
-                      placeholder="Enter pickup point"
+                      placeholder="e.g. Kukatpally JNTU Metro"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Destination</Label>
+                    <Label className="font-semibold text-sm text-foreground">Destination (Campus Drop)</Label>
                     <LocationAutocomplete 
                       value={offerData.destination}
                       onChange={(v) => setOfferData({...offerData, destination: v})}
-                      placeholder="e.g. VNR VJIET Campus"
+                      placeholder="e.g. VNR VJIET Campus Gate 1"
                     />
                   </div>
                 </div>
@@ -1310,7 +1270,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className={cn("grid gap-4", rideCategory === 'personal_vehicle' ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1")}>
                     <div className="space-y-2 flex flex-col justify-end">
-                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2 mb-2">
+                      <Label className="font-semibold text-sm text-foreground flex items-center gap-2 mb-2">
                         Vehicle Type
                         {offerData.vehicle_type && (
                           <span className="text-lg">
@@ -1335,19 +1295,19 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           })
                         }
                       }} value={offerData.vehicle_type}>
-                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus:ring-blue-500">
+                        <SelectTrigger className="bg-secondary/50 dark:bg-slate-950 border-border dark:border-slate-800 h-12 rounded-xl focus:ring-blue-500">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700">
+                        <SelectContent className="bg-popover dark:bg-[#0e1320] border-border dark:border-slate-800 shadow-xl">
                           {rideCategory === 'personal_vehicle' ? (
                             <>
-                              <SelectItem value="bike">Bike</SelectItem>
-                              <SelectItem value="car">Car</SelectItem>
+                              <SelectItem value="bike">Bike (2-Wheeler)</SelectItem>
+                              <SelectItem value="car">Car (4-Wheeler)</SelectItem>
                             </>
                           ) : (
                             <>
-                              <SelectItem value="auto">Auto</SelectItem>
-                              <SelectItem value="car">Cab</SelectItem>
+                              <SelectItem value="auto">Auto Pool Group</SelectItem>
+                              <SelectItem value="car">Cab Split</SelectItem>
                             </>
                           )}
                         </SelectContent>
@@ -1357,7 +1317,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     {rideCategory === 'personal_vehicle' && (
                       <div className="space-y-2 flex flex-col justify-end">
                         <div className="flex items-center justify-between mb-2">
-                          <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Vehicle No.</Label>
+                          <Label className="font-semibold text-sm text-foreground">Vehicle Reg. No.</Label>
                         </div>
                         <div className="relative">
                           <Input 
@@ -1365,7 +1325,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             value={offerData.vehicle_number}
                             onChange={e => setOfferData({...offerData, vehicle_number: e.target.value})}
                             className={cn(
-                              "bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 uppercase pr-10",
+                              "bg-secondary/50 dark:bg-slate-950 border-border dark:border-slate-800 h-12 rounded-xl focus-visible:ring-blue-500 uppercase pr-10",
                               offerData.vehicle_number.length > 0 && !isValidIndianVehicleNumber(offerData.vehicle_number) ? "border-red-500 focus-visible:ring-red-500" : ""
                             )}
                             placeholder="TS09XX1234"
@@ -1373,17 +1333,17 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                           {offerData.vehicle_number.length > 0 && (
                             <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                               {isValidIndianVehicleNumber(offerData.vehicle_number) ? (
-                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                               ) : (
-                                <XCircle className="w-5 h-5 text-red-500" />
+                                <XCircle className="w-5 h-5 text-rose-500" />
                               )}
                             </div>
                           )}
                         </div>
                         {offerData.vehicle_number.length > 0 && !isValidIndianVehicleNumber(offerData.vehicle_number) && (
-                          <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                          <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 font-medium">
                             <XCircle className="w-3 h-3" />
-                            Please enter a valid Indian vehicle number (e.g., TS09XX1234)
+                            Please enter a valid Indian plate (e.g., TS09XX1234)
                           </p>
                         )}
                       </div>
@@ -1391,16 +1351,16 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Select Your Exact Route</Label>
+                    <Label className="font-semibold text-sm text-foreground">Predefined Transit Route</Label>
                     <div className="relative">
-                      <Select value={offerData.route_id ?? 'none'} onValueChange={v => setOfferData({...offerData, route_id: v === 'none' ? '' : v})}>
-                        <SelectTrigger className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 min-h-[72px] py-2 rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4 text-left">
+                      <Select value={offerData.route_id || 'none'} onValueChange={v => setOfferData({...offerData, route_id: (!v || v === 'none') ? '' : v})}>
+                        <SelectTrigger className="bg-secondary/50 dark:bg-slate-950 border-border dark:border-slate-800 min-h-[72px] py-2 rounded-xl focus:ring-blue-500 flex flex-col items-start justify-center px-4 text-left">
                           <SelectValue placeholder="Select a predefined route to enable En-Route Matching" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#1f2937] border-slate-200 dark:border-slate-700 shadow-xl max-h-[300px]">
+                        <SelectContent className="bg-popover dark:bg-[#0e1320] border-border dark:border-slate-800 shadow-xl max-h-[300px]">
                           <SelectItem value="none">
                             <div className="font-bold">Custom Route</div>
-                            <div className="text-xs text-muted-foreground">No intermediate pickups</div>
+                            <div className="text-xs text-muted-foreground">Direct trip without intermediate waypoint pickups</div>
                           </SelectItem>
                           {COLLEGE_ROUTES.filter(route => {
                             if (!offerData.origin && !offerData.destination) return true;
@@ -1416,8 +1376,8 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                              return oIdx !== -1 && dIdx !== -1 && oIdx !== dIdx;
                           }).map((route, idx) => (
                             <SelectItem key={route.id} value={route.id}>
-                              <div className="font-bold">Option {idx + 1}</div>
-                              <div className="text-xs text-slate-500">Via {route.waypoints.join(' → ')}</div>
+                              <div className="font-bold">Corridor {idx + 1}</div>
+                              <div className="text-xs text-muted-foreground">Via {route.waypoints.join(' → ')}</div>
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -1429,7 +1389,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 {/* Row 4: Date, Time, Seats */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Departure Date & Time</Label>
+                    <Label className="font-semibold text-sm text-foreground">Departure Date & Time</Label>
                     <div className="relative">
                       <Input 
                         type="datetime-local"
@@ -1437,21 +1397,21 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                         onChange={e => setOfferData({...offerData, departure_time: e.target.value})}
                         className={cn(
-                          "bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500",
-                          offerData.departure_time && new Date(offerData.departure_time).getTime() < Date.now() ? "border-red-500 focus-visible:ring-red-500" : ""
+                          "bg-secondary/50 dark:bg-slate-950 border-border dark:border-slate-800 h-12 rounded-xl focus-visible:ring-blue-500",
+                          offerData.departure_time && new Date(offerData.departure_time).getTime() < Date.now() ? "border-rose-500 focus-visible:ring-rose-500" : ""
                         )}
                       />
                     </div>
                     {offerData.departure_time && new Date(offerData.departure_time).getTime() < Date.now() && (
-                      <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                      <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 font-medium">
                         <XCircle className="w-3 h-3" />
                         Departure time must be in the future
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">
-                      Total Seats (Max: {offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4})
+                    <Label className="font-semibold text-sm text-foreground">
+                      Seats Offered (Max: {offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4})
                     </Label>
                     <Input 
                       type="number" min="1" max={offerData.vehicle_type === 'bike' ? 1 : offerData.vehicle_type === 'auto' ? 2 : 4}
@@ -1462,7 +1422,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                         if (val > max) val = max;
                         setOfferData({...offerData, total_seats: val});
                       }}
-                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500"
+                      className="bg-secondary/50 dark:bg-slate-950 border-border dark:border-slate-800 h-12 rounded-xl focus-visible:ring-blue-500 font-bold"
                     />
                   </div>
                 </div>
@@ -1471,12 +1431,12 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <Label className="font-semibold text-sm text-foreground dark:text-slate-300 flex items-center gap-2">
+                      <Label className="font-semibold text-sm text-foreground flex items-center gap-2">
                         {rideCategory === 'auto_split' ? 'Total Trip Cost (₹)' : 'Price per Seat (₹)'}
                         {rideCategory === 'personal_vehicle' && (
-                          <span className="hidden sm:flex text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800 items-center gap-1">
+                          <span className="hidden sm:flex text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800 items-center gap-1 font-semibold">
                             <Sparkles className="w-3 h-3" />
-                            Powered by Featherless AI
+                            VNR Smart Fare
                           </span>
                         )}
                       </Label>
@@ -1498,7 +1458,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       type="number" min="0"
                       value={offerData.price_per_seat || ''}
                       onChange={e => setOfferData({...offerData, price_per_seat: parseInt(e.target.value) || 0})}
-                      className="bg-slate-50 dark:bg-[#111827] border-slate-200 dark:border-slate-700/50 h-12 rounded-xl focus-visible:ring-blue-500 font-black text-xl"
+                      className="bg-secondary/50 dark:bg-slate-950 border-border dark:border-slate-800 h-12 rounded-xl focus-visible:ring-blue-500 font-black text-xl"
                     />
                     {aiFareReasoning && (
                       <p className="text-xs text-blue-600 dark:text-blue-400 font-medium animate-in slide-in-from-top-1 fade-in">
@@ -1507,22 +1467,22 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     )}
                   </div>
                   <div className="space-y-2 flex flex-col">
-                    <Label className="font-semibold text-sm text-foreground dark:text-slate-300">Pricing Method</Label>
-                    <div className="flex-1 bg-[#0f3d32] dark:bg-[#064e3b]/30 border border-[#059669]/30 rounded-xl flex items-center px-4 min-h-[48px] py-2">
-                      <span className="text-[#10b981] dark:text-[#34d399] font-bold text-sm tracking-wide">
-                        {rideCategory === 'auto_split' ? 'Dynamic split based on active passengers' : 'Fixed price per passenger'}
+                    <Label className="font-semibold text-sm text-foreground">Pricing Protocol</Label>
+                    <div className="flex-1 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-xl flex items-center px-4 min-h-[48px] py-2">
+                      <span className="text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm tracking-wide">
+                        {rideCategory === 'auto_split' ? 'Dynamic meter split computed proportionally' : 'Fixed non-profit fuel contribution per seat'}
                       </span>
                     </div>
                   </div>
                 </div>
                 
                 {currentUserProfile?.gender === 'female' && (
-                  <div className="flex items-center justify-between p-4 bg-pink-50 dark:bg-pink-900/20 rounded-xl border border-pink-100 dark:border-pink-900/40">
+                  <div className="flex items-center justify-between p-4 bg-pink-50/80 dark:bg-pink-950/30 rounded-xl border border-pink-200 dark:border-pink-900/40">
                     <div className="space-y-1">
-                      <Label className="text-pink-600 dark:text-pink-400 flex items-center gap-2 font-bold">
+                      <Label className="text-pink-700 dark:text-pink-400 flex items-center gap-2 font-bold">
                         <Shield className="w-5 h-5" /> Women Only Ride
                       </Label>
-                      <p className="text-xs text-pink-700/80 dark:text-pink-500/80 font-medium">Only female users can request seats.</p>
+                      <p className="text-xs text-pink-600/90 dark:text-pink-400/80 font-medium">Only verified female students can view and book seats.</p>
                     </div>
                     <Switch 
                       checked={offerData.is_women_only}
@@ -1534,9 +1494,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                 <Button
                   onClick={() => offerMutation.mutate()}
                   disabled={offerMutation.isPending || !offerData.origin || !offerData.departure_time || (rideCategory === 'personal_vehicle' && !offerData.vehicle_number)}
-                  className="w-full h-14 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-bold text-lg rounded-xl shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] transition-all disabled:opacity-50 disabled:shadow-none"
+                  className="w-full h-13 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-base rounded-xl shadow-md transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  {offerMutation.isPending ? 'Publishing…' : 'Post Ride'}
+                  {offerMutation.isPending ? 'Publishing Ride to Campus Feed…' : 'Publish Campus Ride'}
                 </Button>
               </div>
 

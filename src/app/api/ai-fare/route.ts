@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     
     let distKm = 10; // default average campus commute
     if (matchOrig && matchDest) {
-      const straightLineDist = calculateDistance(matchOrig.lat, matchOrig.lon, matchDest.lat, matchDest.lon);
+      const straightLineDist = calculateDistance(matchOrig.lat, matchOrig.lng, matchDest.lat, matchDest.lng);
       distKm = Math.max(3, Math.round(straightLineDist * 1.35 * 10) / 10); // 1.35 factor for road sinuosity in Hyderabad
     }
 
