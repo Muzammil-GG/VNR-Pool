@@ -593,7 +593,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-3 sm:pt-6 pb-24 sm:pb-12 space-y-4 sm:space-y-6 text-foreground relative z-10">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 pt-3 sm:pt-6 pb-28 md:pb-12 space-y-4 sm:space-y-6 text-foreground relative z-10">
       
       {/* ── Executive Campus App Bar ────────────────────── */}
       <motion.header
@@ -743,27 +743,6 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
         </div>
       </motion.header>
 
-      {/* ── Mobile/Tablet Secondary Tabs ────────────────────────── */}
-      <div className="md:hidden flex p-1 bg-secondary/70 dark:bg-slate-900/70 rounded-xl border border-border shadow-xs w-full">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              "flex-1 py-2 rounded-lg text-xs font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5",
-              activeTab === tab
-                ? "bg-blue-600 text-white shadow-xs"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {tab === 'Find a Ride' && <Search className="w-3.5 h-3.5" />}
-            {tab === 'Offer a Seat' && <Plus className="w-3.5 h-3.5" />}
-            {tab === 'My Rides' && <List className="w-3.5 h-3.5" />}
-            <span>{tab}</span>
-          </button>
-        ))}
-      </div>
-
       {/* ── Primary Content Area ─────────────────────────────────── */}
       {activeTab === 'Find a Ride' ? (
         <div className="space-y-4 sm:space-y-5">
@@ -775,44 +754,47 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
             className="rounded-2xl bg-card border border-border shadow-xs p-3.5 sm:p-4 space-y-3 transition-colors"
           >
             {/* Top Row: Mode Switcher + Quick Dialogs */}
-            <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center justify-between gap-1.5 sm:gap-2">
               {/* Category Segmented Control */}
-              <div className="inline-flex p-1 bg-secondary/80 dark:bg-slate-900/80 rounded-xl border border-border/70 text-xs font-bold">
+              <div className="inline-flex p-1 bg-secondary/80 dark:bg-slate-900/80 rounded-xl border border-border/70 text-xs font-bold shrink-0">
                 <button
                   type="button"
                   onClick={() => handleCategoryChange('personal_vehicle')}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
+                    "px-2 sm:px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer text-xs",
                     rideCategory === 'personal_vehicle'
                       ? "bg-blue-600 text-white shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <Car className="w-3.5 h-3.5" />
-                  <span>Pool (Car/Bike)</span>
+                  <Car className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden sm:inline">Pool (Car/Bike)</span>
+                  <span className="sm:hidden">Car/Bike</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleCategoryChange('auto_split')}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
+                    "px-2 sm:px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer text-xs",
                     rideCategory === 'auto_split'
                       ? "bg-blue-600 text-white shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <Navigation className="w-3.5 h-3.5" />
-                  <span>Auto / Cab Split</span>
+                  <Navigation className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden sm:inline">Auto / Cab Split</span>
+                  <span className="sm:hidden">Auto/Cab</span>
                 </button>
               </div>
 
               {/* Utility Triggers: Map & Leaderboard */}
-              <div className="flex items-center gap-1.5 ml-auto">
+              <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                 <Dialog>
                   <DialogTrigger render={
-                    <Button variant="outline" size="sm" className="h-8 px-2.5 rounded-xl border-border bg-background hover:bg-secondary text-xs font-bold gap-1.5 cursor-pointer shadow-xs">
-                      <MapPin className="w-3.5 h-3.5 text-blue-500" />
-                      <span>Map View</span>
+                    <Button variant="outline" size="sm" className="h-8 px-2 sm:px-2.5 rounded-xl border-border bg-background hover:bg-secondary text-xs font-bold gap-1 sm:gap-1.5 cursor-pointer shadow-xs">
+                      <MapPin className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                      <span className="hidden sm:inline">Map View</span>
+                      <span className="sm:hidden">Map</span>
                       {(rides?.length || 0) > 0 && (
                         <span className="w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">
                           {rides?.length}
@@ -833,9 +815,10 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
                 <Dialog>
                   <DialogTrigger render={
-                    <Button variant="outline" size="sm" className="h-8 px-2.5 rounded-xl border-border bg-background hover:bg-secondary text-xs font-bold gap-1.5 cursor-pointer shadow-xs">
-                      <Zap className="w-3.5 h-3.5 text-emerald-500" />
-                      <span>Leaderboard</span>
+                    <Button variant="outline" size="sm" className="h-8 px-2 sm:px-2.5 rounded-xl border-border bg-background hover:bg-secondary text-xs font-bold gap-1 sm:gap-1.5 cursor-pointer shadow-xs">
+                      <Zap className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span className="hidden sm:inline">Leaderboard</span>
+                      <span className="sm:hidden">Rank</span>
                     </Button>
                   } />
                   <DialogContent className="max-w-lg w-[95vw] p-0 overflow-hidden bg-transparent border-none shadow-none">
@@ -893,7 +876,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
 
             {/* Quick Corridor Filter Pills + Women-only toggle */}
             <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/40 text-xs">
-              <div className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5">
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
                 {["JNTU Metro", "Miyapur Metro", "Pragathi Nagar", "Secunderabad", "Gandi Maisamma"].map((corridor) => (
                   <button
                     key={corridor}
@@ -992,25 +975,36 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                     transition={{ delay: i * 0.04, duration: 0.3 }}
                     className="rounded-2xl bg-card border border-border/80 hover:border-blue-500/40 shadow-xs hover:shadow-sm transition-all p-4 sm:p-5 space-y-3.5 relative overflow-hidden flex flex-col justify-between"
                   >
-                    {/* Top Row: Departure Time & Badges */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
-                        <Clock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                        <span className="text-foreground font-bold">{timeStr}</span>
-                        <span>•</span>
-                        <span>{dateStr}</span>
+                    {/* Top Row: Departure Time, Vehicle Badge & Prominent Price */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
+                          <Clock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                          <span className="text-foreground font-bold">{timeStr}</span>
+                          <span>•</span>
+                          <span>{dateStr}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide bg-secondary text-muted-foreground border border-border/60">
+                            {ride.vehicle_type === 'bike' ? '🏍️ Bike' : 
+                             ride.vehicle_type === 'auto' ? '🛺 Auto Split' : 
+                             (ride.ride_category === 'auto_split' ? '🚕 Cab Split' : '🚗 Car')}
+                          </span>
+                          {ride.is_women_only && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-pink-50 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300 border border-pink-200 dark:border-pink-800 flex items-center gap-1">
+                              <Shield className="w-3 h-3" /> Women Only
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
-                        {ride.is_women_only && (
-                          <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-pink-50 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300 border border-pink-200 dark:border-pink-800 flex items-center gap-1">
-                            <Shield className="w-3 h-3" /> Women Only
-                          </span>
-                        )}
-                        <span className="text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide bg-secondary text-muted-foreground border border-border/60">
-                          {ride.vehicle_type === 'bike' ? '🏍️ Bike' : 
-                           ride.vehicle_type === 'auto' ? '🛺 Auto Split' : 
-                           (ride.ride_category === 'auto_split' ? '🚕 Cab Split' : '🚗 Car')}
+                      {/* Prominent Price in top right */}
+                      <div className="text-right shrink-0">
+                        <div className="text-xl sm:text-2xl font-black text-foreground leading-none tracking-tight">
+                          ₹{displayPrice}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground font-medium block mt-0.5">
+                          {ride.ride_category === 'auto_split' ? 'your share' : 'per seat'}
                         </span>
                       </div>
                     </div>
@@ -1036,7 +1030,7 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                       </div>
                     </div>
 
-                    {/* Driver, Available Seats & Price */}
+                    {/* Driver & Seat Availability */}
                     <div className="flex items-center justify-between pt-2.5 border-t border-border/50">
                       {/* Driver */}
                       <div 
@@ -1059,26 +1053,25 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                                 : 'New'}
                             </span>
                           </div>
-                          <div className="text-[11px] text-muted-foreground mt-0.5">
-                            {isFull ? (
-                              <span className="text-rose-500 font-semibold">Fully booked</span>
-                            ) : (
-                              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                                {ride.available_seats} seat{ride.available_seats > 1 ? 's' : ''} left
-                              </span>
-                            )}
-                          </div>
+                          {ride.vehicle_number && (
+                            <span className="text-[10px] text-muted-foreground block font-mono mt-0.5">
+                              {ride.vehicle_number}
+                            </span>
+                          )}
                         </div>
                       </div>
 
-                      {/* Price */}
+                      {/* Seat Status Badge */}
                       <div className="text-right">
-                        <div className="text-xl sm:text-2xl font-black text-foreground leading-none">
-                          ₹{displayPrice}
-                        </div>
-                        <span className="text-[10px] text-muted-foreground font-medium block mt-0.5">
-                          {ride.ride_category === 'auto_split' ? 'your share' : 'per seat'}
-                        </span>
+                        {isFull ? (
+                          <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200 dark:border-rose-900">
+                            Fully booked
+                          </span>
+                        ) : (
+                          <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                            {ride.available_seats} seat{ride.available_seats > 1 ? 's' : ''} left
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -1533,45 +1526,45 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
       />
 
       {/* ── Mobile Bottom Navigation ────────────────────────────── */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-50 flex items-center justify-around px-2 pb-safe">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card/90 dark:bg-card/85 backdrop-blur-xl border-t border-border z-50 flex items-center justify-around px-2 pb-safe shadow-lg">
         <button
           onClick={() => setActiveTab('Find a Ride')}
           className={cn(
-            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors",
-            activeTab === 'Find a Ride' ? "text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-300"
+            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors cursor-pointer",
+            activeTab === 'Find a Ride' ? "text-blue-600 dark:text-blue-400 font-bold" : "text-muted-foreground hover:text-foreground font-medium"
           )}
         >
           <Search className={cn("w-5 h-5 transition-transform", activeTab === 'Find a Ride' && "scale-110")} />
-          <span className="text-[10px] font-medium tracking-wide">Search</span>
+          <span className="text-[10px] tracking-wide">Search</span>
         </button>
 
         <button
           onClick={() => setActiveTab('Offer a Seat')}
           className={cn(
-            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors relative",
-            activeTab === 'Offer a Seat' ? "text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-300"
+            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors relative cursor-pointer",
+            activeTab === 'Offer a Seat' ? "text-blue-600 dark:text-blue-400 font-bold" : "text-muted-foreground hover:text-foreground font-medium"
           )}
         >
           <div className={cn(
             "absolute -top-4 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform",
             activeTab === 'Offer a Seat' 
-              ? "bg-blue-600 text-white scale-110" 
-              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+              ? "bg-blue-600 text-white scale-110 shadow-blue-600/30" 
+              : "bg-background text-foreground border border-border"
           )}>
             <Plus className="w-6 h-6" />
           </div>
-          <span className="text-[10px] font-medium tracking-wide mt-6">Offer</span>
+          <span className="text-[10px] tracking-wide mt-6">Offer</span>
         </button>
 
         <button
           onClick={() => setActiveTab('My Rides')}
           className={cn(
-            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors",
-            activeTab === 'My Rides' ? "text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-300"
+            "flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors cursor-pointer",
+            activeTab === 'My Rides' ? "text-blue-600 dark:text-blue-400 font-bold" : "text-muted-foreground hover:text-foreground font-medium"
           )}
         >
           <List className={cn("w-5 h-5 transition-transform", activeTab === 'My Rides' && "scale-110")} />
-          <span className="text-[10px] font-medium tracking-wide">Rides</span>
+          <span className="text-[10px] tracking-wide">Rides</span>
         </button>
       </div>
 

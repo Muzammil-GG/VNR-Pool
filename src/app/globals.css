@@ -577,6 +577,14 @@ input:focus, textarea:focus {
   }
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 body:has(#landing-container) .global-layout-footer {
   display: none !important;
 }

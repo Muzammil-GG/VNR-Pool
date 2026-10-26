@@ -84,7 +84,7 @@ export function AIChatbot() {
 
   return (
     <>
-      <div className="fixed bottom-24 sm:bottom-6 right-4 sm:right-6 z-50">
+      <div className="fixed bottom-20 md:bottom-6 right-3.5 md:right-6 z-50">
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -92,7 +92,7 @@ export function AIChatbot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="absolute bottom-16 right-0 w-[calc(100vw-2rem)] sm:w-[400px] h-[500px] max-h-[calc(100vh-140px)] bg-card/95 backdrop-blur-xl border border-border shadow-2xl rounded-none flex flex-col overflow-hidden"
+              className="absolute bottom-14 md:bottom-16 right-0 w-[calc(100vw-2rem)] sm:w-[400px] h-[500px] max-h-[calc(100vh-140px)] bg-card/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl flex flex-col overflow-hidden"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-border bg-secondary/30">
@@ -207,11 +207,11 @@ export function AIChatbot() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-colors duration-300 ${
+          className={`w-12 h-12 md:w-14 md:h-14 rounded-full shadow-xl flex items-center justify-center transition-colors duration-300 cursor-pointer ${
             isOpen ? 'bg-secondary text-foreground border border-border' : 'bg-blue-600 text-white'
           }`}
         >
-          {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
+          {isOpen ? <X className="w-5 h-5 md:w-6 md:h-6" /> : <MessageSquare className="w-5 h-5 md:w-6 md:h-6" />}
         </motion.button>
       </div>
     </>
