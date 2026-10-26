@@ -1411,9 +1411,9 @@ export function Dashboard({ currentUserId }: { currentUserId: string }) {
                             const oIdx = o ? route.waypoints.findIndex(w => clean(w).includes(o) || o.includes(clean(w))) : -1;
                             const dIdx = d ? route.waypoints.findIndex(w => clean(w).includes(d) || d.includes(clean(w))) : -1;
                             
-                            if (o && !d) return oIdx !== -1;
-                            if (!o && d) return dIdx !== -1;
-                            return oIdx !== -1 && dIdx !== -1 && oIdx < dIdx;
+                             if (o && !d) return oIdx !== -1;
+                             if (!o && d) return dIdx !== -1;
+                             return oIdx !== -1 && dIdx !== -1 && oIdx !== dIdx;
                           }).map((route, idx) => (
                             <SelectItem key={route.id} value={route.id}>
                               <div className="font-bold">Option {idx + 1}</div>

@@ -493,40 +493,20 @@ export function getRouteById(id: string): Route | undefined {
 }
 
 // Checks if a start and end location exist sequentially in a given route
-// and ensures the passenger's sub-route is fully contained within the driver's actual route.
+// supporting both forward (Landmark -> VNR) and reverse (VNR -> Landmark) directions.
 export function checkFractionalMatch(routeId: string, startLoc: string, endLoc: string, driverOrigin?: string, driverDest?: string): boolean {
   const route = getRouteById(routeId);
   if (!route) return false;
   
-  // Clean up strings for comparison
   const clean = (s: string) => s.toLowerCase().trim();
   const start = clean(startLoc);
   const end = clean(endLoc);
   
-  const startIndex = route.waypoints.findIndex(w => clean(w).includes(start) || start.includes(clean(w)));
-  const endIndex = route.waypoints.findIndex(w => clean(w).includes(end) || end.includes(clean(w)));
+  const startIndex = findWaypointIndex(route.waypoints, start);
+  const endIndex = findWaypointIndex(route.waypoints, end);
   
-  if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+  if (startIndex === -1 || endIndex === -1 || startIndex === endIndex) {
     return false;
-  }
-  
-  // If driver bounds are provided, ensure the passenger is boarding after/at driver origin,
-  // and getting off before/at driver destination.
-  if (driverOrigin && driverDest) {
-    const dOrig = clean(driverOrigin);
-    const dDest = clean(driverDest);
-    
-    let driverStartIndex = route.waypoints.findIndex(w => clean(w).includes(dOrig) || dOrig.includes(clean(w)));
-    let driverEndIndex = route.waypoints.findIndex(w => clean(w).includes(dDest) || dDest.includes(clean(w)));
-    
-    // If driver's origin/destination is not explicitly in the waypoints (e.g. they typed a custom nearby place),
-    // we assume they cover the full route to be lenient, or we just rely on the fact that they picked this route.
-    if (driverStartIndex === -1) driverStartIndex = 0;
-    if (driverEndIndex === -1) driverEndIndex = route.waypoints.length - 1;
-    
-    if (startIndex < driverStartIndex || endIndex > driverEndIndex) {
-      return false;
-    }
   }
   
   return true;
@@ -535,7 +515,6 @@ export function checkFractionalMatch(routeId: string, startLoc: string, endLoc: 
 function findWaypointIndex(waypoints: string[], location: string): number {
   const clean = (s: string) => s.toLowerCase().trim();
   const target = clean(location);
-  let bestIndex = -1;
   
   for (let i = 0; i < waypoints.length; i++) {
     const w = clean(waypoints[i]);
@@ -544,7 +523,7 @@ function findWaypointIndex(waypoints: string[], location: string): number {
     }
   }
   
-  return bestIndex;
+  return -1;
 }
 
 export function getSlicedWaypoints(routeId: string, origin: string, destination: string): string[] {
@@ -554,8 +533,13 @@ export function getSlicedWaypoints(routeId: string, origin: string, destination:
   const startIndex = findWaypointIndex(route.waypoints, origin);
   const endIndex = findWaypointIndex(route.waypoints, destination);
 
-  if (startIndex !== -1 && endIndex !== -1 && startIndex <= endIndex) {
-    return route.waypoints.slice(startIndex, endIndex + 1);
+  if (startIndex !== -1 && endIndex !== -1) {
+    if (startIndex <= endIndex) {
+      return route.waypoints.slice(startIndex, endIndex + 1);
+    } else {
+      // Reverse direction (e.g. VNR to Landmark)
+      return route.waypoints.slice(endIndex, startIndex + 1).reverse();
+    }
   }
 
   return route.waypoints;
