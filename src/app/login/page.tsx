@@ -2,7 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CinematicAuth } from '@/components/auth/CinematicAuth'
 
-export default async function LoginPage() {
+export default async function LoginPage(props: {
+  searchParams?: Promise<{ preview?: string }>
+}) {
+  const searchParams = props.searchParams ? await props.searchParams : undefined
   const supabase = await createClient()
   let user = null
   try {
@@ -12,7 +15,8 @@ export default async function LoginPage() {
     // Graceful fallback if supabase is unreachable
   }
 
-  if (user) {
+  // If user is logged in and not explicitly previewing, redirect to home
+  if (user && searchParams?.preview !== '3d' && searchParams?.preview !== 'true') {
     redirect('/')
   }
 

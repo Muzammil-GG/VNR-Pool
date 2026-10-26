@@ -26,7 +26,7 @@ export default async function Home(props: {
     console.error('Failed to fetch user session:', err)
   }
 
-  if (!user) {
+  if (!user || searchParams?.preview === '3d' || searchParams?.preview === 'true') {
     return <CinematicAuth />
   }
 

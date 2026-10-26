@@ -223,7 +223,10 @@ export function CinematicAuth() {
   const SceneNotifier = () => {
     useEffect(() => {
       // Just a tiny timeout to ensure refs are populated
-      const timer = setTimeout(() => setSceneReady(true), 100);
+      const timer = setTimeout(() => {
+        setSceneReady(true);
+        ScrollTrigger.refresh();
+      }, 100);
       return () => clearTimeout(timer);
     }, []);
     return null;
@@ -296,12 +299,15 @@ export function CinematicAuth() {
         </div>
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Link
-            href="/login"
-            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold btn-glow-primary text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.03] active:scale-[0.98]"
+          <button
+            type="button"
+            onClick={() => {
+              authFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold btn-glow-primary text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
           >
             Sign In
-          </Link>
+          </button>
         </div>
       </header>
 
